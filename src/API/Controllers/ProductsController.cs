@@ -1,10 +1,12 @@
 ﻿using API.Dtos;
+using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -30,6 +32,8 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<Product>>> GetProduct(int id)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
