@@ -2,7 +2,7 @@
 using AutoMapper;
 using Core.Entities;
 
-namespace API.Helpers
+namespace API.Helpers.ValueResolvers
 {
     public class ProductUrlResolver : IValueResolver<Product, ProductDto, string>
     {
