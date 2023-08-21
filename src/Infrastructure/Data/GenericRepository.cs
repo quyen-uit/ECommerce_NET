@@ -1,6 +1,5 @@
 ﻿using Core.Common;
 using Core.Interfaces;
-using Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,6 +16,11 @@ namespace Infrastructure.Data
         public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<int> CountAsync(ISpecification<T> specification)
+        {
+            return await ApplySpecification(specification).CountAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
