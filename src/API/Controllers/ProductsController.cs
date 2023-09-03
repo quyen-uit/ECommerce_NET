@@ -55,7 +55,7 @@ namespace API.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound(new ApiException(404));
             }
         }
 
