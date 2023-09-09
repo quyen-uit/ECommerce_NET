@@ -1,5 +1,9 @@
-﻿using Core.Interfaces;
+﻿using Core.Entities.Identity;
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,13 +19,27 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>(options =>
                            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                                builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+
+            // identity context
+            services.AddDbContext<AppIdentityDbContext>(options =>
+                          options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                               builder => builder.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName)));
+
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis"));
                 return ConnectionMultiplexer.Connect(options);
             });
+
+            // add identity service
+            services.AddIdentityCore<AppUser>(options => { })
+            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddSignInManager<SignInManager<AppUser>>();
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddScoped<ITokenService, TokenService>();
+
             return services;
         }
     }

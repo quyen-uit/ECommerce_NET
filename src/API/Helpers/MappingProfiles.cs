@@ -2,6 +2,7 @@
 using API.Helpers.ValueResolvers;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 
 namespace API.Helpers
 {
@@ -15,6 +16,9 @@ namespace API.Helpers
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
             CreateMap<ProductType, ProductTypeDto>();
             CreateMap<ProductBrand, ProductBrandDto>();
+
+            CreateMap<Address, AddressDto>();
+            CreateMap<AddressDto, Address>();
         }
     }
 }

@@ -1,8 +1,11 @@
-using API;
+using API.Extensions;
 using API.Middlewares;
 using Core;
+using Core.Entities.Identity;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +19,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCoreServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddAPIService();
+builder.Services.AddAPIService(builder.Configuration);
 
 var app = builder.Build();
 
@@ -36,6 +39,7 @@ app.UseStaticFiles();
 
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -44,10 +48,14 @@ app.MapControllers();
 using var scope = app.Services.CreateScope();
 var service = scope.ServiceProvider;
 var context = service.GetRequiredService<ApplicationDbContext>();
+var contextIdentity = service.GetRequiredService<AppIdentityDbContext>();
+var userManager = service.GetRequiredService<UserManager<AppUser>>();
 var logger = service.GetRequiredService<ILogger<Program>>();
 try
 {
-    await context.Database.MigrateAsync();
+    await context.Database.MigrateAsync(); 
+    await contextIdentity.Database.MigrateAsync();
+    await AppIdentityDbContextSeed.SeedUserAync(userManager);
     await ApplicationDbContextSeed.SeedAsync(context);
 }
 catch (Exception ex)

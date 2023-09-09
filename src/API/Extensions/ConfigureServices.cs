@@ -1,14 +1,17 @@
 ﻿using API.Errors;
 using API.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
-namespace API
+namespace API.Extensions
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddAPIService(this IServiceCollection services)
+        public static IServiceCollection AddAPIService(this IServiceCollection services, IConfiguration configuration)
         {
             // add service for web api
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -35,6 +38,21 @@ namespace API
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 });
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"])),
+                        ValidIssuer = configuration["Token:Issuer"]
+                    };
+                });
+
+            services.AddAuthorization();
 
             return services;
         }
