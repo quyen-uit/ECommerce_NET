@@ -17,13 +17,12 @@ namespace API.Helpers
             CreateMap<ProductType, ProductTypeDto>();
             CreateMap<ProductBrand, ProductBrandDto>();
 
-            CreateMap<Address, AddressDto>();
-            CreateMap<AddressDto, Address>();
+            CreateMap<Address, AddressDto>().ReverseMap();
 
-            CreateMap<CustomerBasket, CustomerBasketDto>();
-            CreateMap<CustomerBasketDto, CustomerBasket>();
-            CreateMap<BasketItemDto, BasketItem>();
-            CreateMap<BasketItem, BasketItemDto>();
+            CreateMap<CustomerBasket, CustomerBasketDto>().ReverseMap();
+            CreateMap<BasketItemDto, BasketItem>().ReverseMap();
+
+            CreateMap<AddressDto, Core.Entities.OrderAggregate.Address>();
         }
     }
 }
