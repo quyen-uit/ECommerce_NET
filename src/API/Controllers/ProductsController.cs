@@ -35,7 +35,7 @@ namespace API.Controllers
 
             var count = await _productRepository.CountAsync(countSpec);
 
-            var products = await _productRepository.GetAllWithSpec(spec);
+            var products = await _productRepository.GetAllWithSpecAsync(spec);
             var produtDtos = _mapper.Map<IReadOnlyList<ProductDto>>(products);
 
             return Ok(new Pagination<ProductDto>(productSpecParams.PageIndex, productSpecParams.PageSize, count, produtDtos));
@@ -48,7 +48,7 @@ namespace API.Controllers
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
 
-            var product = await _productRepository.GetEntityWithSpec(spec);
+            var product = await _productRepository.GetEntityWithSpecAsync(spec);
             if (product != null)
             {
                 return Ok(_mapper.Map<ProductDto>(product));
