@@ -4,21 +4,19 @@ using API.Extensions;
 using AutoMapper;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
-using System.Security.Claims;
+
 
 namespace API.Controllers
 {
     [Authorize]
-    public class OrderContrller : ApiControllerBase
+    public class OrderController : ApiControllerBase
     {
         private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
 
-        public OrderContrller(IOrderService orderService, IMapper mapper)
+        public OrderController(IOrderService orderService, IMapper mapper)
         {
             _orderService = orderService;
             _mapper = mapper;
