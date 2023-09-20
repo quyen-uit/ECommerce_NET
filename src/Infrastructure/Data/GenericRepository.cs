@@ -18,9 +18,19 @@ namespace Infrastructure.Data
             _context = context;
         }
 
+        public async void Add(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+        }
+
         public async Task<int> CountAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).CountAsync();
+        }
+
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
@@ -28,7 +38,7 @@ namespace Infrastructure.Data
             return  await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> specification)
+        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).ToListAsync();
         }
@@ -38,9 +48,15 @@ namespace Infrastructure.Data
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> GetEntityWithSpec(ISpecification<T> specification)
+        public async Task<T> GetEntityWithSpecAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).FirstOrDefaultAsync();
+        }
+
+        public void Update(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
