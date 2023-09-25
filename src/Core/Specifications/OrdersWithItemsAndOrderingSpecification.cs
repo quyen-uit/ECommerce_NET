@@ -20,6 +20,7 @@ namespace Core.Specifications
         {
             AddInclude(o => o.ShipToAddress);
             AddInclude(o => o.DeliveryMethod);
+            AddInclude(o => o.OrderItems);
         }
     }
 }
