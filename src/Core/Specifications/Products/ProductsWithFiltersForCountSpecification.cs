@@ -2,7 +2,7 @@
 using Core.Entities;
 using Core.Specifications.Parameters;
 
-namespace Core.Specifications
+namespace Core.Specifications.Products
 {
     public class ProductsWithFiltersForCountSpecification : BaseSpecification<Product>
     {

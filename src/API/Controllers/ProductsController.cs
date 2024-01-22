@@ -6,6 +6,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Core.Specifications.Parameters;
+using Core.Specifications.Products;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -39,7 +40,7 @@ namespace API.Controllers
             var products = await _productRepository.GetAllWithSpecAsync(spec);
             var produtDtos = _mapper.Map<IReadOnlyList<ProductDto>>(products);
 
-            return Ok(new Pagination<ProductDto>(productSpecParams.PageIndex, productSpecParams.PageSize, count, produtDtos));
+            return Ok(new Pagination<ProductDto>(productSpecParams.PageNumber, productSpecParams.PageSize, count, produtDtos));
         }
 
         [Cached(600)]

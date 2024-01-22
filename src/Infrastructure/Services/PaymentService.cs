@@ -1,14 +1,10 @@
 ﻿using Core.Entities;
 using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Core.Interfaces;
-using Core.Specifications;
+using Core.Specifications.Orders;
 using Microsoft.Extensions.Configuration;
 using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Product = Core.Entities.Product;
 
 namespace Infrastructure.Services

@@ -1,4 +1,5 @@
 ﻿using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

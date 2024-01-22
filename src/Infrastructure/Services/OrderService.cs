@@ -1,14 +1,8 @@
 ﻿using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
-using Core.Specifications;
-using Infrastructure.Data;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Specifications.Orders;
+
 
 namespace Infrastructure.Services
 {

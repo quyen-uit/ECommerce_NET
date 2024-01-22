@@ -2,7 +2,7 @@
 using Core.Entities;
 using Core.Specifications.Parameters;
 
-namespace Core.Specifications
+namespace Core.Specifications.Products
 {
     public class ProductWithTypesAndBrandsSpecification : BaseSpecification<Product>
     {
@@ -18,15 +18,15 @@ namespace Core.Specifications
             AddInclude(x => x.ProductBrand);
         }
 
-        public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams) 
+        public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams)
             : base(x =>
             (string.IsNullOrEmpty(productSpecParams.Search) || x.Name.ToLower().Contains(productSpecParams.Search))
-            && (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == x.ProductBrandId) 
+            && (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == x.ProductBrandId)
             && (!productSpecParams.TypeId.HasValue || productSpecParams.TypeId == x.ProductTypeId))
         {
             AddInclude(x => x.ProductType);
             AddInclude(x => x.ProductBrand);
-            AddPagination(productSpecParams.PageSize * (productSpecParams.PageIndex - 1), productSpecParams.PageSize);
+            AddPagination(productSpecParams.PageSize * (productSpecParams.PageNumber - 1), productSpecParams.PageSize);
 
             switch (productSpecParams.Sort)
             {
