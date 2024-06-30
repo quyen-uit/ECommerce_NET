@@ -3,7 +3,7 @@ using API.Errors;
 using API.Helpers;
 using AutoMapper;
 using Core.Entities;
-using Core.Interfaces;
+using Core.Interfaces.Reposiories;
 using Core.Specifications;
 using Core.Specifications.Parameters;
 using Core.Specifications.Products;
@@ -28,7 +28,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [Cached(600)]
+        //[Cached(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductSpecParams productSpecParams)
         {
@@ -43,7 +43,7 @@ namespace API.Controllers
             return Ok(new Pagination<ProductDto>(productSpecParams.PageNumber, productSpecParams.PageSize, count, produtDtos));
         }
 
-        [Cached(600)]
+        //[Cached(600)]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -62,14 +62,14 @@ namespace API.Controllers
             }
         }
 
-        [Cached(600)]
+        //[Cached(600)]
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<ProductTypeDto>>> GetProductTypes()
         {
             var types = await _typeRepository.GetAllAsync();
             return Ok(_mapper.Map<IReadOnlyList<ProductTypeDto>>(types));
         }
-        [Cached(600)]
+        //[Cached(600)]
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> GetProductBrands()
         {

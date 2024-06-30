@@ -2,6 +2,8 @@
 using Core.Entities.OrderAggregate;
 using Core.Enums;
 using Core.Interfaces;
+using Core.Interfaces.Reposiories;
+using Core.Interfaces.Services;
 using Core.Specifications.Orders;
 using Microsoft.Extensions.Configuration;
 using Stripe;

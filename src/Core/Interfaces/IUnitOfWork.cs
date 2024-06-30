@@ -1,4 +1,5 @@
 ﻿using Core.Common;
+using Core.Interfaces.Reposiories;
 
 namespace Core.Interfaces
 {

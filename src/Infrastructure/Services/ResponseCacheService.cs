@@ -1,4 +1,4 @@
-﻿using Core.Interfaces;
+﻿using Core.Interfaces.Services;
 using StackExchange.Redis;
 using System.Text.Json;
 

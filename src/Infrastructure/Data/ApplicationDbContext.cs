@@ -17,6 +17,7 @@ namespace Infrastructure.Data
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> Items => Set<OrderItem>();
         public DbSet<DeliveryMethod> DeliveryMethods => Set<DeliveryMethod>();
+  
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

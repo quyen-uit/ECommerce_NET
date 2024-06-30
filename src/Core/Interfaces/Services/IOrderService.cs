@@ -1,6 +1,6 @@
 ﻿using Core.Entities.OrderAggregate;
 
-namespace Core.Interfaces
+namespace Core.Interfaces.Services
 {
     public interface IOrderService
     {

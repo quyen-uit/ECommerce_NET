@@ -35,6 +35,7 @@ namespace Infrastructure.Data.Configurations
                .HasOne(p => p.ProductBrand)
                .WithMany()
                .HasForeignKey(p => p.ProductBrandId);
+
         }
     }
 }

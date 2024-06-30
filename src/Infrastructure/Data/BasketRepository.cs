@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-using Core.Interfaces;
+using Core.Interfaces.Reposiories;
 using StackExchange.Redis;
 using System.Text.Json;
 

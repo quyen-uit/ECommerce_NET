@@ -1,6 +1,8 @@
 ﻿using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
+using Core.Interfaces.Reposiories;
+using Core.Interfaces.Services;
 using Core.Specifications.Orders;
 
 

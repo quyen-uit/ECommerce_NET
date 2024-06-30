@@ -1,7 +1,7 @@
 ﻿using API.Dtos;
 using AutoMapper;
 using Core.Entities;
-using Core.Interfaces;
+using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

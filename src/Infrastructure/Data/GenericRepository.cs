@@ -1,5 +1,6 @@
 ﻿using Core.Common;
 using Core.Interfaces;
+using Core.Interfaces.Reposiories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -17,6 +18,11 @@ namespace Infrastructure.Data
         public async void Add(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
+        }
+
+        public async Task<int> Complete()
+        {
+            return await _context.SaveChangesAsync();
         }
 
         public async Task<int> CountAsync(ISpecification<T> specification)
