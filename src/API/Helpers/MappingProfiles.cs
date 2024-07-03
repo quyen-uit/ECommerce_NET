@@ -11,10 +11,10 @@ namespace API.Helpers
         public MappingProfiles()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.ProductType.Name))
+                .ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
                 .ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
-            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<Category, ProductTypeDto>();
             CreateMap<ProductBrand, ProductBrandDto>();
 
             CreateMap<Core.Entities.Identity.Address, AddressDto>().ReverseMap();

@@ -14,7 +14,7 @@ namespace Core.Entities
         public bool IsTrending { get; set; }
         public int PurchasedNumber { get; set; }
 
-        public ProductType ProductType { get; set; }
+        public Category Category { get; set; }
         public int ProductTypeId { get; set; }
         public ProductBrand ProductBrand { get; set; }
         public int ProductBrandId { get; set; }

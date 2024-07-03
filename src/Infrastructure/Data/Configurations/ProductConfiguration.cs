@@ -27,7 +27,7 @@ namespace Infrastructure.Data.Configurations
                 .HasPrecision(14, 2);
 
             builder
-                .HasOne(pt => pt.ProductType)
+                .HasOne(pt => pt.Category)
                 .WithMany(p => p.Products)
                 .HasForeignKey(p => p.ProductTypeId)
                 .OnDelete(DeleteBehavior.Restrict);

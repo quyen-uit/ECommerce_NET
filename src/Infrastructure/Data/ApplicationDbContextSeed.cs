@@ -14,11 +14,11 @@ namespace Infrastructure.Data
                 var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
                 context.ProductBrands.AddRange(brands!);
             }
-            if (!context.ProductTypes.Any())
+            if (!context.Categories.Any())
             {
                 var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
-                var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-                context.ProductTypes.AddRange(types!);
+                var types = JsonSerializer.Deserialize<List<Category>>(typesData);
+                context.Categories.AddRange(types!);
             }
             if (!context.Products.Any())
             {

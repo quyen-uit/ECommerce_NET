@@ -8,13 +8,13 @@ namespace Core.Specifications.Products
     {
         public ProductWithTypesAndBrandsSpecification()
         {
-            AddInclude(x => x.ProductType);
+            AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
         }
 
         public ProductWithTypesAndBrandsSpecification(int id) : base(x => x.Id == id)
         {
-            AddInclude(x => x.ProductType);
+            AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
         }
 
@@ -24,7 +24,7 @@ namespace Core.Specifications.Products
             && (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == x.ProductBrandId)
             && (!productSpecParams.TypeId.HasValue || productSpecParams.TypeId == x.ProductTypeId))
         {
-            AddInclude(x => x.ProductType);
+            AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
             AddPagination(productSpecParams.PageSize * (productSpecParams.PageNumber - 1), productSpecParams.PageSize);
 

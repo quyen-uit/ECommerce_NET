@@ -14,7 +14,7 @@ namespace Infrastructure.Data
 
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductBrand> ProductBrands => Set<ProductBrand>();
-        public DbSet<ProductType> ProductTypes => Set<ProductType>();
+        public DbSet<Category> Categories => Set<Category>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> Items => Set<OrderItem>();
         public DbSet<DeliveryMethod> DeliveryMethods => Set<DeliveryMethod>();

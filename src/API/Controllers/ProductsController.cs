@@ -17,14 +17,14 @@ namespace API.Controllers
     {
         private readonly IGenericRepository<Product> _productRepository;
         private readonly IGenericRepository<ProductBrand> _brandRepository;
-        private readonly IGenericRepository<ProductType> _typeRepository;
+        private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productRepository, IGenericRepository<ProductBrand> brandRepository, IGenericRepository<ProductType> typeRepository, IMapper mapper)
+        public ProductsController(IGenericRepository<Product> productRepository, IGenericRepository<ProductBrand> brandRepository, IGenericRepository<Category> categoryRepository, IMapper mapper)
         {
             _productRepository = productRepository;
             _brandRepository = brandRepository;
-            _typeRepository = typeRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -66,7 +66,7 @@ namespace API.Controllers
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<ProductTypeDto>>> GetProductTypes()
         {
-            var types = await _typeRepository.GetAllAsync();
+            var types = await _categoryRepository.GetAllAsync();
             return Ok(_mapper.Map<IReadOnlyList<ProductTypeDto>>(types));
         }
         //[Cached(600)]
