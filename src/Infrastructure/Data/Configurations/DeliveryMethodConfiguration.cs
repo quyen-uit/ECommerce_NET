@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Configurations
 {
-    public class DeliveryMethodConfiguration : IEntityTypeConfiguration<DeliveryMethod>
+    public class UserConfiguration : IEntityTypeConfiguration<DeliveryMethod>
     {
         public void Configure(EntityTypeBuilder<DeliveryMethod> builder)
         {

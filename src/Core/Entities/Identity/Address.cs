@@ -12,7 +12,7 @@ namespace Core.Entities.Identity
         public string Ward { get; set; }
         public string District { get; set; }
         public string City { get; set; }
-        public int ZipCode { get; set; }
+        //public int ZipCode { get; set; }
 
         [Required]
         public string AppUserId { get; set; }

@@ -27,14 +27,22 @@ namespace Infrastructure.Data.Configurations
                 .HasPrecision(14, 2);
 
             builder
-                .HasOne(p => p.ProductType)
-                .WithMany()
-                .HasForeignKey(p => p.ProductTypeId);
+                .HasOne(pt => pt.ProductType)
+                .WithMany(p => p.Products)
+                .HasForeignKey(p => p.ProductTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             builder
-               .HasOne(p => p.ProductBrand)
-               .WithMany()
-               .HasForeignKey(p => p.ProductBrandId);
+               .HasOne(pb => pb.ProductBrand)
+               .WithMany(p => p.Products)
+               .HasForeignKey(p => p.ProductBrandId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+               .HasMany(rv => rv.Reviews)
+               .WithOne(p => p.Product)
+               .HasForeignKey(rv => rv.ProductId);
 
         }
     }

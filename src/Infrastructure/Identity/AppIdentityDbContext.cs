@@ -6,6 +6,8 @@ namespace Infrastructure.Identity
 {
     public class AppIdentityDbContext : IdentityDbContext<AppUser>
     {
+        public DbSet<Address> Addresses => Set<Address>();
+
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options) : base(options)
         {
         }

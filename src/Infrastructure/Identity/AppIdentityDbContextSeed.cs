@@ -22,7 +22,6 @@ namespace Infrastructure.Identity
                         Ward = "W",
                         District = "D",
                         City = "C",
-                        ZipCode = 123
 
                     }
                 };
