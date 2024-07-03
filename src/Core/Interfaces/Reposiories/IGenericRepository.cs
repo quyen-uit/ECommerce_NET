@@ -11,7 +11,7 @@ namespace Core.Interfaces.Reposiories
         Task<int> CountAsync(ISpecification<T> specification);
         void Add(T entity);
         void Update(T entity);
-        void Delete(T entity);
+        void Delete(int id);
         Task<int> Complete();
     }
 }

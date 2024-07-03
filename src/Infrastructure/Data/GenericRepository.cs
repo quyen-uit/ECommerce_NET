@@ -30,14 +30,18 @@ namespace Infrastructure.Data
             return await ApplySpecification(specification).CountAsync();
         }
 
-        public void Delete(T entity)
+        public async void Delete(int id)
         {
-            _context.Set<T>().Remove(entity);
+            var entity = await _context.Set<T>().FindAsync(id);
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+            }
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return  await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> specification)
