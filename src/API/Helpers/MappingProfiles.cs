@@ -14,8 +14,12 @@ namespace API.Helpers
                 .ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
                 .ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
-            CreateMap<Category, ProductTypeDto>();
-            CreateMap<ProductBrand, ProductBrandDto>();
+            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<CreateCategoryDto, Category>();
+            CreateMap<ProductBrand, ProductBrandDto>().ReverseMap();
+            CreateMap<CreateProductBrandDto, ProductBrand>();
+            CreateMap<Color, ColorDto>().ReverseMap();
+            CreateMap<CreateColorDto, Color>();
 
             CreateMap<Core.Entities.Identity.Address, AddressDto>().ReverseMap();
 

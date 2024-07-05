@@ -1,6 +1,6 @@
 ﻿using Core.Common;
 
-namespace Core.Specifications.Parameters
+namespace Core.Specifications.Products
 {
     public class ProductSpecParams : QueryStringParameter
     {

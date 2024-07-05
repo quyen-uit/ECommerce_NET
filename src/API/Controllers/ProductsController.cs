@@ -5,7 +5,6 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Specifications;
-using Core.Specifications.Parameters;
 using Core.Specifications.Products;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -64,17 +63,17 @@ namespace API.Controllers
 
         //[Cached(600)]
         [HttpGet("types")]
-        public async Task<ActionResult<IReadOnlyList<ProductTypeDto>>> GetProductTypes()
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetProductTypes()
         {
             var types = await _categoryRepository.GetAllAsync();
-            return Ok(_mapper.Map<IReadOnlyList<ProductTypeDto>>(types));
+            return Ok(_mapper.Map<IReadOnlyList<CategoryDto>>(types));
         }
         //[Cached(600)]
         [HttpGet("brands")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> GetProductBrands()
+        public async Task<ActionResult<IReadOnlyList<CreateProductBrandDto>>> GetProductBrands()
         {
             var types = await _brandRepository.GetAllAsync();
-            return Ok(_mapper.Map<IReadOnlyList<ProductBrandDto>>(types));
+            return Ok(_mapper.Map<IReadOnlyList<CreateProductBrandDto>>(types));
         }
     }
 }

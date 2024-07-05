@@ -20,6 +20,11 @@ namespace Infrastructure.Data
             await _context.Set<T>().AddAsync(entity);
         }
 
+        public async void AddRange(IReadOnlyList<T> entities)
+        {
+            await _context.Set<T>().AddRangeAsync(entities);
+        }
+
         public async Task<int> Complete()
         {
             return await _context.SaveChangesAsync();

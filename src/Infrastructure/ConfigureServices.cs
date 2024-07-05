@@ -43,8 +43,12 @@ namespace Infrastructure
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IPaymentService,PaymentService>();
-            services.AddSingleton<IResponseCacheService,ResponseCacheService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductBrandService, ProductBrandService>();
+            services.AddScoped<IColorService, ColorService>();
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }

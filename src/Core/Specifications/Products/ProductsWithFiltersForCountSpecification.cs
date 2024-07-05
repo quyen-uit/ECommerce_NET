@@ -1,6 +1,5 @@
 ﻿using Core.Common;
 using Core.Entities;
-using Core.Specifications.Parameters;
 
 namespace Core.Specifications.Products
 {
