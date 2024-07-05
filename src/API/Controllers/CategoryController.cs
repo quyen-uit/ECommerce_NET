@@ -1,4 +1,5 @@
-﻿using API.Dtos;
+﻿using Core.Dtos;
+using Core.Dtos.CreateDto;
 using API.Errors;
 using AutoMapper;
 using Core.Entities;
@@ -19,7 +20,7 @@ namespace API.Controllers
         }
 
         // GET: api/Category
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetCategories([FromQuery] bool? isActive)
         {
             var categories = await _categoryService.GetAllCategoriesAsync(isActive);
@@ -33,42 +34,39 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> PostCategory(CreateCategoryDto categoryDto)
         {
-            var category = _mapper.Map<Category>(categoryDto);
-            var result = await _categoryService.AddCategoryAsync(category);
+            var result = await _categoryService.AddCategoryAsync(categoryDto);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
-            return Ok(_mapper.Map<CategoryDto>(category));
+            return Ok(_mapper.Map<CategoryDto>(result));
         }
 
         // POST: api/Category/many
         [HttpPost("many")]
         public async Task<ActionResult<CategoryDto>> PostCategories(IReadOnlyList<CreateCategoryDto> categoryDtos)
         {
-            var categories = _mapper.Map<IReadOnlyList<Category>>(categoryDtos);
-            var result = await _categoryService.AddRangeCategoryAsync(categories);
+            var result = await _categoryService.AddRangeCategoryAsync(categoryDtos);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
-            return Ok(_mapper.Map<IReadOnlyList<CategoryDto>>(categories));
+            return Ok(_mapper.Map<IReadOnlyList<CategoryDto>>(result));
         }
 
         // PUT: api/Category/5
         [HttpPut]
         public async Task<IActionResult> PutCategory(CategoryDto categoryDto)
         {
-            var category = _mapper.Map<Category>(categoryDto);
-            var result = await _categoryService.UpdateCategoryAsync(category);
+            var result = await _categoryService.UpdateCategoryAsync(categoryDto);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Updating fail"));
             }
-            return Ok(_mapper.Map<CategoryDto>(category));
+            return Ok(_mapper.Map<CategoryDto>(result));
         }
 
         // DELETE: api/Category/5

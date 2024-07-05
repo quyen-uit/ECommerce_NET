@@ -1,5 +1,7 @@
 ﻿using API.Errors;
 using API.Helpers;
+using API.Services;
+using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -84,6 +86,15 @@ namespace API.Extensions
                 });
 
             services.AddAuthorization();
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductBrandService, ProductBrandService>();
+            services.AddScoped<IColorService, ColorService>();
+
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }

@@ -1,12 +1,14 @@
 ﻿using Core.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos
+namespace Core.Dtos.CreateDto
 {
-    public class CategoryDto
+    public class CreateCategoryDto
     {
-        public int Id { get; set; }
+        [Required]
+        [MaxLength(20)]
         public string Name { get; set; }
+        [Required]
         public int Order { get; set; }
         public bool IsActive { get; set; }
 

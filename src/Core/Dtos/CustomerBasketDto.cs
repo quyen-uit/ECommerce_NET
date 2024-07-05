@@ -1,7 +1,6 @@
-﻿using Core.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos
+namespace Core.Dtos
 {
     public class CustomerBasketDto
     {

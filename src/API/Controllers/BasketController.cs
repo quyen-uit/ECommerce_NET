@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using Core.Dtos;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Reposiories;

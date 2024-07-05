@@ -1,4 +1,4 @@
-﻿namespace API.Constants
+﻿namespace Core.Common
 {
     public static class MessageErrors
     {

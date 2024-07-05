@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Stripe;
 using Product = Core.Entities.Product;
 
-namespace Infrastructure.Services
+namespace API.Services
 {
     public class PaymentService : IPaymentService
     {

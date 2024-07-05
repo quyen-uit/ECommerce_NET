@@ -4,7 +4,6 @@ using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.Identity;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,14 +40,6 @@ namespace Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IBasketRepository, BasketRepository>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IProductBrandService, ProductBrandService>();
-            services.AddScoped<IColorService, ColorService>();
-
-            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }

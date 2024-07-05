@@ -1,6 +1,5 @@
-﻿using Core.Entities.OrderAggregate;
-
-namespace API.Dtos
+﻿
+namespace Core.Dtos
 {
     public class OrderItemDto
     {

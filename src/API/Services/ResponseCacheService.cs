@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace Infrastructure.Services
+namespace API.Services
 {
     public class ResponseCacheService : IResponseCacheService
     {

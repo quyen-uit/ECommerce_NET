@@ -1,4 +1,6 @@
-﻿using Core.Entities;
+﻿using Core.Dtos;
+using Core.Dtos.CreateDto;
+using Core.Entities;
 
 namespace Core.Interfaces.Services
 {
@@ -6,9 +8,9 @@ namespace Core.Interfaces.Services
     {
         Task<IReadOnlyList<Category>> GetAllCategoriesAsync(bool? isActive);
         Task<Category> GetCategoryByIdAsync(int id);
-        Task<int> AddCategoryAsync(Category category);
-        Task<int> AddRangeCategoryAsync(IReadOnlyList<Category> categories);
-        Task<int> UpdateCategoryAsync(Category category);
+        Task<Category> AddCategoryAsync(CreateCategoryDto category);
+        Task<IReadOnlyList<Category>> AddRangeCategoryAsync(IReadOnlyList<CreateCategoryDto> categories);
+        Task<Category> UpdateCategoryAsync(CategoryDto category);
         Task<int> DeleteCategoryAsync(int id);
     }
 

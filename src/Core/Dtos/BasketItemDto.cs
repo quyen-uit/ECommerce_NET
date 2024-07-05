@@ -1,7 +1,7 @@
-﻿using API.Constants;
+﻿using Core.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos
+namespace Core.Dtos
 {
     public class BasketItemDto
     {

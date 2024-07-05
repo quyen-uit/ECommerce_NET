@@ -1,23 +1,32 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Dtos;
+using Core.Dtos.CreateDto;
+using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
 
-namespace Infrastructure.Services
+namespace API.Services
 {
     public class ColorService : IColorService
     {
         private readonly IGenericRepository<Color> _colorRepository;
+        private readonly IMapper _mapper;
 
-        public ColorService(IGenericRepository<Color> colorRepository)
+        public ColorService(IGenericRepository<Color> colorRepository, IMapper mapper)
         {
             _colorRepository = colorRepository;
+            _mapper = mapper;
         }
 
-        public async Task<int> AddColorAsync(Color color)
+        public async Task<Color> AddColorAsync(CreateColorDto colorDto)
         {
+            var color = _mapper.Map<Color>(colorDto);
+
             _colorRepository.Add(color);
-            return await _colorRepository.Complete();
+            await _colorRepository.Complete();
+
+            return color;
         }
 
         public async Task<int> DeleteColorAsync(int id)
@@ -31,21 +40,28 @@ namespace Infrastructure.Services
             return await _colorRepository.GetAllAsync();
         }
 
-        public async Task<int> UpdateColorAsync(Color color)
+        public async Task<Color> UpdateColorAsync(ColorDto colorDto)
         {
+            var color = _mapper.Map<Color>(colorDto);
+
             _colorRepository.Update(color);
-            return await _colorRepository.Complete();
+            await _colorRepository.Complete();
+            return color;
         }
 
-        public async Task<int> AddRangeColorAsync(IReadOnlyList<Color> colors)
+        public async Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos)
         {
+            var colors = _mapper.Map<IReadOnlyList<Color>>(colorDtos);
+
             _colorRepository.AddRange(colors);
-            return await _colorRepository.Complete();
+            await _colorRepository.Complete();
+            return colors;
         }
 
         public async Task<Color> GetColorByIdAsync(int id)
         {
             return await _colorRepository.GetByIdAsync(id);
         }
+
     }
 }

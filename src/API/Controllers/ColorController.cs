@@ -1,4 +1,5 @@
-﻿using API.Dtos;
+﻿using Core.Dtos;
+using Core.Dtos.CreateDto;
 using API.Errors;
 using AutoMapper;
 using Core.Entities;
@@ -19,7 +20,7 @@ namespace API.Controllers
         }
 
         // GET: api/Color
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IReadOnlyList<ColorDto>>> GetColors()
         {
             var colors = await _colorService.GetAllColorsAsync();
@@ -33,42 +34,39 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ColorDto>> PostColor(CreateColorDto colorDto)
         {
-            var color = _mapper.Map<Color>(colorDto);
-            var result = await _colorService.AddColorAsync(color);
+            var result = await _colorService.AddColorAsync(colorDto);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
-            return Ok(_mapper.Map<ColorDto>(color));
+            return Ok(_mapper.Map<ColorDto>(result));
         }
 
         // POST: api/Color/many
         [HttpPost("many")]
         public async Task<ActionResult<ColorDto>> PostColors(IReadOnlyList<CreateColorDto> colorDtos)
         {
-            var colors = _mapper.Map<IReadOnlyList<Color>>(colorDtos);
-            var result = await _colorService.AddRangeColorAsync(colors);
+            var result = await _colorService.AddRangeColorAsync(colorDtos);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
-            return Ok(_mapper.Map<IReadOnlyList<ColorDto>>(colors));
+            return Ok(_mapper.Map<IReadOnlyList<ColorDto>>(result));
         }
 
         // PUT: api/Color/5
         [HttpPut]
         public async Task<IActionResult> PutColor(ColorDto colorDto)
         {
-            var color = _mapper.Map<Color>(colorDto);
-            var result = await _colorService.UpdateColorAsync(color);
+            var result = await _colorService.UpdateColorAsync(colorDto);
 
-            if (result < 0)
+            if (result == null)
             {
                 return BadRequest(new ApiResponse(400, "Updating fail"));
             }
-            return Ok(_mapper.Map<ColorDto>(color));
+            return Ok(_mapper.Map<ColorDto>(result));
         }
 
         // DELETE: api/Color/5

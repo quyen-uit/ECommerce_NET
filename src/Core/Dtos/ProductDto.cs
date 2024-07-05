@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
+using Core.Enums;
 
-namespace API.Dtos
+namespace Core.Dtos
 {
     public class ProductDto
     {
@@ -11,5 +12,9 @@ namespace API.Dtos
         public string PhotoUrl { get; set; }
         public string ProductType { get; set; }
         public string ProductBrand { get; set; }
+        public int Stock { get; set; }
+        public ProductSize Size { get; set; }
+        public bool IsTrending { get; set; }
+        public bool IsNew { get; set; }
     }
 }

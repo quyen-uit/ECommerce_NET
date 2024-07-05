@@ -1,29 +1,42 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Dtos;
+using Core.Dtos.CreateDto;
+using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
 
-namespace Infrastructure.Services
+namespace API.Services
 {
     public class CategoryService : ICategoryService
     {
         private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
 
-        public CategoryService(IGenericRepository<Category> categoryRepository)
+        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
-        public async Task<int> AddCategoryAsync(Category category)
+        public async Task<Category> AddCategoryAsync(CreateCategoryDto categoryDto)
         {
+            var category = _mapper.Map<Category>(categoryDto);
+
             _categoryRepository.Add(category);
-            return await _categoryRepository.Complete();
+            await _categoryRepository.Complete();
+
+            return category;
         }
 
-        public async Task<int> AddRangeCategoryAsync(IReadOnlyList<Category> categories)
+        public async Task<IReadOnlyList<Category>> AddRangeCategoryAsync(IReadOnlyList<CreateCategoryDto> categoryDtos)
         {
+            var categories = _mapper.Map<IReadOnlyList<Category>>(categoryDtos);
+
             _categoryRepository.AddRange(categories);
-            return await _categoryRepository.Complete();
+            await _categoryRepository.Complete();
+
+            return categories;
         }
 
 
@@ -49,10 +62,14 @@ namespace Infrastructure.Services
             return await _categoryRepository.GetByIdAsync(id);
         }
 
-        public async Task<int> UpdateCategoryAsync(Category category)
+        public async Task<Category> UpdateCategoryAsync(CategoryDto categoryDto)
         {
+            var category = _mapper.Map<Category>(categoryDto);
+
             _categoryRepository.Update(category);
-            return await _categoryRepository.Complete();
+            await _categoryRepository.Complete();
+            return category;
+
         }
     }
 }

@@ -6,7 +6,7 @@ using Core.Interfaces.Services;
 using Core.Specifications.Orders;
 
 
-namespace Infrastructure.Services
+namespace API.Services
 {
     public class OrderService : IOrderService
     {

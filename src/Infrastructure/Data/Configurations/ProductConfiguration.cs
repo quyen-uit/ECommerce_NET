@@ -29,7 +29,7 @@ namespace Infrastructure.Data.Configurations
             builder
                 .HasOne(pt => pt.Category)
                 .WithMany(p => p.Products)
-                .HasForeignKey(p => p.ProductTypeId)
+                .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
 

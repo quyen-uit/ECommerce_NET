@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using Core.Dtos;
 using API.Errors;
 using API.Helpers;
 using AutoMapper;
@@ -61,19 +61,5 @@ namespace API.Controllers
             }
         }
 
-        //[Cached(600)]
-        [HttpGet("types")]
-        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetProductTypes()
-        {
-            var types = await _categoryRepository.GetAllAsync();
-            return Ok(_mapper.Map<IReadOnlyList<CategoryDto>>(types));
-        }
-        //[Cached(600)]
-        [HttpGet("brands")]
-        public async Task<ActionResult<IReadOnlyList<CreateProductBrandDto>>> GetProductBrands()
-        {
-            var types = await _brandRepository.GetAllAsync();
-            return Ok(_mapper.Map<IReadOnlyList<CreateProductBrandDto>>(types));
-        }
     }
 }

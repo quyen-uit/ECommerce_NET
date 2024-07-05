@@ -21,7 +21,7 @@ namespace Core.Specifications.Products
             : base(x =>
             (string.IsNullOrEmpty(productSpecParams.Search) || x.Name.ToLower().Contains(productSpecParams.Search))
             && (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == x.ProductBrandId)
-            && (!productSpecParams.TypeId.HasValue || productSpecParams.TypeId == x.ProductTypeId))
+            && (!productSpecParams.TypeId.HasValue || productSpecParams.TypeId == x.CategoryId))
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
