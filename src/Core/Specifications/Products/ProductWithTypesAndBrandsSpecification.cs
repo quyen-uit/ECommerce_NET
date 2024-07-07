@@ -15,6 +15,7 @@ namespace Core.Specifications.Products
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
+            AddInclude(x => x.ProductColors);
         }
 
         public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams)
@@ -25,6 +26,7 @@ namespace Core.Specifications.Products
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
+            AddInclude(x => x.ProductColors);
             AddPagination(productSpecParams.PageSize * (productSpecParams.PageNumber - 1), productSpecParams.PageSize);
 
             switch (productSpecParams.Sort)

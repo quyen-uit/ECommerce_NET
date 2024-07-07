@@ -17,6 +17,7 @@ namespace API.Helpers
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
             CreateMap<CreateProductDto, Product>().ReverseMap();
             CreateMap<CreateProductColorDto, ProductColor>().ReverseMap();
+            CreateMap<ProductColor, ProductColorDto>().ReverseMap();
 
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<CreateCategoryDto, Category>();

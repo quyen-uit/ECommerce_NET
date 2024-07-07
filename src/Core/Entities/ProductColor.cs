@@ -14,7 +14,7 @@ namespace Core.Entities
         public int ColorId { get; set; }
         public Color Color { get; set; }
 
-        public ICollection<string> PhotoUrls { get; set; }
+        public List<string> PhotoUrls { get; set; }
     }
 
 }
