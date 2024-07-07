@@ -76,7 +76,7 @@ namespace API.Controllers
             var color = await _colorService.GetColorByIdAsync(id);
             if (color == null)
             {
-                return NotFound("Not found color");
+                return NotFound(new ApiException(404));
             }
 
             var result = await _colorService.DeleteColorAsync(id);

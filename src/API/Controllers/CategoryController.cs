@@ -76,7 +76,7 @@ namespace API.Controllers
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
-                return NotFound("Not found category");
+                return NotFound(new ApiException(404));
             }
 
             var result = await _categoryService.DeleteCategoryAsync(id);

@@ -77,7 +77,7 @@ namespace API.Controllers
             var productBrand = await _productBrandService.GetProductBrandByIdAsync(id);
             if (productBrand == null)
             {
-                return NotFound("Not found productBrand");
+                return NotFound(new ApiException(404));
             }
 
             var result = await _productBrandService.DeleteProductBrandAsync(id);

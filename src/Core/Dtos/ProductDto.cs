@@ -13,7 +13,7 @@ namespace Core.Dtos
         public string ProductType { get; set; }
         public string ProductBrand { get; set; }
         public int Stock { get; set; }
-        public ProductSize Size { get; set; }
+        public List<ProductSize> Size { get; set; } = new List<ProductSize>();
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
     }
