@@ -13,7 +13,7 @@ namespace Core.Interfaces.Services
         Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams);
         Task<Product> GetProductByIdAsync(int id);
         Task<Product> AddProductAsync(CreateProductDto productDto);
-        //Task<int> UpdateProductAsync(ProductDto product);
-        //Task<int> DeleteProductAsync(int id);
+        Task<int> UpdateProductAsync(int id, CreateProductDto product);
+        Task<int> DeleteProductAsync(int id);
     }
 }

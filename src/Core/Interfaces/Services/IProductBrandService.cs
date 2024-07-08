@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
         Task<ProductBrand> GetProductBrandByIdAsync(int id);
         Task<ProductBrand> AddProductBrandAsync(CreateProductBrandDto productBrandDto);
         Task<IReadOnlyList<ProductBrand>> AddRangeProductBrandAsync(IReadOnlyList<CreateProductBrandDto> productBrandDto);
-        Task<ProductBrand> UpdateProductBrandAsync(ProductBrandDto productBrandDto);
+        Task<ProductBrand> UpdateProductBrandAsync(int id, CreateProductBrandDto productBrandDto);
         Task<int> DeleteProductBrandAsync(int id);
     }
 

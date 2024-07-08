@@ -58,9 +58,9 @@ namespace API.Controllers
 
         // PUT: api/Category/5
         [HttpPut]
-        public async Task<IActionResult> PutCategory(CategoryDto categoryDto)
+        public async Task<IActionResult> PutCategory(int id, CreateCategoryDto categoryDto)
         {
-            var result = await _categoryService.UpdateCategoryAsync(categoryDto);
+            var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
 
             if (result == null)
             {

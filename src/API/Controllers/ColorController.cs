@@ -57,10 +57,10 @@ namespace API.Controllers
         }
 
         // PUT: api/Color/5
-        [HttpPut]
-        public async Task<IActionResult> PutColor(ColorDto colorDto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutColor(int id, CreateColorDto colorDto)
         {
-            var result = await _colorService.UpdateColorAsync(colorDto);
+            var result = await _colorService.UpdateColorAsync(id, colorDto);
 
             if (result == null)
             {

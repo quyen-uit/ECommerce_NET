@@ -58,10 +58,10 @@ namespace API.Controllers
         }
 
         // PUT: api/ProductBrand/5
-        [HttpPut]
-        public async Task<IActionResult> PutProductBrand(ProductBrandDto productBrandDto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProductBrand(int id, CreateProductBrandDto productBrandDto)
         {
-            var result = await _productBrandService.UpdateProductBrandAsync(productBrandDto);
+            var result = await _productBrandService.UpdateProductBrandAsync(id, productBrandDto);
 
             if (result == null)
             {

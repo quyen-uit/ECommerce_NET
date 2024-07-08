@@ -25,13 +25,19 @@ namespace API.Services
 
             _productRepository.Add(product);
             await _productRepository.Complete();
-            return product;
+
+            return await GetProductByIdAsync(product.Id);
         }
 
         public async Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams)
         {
             var countSpec = new ProductsWithFiltersForCountSpecification(productSpecParams);
             return await _productRepository.CountAsync(countSpec);
+        }
+
+        public Task<int> DeleteProductAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IReadOnlyList<Product>> GetAllProductsAsync(ProductSpecParams productSpecParams)
@@ -46,6 +52,11 @@ namespace API.Services
             var spec = new ProductWithTypesAndBrandsSpecification(id);
             var products = await _productRepository.GetEntityWithSpecAsync(spec);
             return products;
+        }
+
+        public Task<int> UpdateProductAsync(int id, CreateProductDto product)
+        {
+            throw new NotImplementedException();
         }
     }
 }

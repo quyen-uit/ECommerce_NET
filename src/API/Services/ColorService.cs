@@ -40,9 +40,10 @@ namespace API.Services
             return await _colorRepository.GetAllAsync();
         }
 
-        public async Task<Color> UpdateColorAsync(ColorDto colorDto)
+        public async Task<Color> UpdateColorAsync(int id, CreateColorDto colorDto)
         {
             var color = _mapper.Map<Color>(colorDto);
+            color.Id = id;
 
             _colorRepository.Update(color);
             await _colorRepository.Complete();

@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
         Task<Color> GetColorByIdAsync(int id);
         Task<Color> AddColorAsync(CreateColorDto colorDto);
         Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
-        Task<Color> UpdateColorAsync(ColorDto colorDto);
+        Task<Color> UpdateColorAsync(int id, CreateColorDto colorDto);
         Task<int> DeleteColorAsync(int id);
     }
 

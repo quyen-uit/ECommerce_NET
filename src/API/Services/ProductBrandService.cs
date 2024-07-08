@@ -39,9 +39,10 @@ namespace API.Services
             return await _productBrandRepository.GetAllAsync();
         }
 
-        public async Task<ProductBrand> UpdateProductBrandAsync(ProductBrandDto productBrandDto)
+        public async Task<ProductBrand> UpdateProductBrandAsync(int id, CreateProductBrandDto productBrandDto)
         {
             var productBrand = _mapper.Map<ProductBrand>(productBrandDto);
+            productBrand.Id = id;
 
             _productBrandRepository.Update(productBrand);
             await _productBrandRepository.Complete();

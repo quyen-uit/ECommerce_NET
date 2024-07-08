@@ -5,7 +5,9 @@ namespace Core.Specifications.Products
     public class ProductSpecParams : QueryStringParameter
     {
         public int? BrandId { get; set; }
-        public int? TypeId { get; set; }
+        public int? CategoryId { get; set; }
+        public bool? IsNew { get; set; }
+        public bool? IsTrending { get; set; }
         public string Sort { get; set; }
         private string _search;
         public string Search

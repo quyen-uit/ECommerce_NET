@@ -12,12 +12,14 @@ namespace API.Helpers
         public MappingProfiles()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
-                .ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
+                //.ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
+                //.ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
             CreateMap<CreateProductDto, Product>().ReverseMap();
-            CreateMap<CreateProductColorDto, ProductColor>().ReverseMap();
-            CreateMap<ProductColor, ProductColorDto>().ReverseMap();
+            CreateMap<CreateProductColorDto, ProductColor>();
+            CreateMap<ProductColor, ProductColorDto>()
+                .ForMember(p => p.HexCode, opt => opt.MapFrom(p => p.Color.HexCode))
+                .ForMember(p => p.ColorName, opt => opt.MapFrom(p => p.Color.Name));
 
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<CreateCategoryDto, Category>();

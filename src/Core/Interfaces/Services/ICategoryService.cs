@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
         Task<Category> GetCategoryByIdAsync(int id);
         Task<Category> AddCategoryAsync(CreateCategoryDto category);
         Task<IReadOnlyList<Category>> AddRangeCategoryAsync(IReadOnlyList<CreateCategoryDto> categories);
-        Task<Category> UpdateCategoryAsync(CategoryDto category);
+        Task<Category> UpdateCategoryAsync(int id, CreateCategoryDto category);
         Task<int> DeleteCategoryAsync(int id);
     }
 

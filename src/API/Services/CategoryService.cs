@@ -62,9 +62,10 @@ namespace API.Services
             return await _categoryRepository.GetByIdAsync(id);
         }
 
-        public async Task<Category> UpdateCategoryAsync(CategoryDto categoryDto)
+        public async Task<Category> UpdateCategoryAsync(int id, CreateCategoryDto categoryDto)
         {
             var category = _mapper.Map<Category>(categoryDto);
+            category.Id = id;
 
             _categoryRepository.Update(category);
             await _categoryRepository.Complete();
