@@ -12,22 +12,17 @@ using System.Net;
 using Core.Interfaces.Services;
 using API.Services;
 using Core.Dtos.CreateDto;
+using Stripe;
 
 namespace API.Controllers
 {
     public class ProductsController : ApiControllerBase
     {
-        private readonly IGenericRepository<Product> _productRepository;
-        private readonly IGenericRepository<ProductBrand> _brandRepository;
-        private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IProductService _productService;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productRepository, IGenericRepository<ProductBrand> brandRepository, IGenericRepository<Category> categoryRepository, IMapper mapper, IProductService productService)
+        public ProductsController(IMapper mapper, IProductService productService)
         {
-            _productRepository = productRepository;
-            _brandRepository = brandRepository;
-            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _productService = productService;
         }
@@ -47,7 +42,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<Product>>> GetProduct(int id)
+        public async Task<ActionResult<List<Core.Entities.Product>>> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
 
@@ -62,7 +57,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> PostProductBrand(CreateProductDto productDto)
+        public async Task<ActionResult<ProductDto>> PostProduct(CreateProductDto productDto)
         {
             var result = await _productService.AddProductAsync(productDto);
 
@@ -71,6 +66,36 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
             return Ok(_mapper.Map<ProductDto>(result));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(int id, CreateProductDto productDto)
+        {
+            var result = await _productService.UpdateProductAsync(id, productDto);
+
+            if (result == null)
+            {
+                return BadRequest(new ApiResponse(400, "Updating fail"));
+            }
+            return Ok(_mapper.Map<ProductDto>(result));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound(new ApiException(404));
+            }
+
+            var result = await _productService.DeleteProductAsync(id);
+
+            if (result < 0)
+            {
+                return BadRequest(new ApiResponse(400, "Deleting fail"));
+            }
+            return Ok("Delete succesfully");
         }
 
 

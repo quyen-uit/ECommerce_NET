@@ -359,18 +359,32 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.ProductColor", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhotoUrls")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProductId", "ColorId");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ColorId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductColors");
                 });

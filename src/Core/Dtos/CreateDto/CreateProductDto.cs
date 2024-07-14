@@ -17,8 +17,13 @@ namespace Core.Dtos.CreateDto
         public List<ProductSize> Size { get; set; }
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
-        public int CategoryId { get; set; }
-        public int ProductBrandId { get; set; }
-        public ICollection<CreateProductColorDto> ProductColors { get; set; }
+        [Required]
+        public ProductBrandDto ProductBrand { get; set; }
+        [Required]
+        public CategoryDto Category { get; set; }
+
+        //public int CategoryId { get; set; }
+        //public int ProductBrandId { get; set; }
+        //public ICollection<CreateProductColorDto> ProductColors { get; set; }
     }
 }

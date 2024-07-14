@@ -3,7 +3,7 @@ using Core.Interfaces.Reposiories;
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data.Repositories
 {
     public class BasketRepository : IBasketRepository
     {

@@ -13,7 +13,7 @@ namespace Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ProductColor> builder)
         {
-            builder.HasKey(pc => new { pc.ProductId, pc.ColorId });
+            //builder.HasKey(pc => new { pc.ProductId, pc.ColorId });
             builder
                 .HasOne(pc => pc.Product)
                 .WithMany(p => p.ProductColors)

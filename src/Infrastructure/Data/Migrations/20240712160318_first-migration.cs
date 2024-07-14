@@ -6,11 +6,54 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class firstmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AppUser",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUser", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Colors",
                 columns: table => new
@@ -61,19 +104,29 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductTypes",
+                name: "Address",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ward = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductTypes", x => x.Id);
+                    table.PrimaryKey("PK_Address", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Address_AppUser_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AppUser",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,10 +173,11 @@ namespace Infrastructure.Data.Migrations
                     Price = table.Column<decimal>(type: "decimal(14,2)", precision: 14, scale: 2, nullable: false),
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsTrending = table.Column<bool>(type: "bit", nullable: false),
+                    IsNew = table.Column<bool>(type: "bit", nullable: false),
                     PurchasedNumber = table.Column<int>(type: "int", nullable: false),
-                    ProductTypeId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     ProductBrandId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -132,15 +186,15 @@ namespace Infrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_ProductBrands_ProductBrandId",
-                        column: x => x.ProductBrandId,
-                        principalTable: "ProductBrands",
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Products_ProductTypes_ProductTypeId",
-                        column: x => x.ProductTypeId,
-                        principalTable: "ProductTypes",
+                        name: "FK_Products_ProductBrands_ProductBrandId",
+                        column: x => x.ProductBrandId,
+                        principalTable: "ProductBrands",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -175,13 +229,17 @@ namespace Infrastructure.Data.Migrations
                 name: "ProductColors",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     ColorId = table.Column<int>(type: "int", nullable: false),
-                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhotoUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductColors", x => new { x.ProductId, x.ColorId });
+                    table.PrimaryKey("PK_ProductColors", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ProductColors_Colors_ColorId",
                         column: x => x.ColorId,
@@ -221,6 +279,12 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Address_AppUserId",
+                table: "Address",
+                column: "AppUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_OrderId",
                 table: "Items",
                 column: "OrderId");
@@ -236,14 +300,19 @@ namespace Infrastructure.Data.Migrations
                 column: "ColorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductColors_ProductId",
+                table: "ProductColors",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_ProductBrandId",
                 table: "Products",
                 column: "ProductBrandId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_ProductTypeId",
-                table: "Products",
-                column: "ProductTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductId",
@@ -255,6 +324,9 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Address");
+
+            migrationBuilder.DropTable(
                 name: "Items");
 
             migrationBuilder.DropTable(
@@ -262,6 +334,9 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "AppUser");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -276,10 +351,10 @@ namespace Infrastructure.Data.Migrations
                 name: "DeliveryMethods");
 
             migrationBuilder.DropTable(
-                name: "ProductBrands");
+                name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "ProductTypes");
+                name: "ProductBrands");
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240706044531_UpdateProductAndForeignKey")]
-    partial class UpdateProductAndForeignKey
+    [Migration("20240712160318_first-migration")]
+    partial class firstmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -320,8 +320,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("PurchasedNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
@@ -362,18 +362,32 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.ProductColor", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ColorId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhotoUrls")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProductId", "ColorId");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ColorId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductColors");
                 });

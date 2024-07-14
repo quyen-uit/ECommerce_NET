@@ -1,9 +1,9 @@
-﻿using Core.Dtos;
-using API.Helpers.ValueResolvers;
+﻿using API.Helpers.ValueResolvers;
 using AutoMapper;
+using Core.Dtos;
+using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
-using Core.Dtos.CreateDto;
 
 namespace API.Helpers
 {
@@ -15,7 +15,12 @@ namespace API.Helpers
                 //.ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
                 //.ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
-            CreateMap<CreateProductDto, Product>().ReverseMap();
+            CreateMap<CreateProductDto, Product>()
+                .ForMember(d => d.CategoryId, opt => opt.MapFrom(s => s.Category.Id))
+                .ForMember(d => d.ProductBrandId, opt => opt.MapFrom(s => s.ProductBrand.Id))
+                .ForMember(d => d.ProductBrand, opt => opt.Ignore())
+                .ForMember(d => d.Category, opt => opt.Ignore());
+
             CreateMap<CreateProductColorDto, ProductColor>();
             CreateMap<ProductColor, ProductColorDto>()
                 .ForMember(p => p.HexCode, opt => opt.MapFrom(p => p.Color.HexCode))

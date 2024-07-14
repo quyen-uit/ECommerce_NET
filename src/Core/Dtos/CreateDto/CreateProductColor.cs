@@ -6,6 +6,8 @@ namespace Core.Dtos.CreateDto
     {
         [Required]
         public int ColorId { get; set; }
+        [Required]
+        public int ProductId { get; set; }
         [Required] 
         public List<string> PhotoUrls { get; set; }
 
