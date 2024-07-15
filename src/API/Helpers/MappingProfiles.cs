@@ -15,11 +15,7 @@ namespace API.Helpers
                 //.ForMember(d => d.ProductType, opt => opt.MapFrom(s => s.Category.Name))
                 //.ForMember(d => d.ProductBrand, opt => opt.MapFrom(s => s.ProductBrand.Name))
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
-            CreateMap<CreateProductDto, Product>()
-                .ForMember(d => d.CategoryId, opt => opt.MapFrom(s => s.Category.Id))
-                .ForMember(d => d.ProductBrandId, opt => opt.MapFrom(s => s.ProductBrand.Id))
-                .ForMember(d => d.ProductBrand, opt => opt.Ignore())
-                .ForMember(d => d.Category, opt => opt.Ignore());
+            CreateMap<CreateProductDto, Product>();
 
             CreateMap<CreateProductColorDto, ProductColor>();
             CreateMap<ProductColor, ProductColorDto>()
