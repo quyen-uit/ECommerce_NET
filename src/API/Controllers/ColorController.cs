@@ -5,6 +5,7 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using API.Services;
 
 namespace API.Controllers
 {
@@ -41,6 +42,22 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
             return Ok(_mapper.Map<ColorDto>(result));
+        }
+
+
+        // GET: api/Color/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ColorDto>> GetColor(int id)
+        {
+            var color = await _colorService.GetColorByIdAsync(id);
+
+            if (color == null)
+            {
+                return NotFound(new ApiException(404));
+            }
+            var colorDto = _mapper.Map<ColorDto>(color);
+
+            return Ok(colorDto);
         }
 
         // POST: api/Color/many
@@ -85,7 +102,7 @@ namespace API.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Deleting fail"));
             }
-            return Ok("Delete succesfully");
+            return Ok(new ApiResponse(200, "Deleting succesfully"));
         }
     }
 }

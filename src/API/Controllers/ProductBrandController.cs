@@ -5,6 +5,7 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using API.Services;
 
 namespace API.Controllers
 {
@@ -42,6 +43,22 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "Creating fail"));
             }
             return Ok(_mapper.Map<ProductBrandDto>(result));
+        }
+
+
+        // GET: api/ProductBrand/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductBrandDto>> GetProductBrand(int id)
+        {
+            var productBrand = await _productBrandService.GetProductBrandByIdAsync(id);
+
+            if (productBrand == null)
+            {
+                return NotFound(new ApiException(404));
+            }
+
+            var productBrandDto = _mapper.Map<ProductBrandDto>(productBrand);
+            return Ok(productBrandDto);
         }
 
         // POST: api/ProductBrand/many
@@ -86,7 +103,7 @@ namespace API.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Deleting fail"));
             }
-            return Ok("Delete succesfully");
+            return Ok(new ApiResponse(200, "Deleting succesfully"));
         }
     }
 }

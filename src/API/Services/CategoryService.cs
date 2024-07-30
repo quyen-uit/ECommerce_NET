@@ -4,6 +4,7 @@ using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
+using Core.Specifications.Categories;
 using Core.Specifications.Products;
 
 namespace API.Services
@@ -46,15 +47,10 @@ namespace API.Services
             return await _categoryRepository.Complete();
         }
 
-        public async Task<IReadOnlyList<Category>> GetAllCategoriesAsync(bool? isActive)
+        public async Task<IReadOnlyList<Category>> GetAllCategoriesAsync(CategorySpecParams specParams)
         {
-            if (isActive != null)
-            {
-                var spec = new ProductTypesWithActiveFilterSpecification((bool)isActive);
-                return await _categoryRepository.GetAllWithSpecAsync(spec);
-            }
-            return await _categoryRepository.GetAllAsync();
-
+            var spec = new CategoryWithParamsSpec(specParams);
+            return await _categoryRepository.GetAllWithSpecAsync(spec);
         }
 
         public async Task<Category> GetCategoryByIdAsync(int id)

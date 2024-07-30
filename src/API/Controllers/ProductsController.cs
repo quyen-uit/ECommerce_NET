@@ -95,7 +95,7 @@ namespace API.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Deleting fail"));
             }
-            return Ok("Delete succesfully");
+            return Ok(new ApiResponse(200, "Deleting succesfully"));
         }
 
 

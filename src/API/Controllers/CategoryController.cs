@@ -5,6 +5,7 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Core.Specifications.Categories;
 
 namespace API.Controllers
 {
@@ -21,12 +22,27 @@ namespace API.Controllers
 
         // GET: api/Category
         [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetCategories([FromQuery] bool? isActive)
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetCategories([FromQuery] CategorySpecParams specParams)
         {
-            var categories = await _categoryService.GetAllCategoriesAsync(isActive);
+            var categories = await _categoryService.GetAllCategoriesAsync(specParams);
             var categoryDtos = _mapper.Map<IReadOnlyList<CategoryDto>>(categories);
 
             return Ok(categoryDtos);
+        }
+
+        // GET: api/Category/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CategoryDto>> GetCategory(int id)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            
+            if (category == null)
+            {
+                return NotFound(new ApiException(404));
+            }
+
+            var categoryDto = _mapper.Map<CategoryDto>(category);
+            return Ok(categoryDto);
         }
 
 
@@ -57,7 +73,7 @@ namespace API.Controllers
         }
 
         // PUT: api/Category/5
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, CreateCategoryDto categoryDto)
         {
             var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
@@ -85,7 +101,7 @@ namespace API.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Deleting fail"));
             }
-            return Ok("Delete succesfully");
+            return Ok(new ApiResponse(200, "Deleting succesfully"));
         }
     }
 }
