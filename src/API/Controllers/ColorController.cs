@@ -6,6 +6,7 @@ using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using API.Services;
+using Core.Specifications.Categories;
 
 namespace API.Controllers
 {
@@ -22,9 +23,9 @@ namespace API.Controllers
 
         // GET: api/Color
         [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<ColorDto>>> GetColors()
+        public async Task<ActionResult<IReadOnlyList<ColorDto>>> GetColors([FromQuery]ColorSpecParams specParams)
         {
-            var colors = await _colorService.GetAllColorsAsync();
+            var colors = await _colorService.GetAllColorsAsync(specParams);
             var colorDtos = _mapper.Map<IReadOnlyList<ColorDto>>(colors);
 
             return Ok(colorDtos);

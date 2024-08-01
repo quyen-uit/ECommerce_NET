@@ -4,6 +4,7 @@ using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
+using Core.Specifications.Categories;
 using Core.Specifications.Products;
 
 namespace API.Services
@@ -35,9 +36,10 @@ namespace API.Services
             return await _colorRepository.Complete();
         }
 
-        public async Task<IReadOnlyList<Color>> GetAllColorsAsync()
+        public async Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams)
         {
-            return await _colorRepository.GetAllAsync();
+            var spec = new ColorWithParamsSpec(specParams);
+            return await _colorRepository.GetAllWithSpecAsync(spec);
         }
 
         public async Task<Color> UpdateColorAsync(int id, CreateColorDto colorDto)

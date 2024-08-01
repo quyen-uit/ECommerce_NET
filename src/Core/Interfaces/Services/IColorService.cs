@@ -1,12 +1,13 @@
 ﻿using Core.Dtos;
 using Core.Dtos.CreateDto;
 using Core.Entities;
+using Core.Specifications.Categories;
 
 namespace Core.Interfaces.Services
 {
     public interface IColorService
     {
-        Task<IReadOnlyList<Color>> GetAllColorsAsync();
+        Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams);
         Task<Color> GetColorByIdAsync(int id);
         Task<Color> AddColorAsync(CreateColorDto colorDto);
         Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
