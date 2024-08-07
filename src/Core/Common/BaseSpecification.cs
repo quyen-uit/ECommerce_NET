@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Core.Interfaces;
+using Core.Specifications.Products;
 
 namespace Core.Common
 {
@@ -50,10 +51,10 @@ namespace Core.Common
             OrderByDescending = orderByDescending;
         }
 
-        protected void AddPagination(int skip, int take)
+        protected void AddPagination(int pageSize, int pageNumber)
         {
-            Take = take;
-            Skip = skip;
+            Skip = pageSize * (pageNumber - 1);
+            Take = pageSize;
             IsPagingEnable = true;
         }
     }

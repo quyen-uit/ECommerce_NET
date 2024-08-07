@@ -38,7 +38,7 @@ namespace API.Services
 
         public async Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams)
         {
-            var spec = new ColorWithParamsSpec(specParams);
+            var spec = new ColorWithParamsAndPaginationSpec(specParams);
             return await _colorRepository.GetAllWithSpecAsync(spec);
         }
 
@@ -64,6 +64,12 @@ namespace API.Services
         public async Task<Color> GetColorByIdAsync(int id)
         {
             return await _colorRepository.GetByIdAsync(id);
+        }
+
+        public async Task<int> CountAllAsync(ColorSpecParams specParams)
+        {
+            var countSpec = new ColorWithParamsSpec(specParams);
+            return await _colorRepository.CountAsync(countSpec);
         }
 
     }

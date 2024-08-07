@@ -7,6 +7,9 @@ using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using API.Services;
 using Core.Specifications.Categories;
+using API.Helpers;
+using Core.Specifications.Products;
+using Stripe;
 
 namespace API.Controllers
 {
@@ -28,7 +31,8 @@ namespace API.Controllers
             var colors = await _colorService.GetAllColorsAsync(specParams);
             var colorDtos = _mapper.Map<IReadOnlyList<ColorDto>>(colors);
 
-            return Ok(colorDtos);
+            var count = await _colorService.CountAllAsync(specParams);
+            return Ok(new Pagination<ColorDto>(specParams.PageNumber, specParams.PageSize, count, colorDtos));
         }
 
 

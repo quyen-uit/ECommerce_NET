@@ -33,7 +33,7 @@ namespace Core.Specifications.Products
             AddInclude(x => x.ProductColors);
             AddIncludeString("ProductColors.Color");
 
-            AddPagination(productSpecParams.PageSize * (productSpecParams.PageNumber - 1), productSpecParams.PageSize);
+            AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
 
             switch (productSpecParams.Sort)
             {
