@@ -6,6 +6,8 @@ using Core.Entities;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using API.Services;
+using Core.Specifications.Categories;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -23,12 +25,13 @@ namespace API.Controllers
 
         // GET: api/ProductBrand
         [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> GetProductBrands()
+        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> GetProductBrands([FromQuery] ProductBrandSpecParams specParams)
         {
-            var productBrands = await _productBrandService.GetAllProductBrandsAsync();
+            var productBrands = await _productBrandService.GetAllProductBrandsAsync(specParams);
             var productBrandDtos = _mapper.Map<IReadOnlyList<ProductBrandDto>>(productBrands);
 
-            return Ok(productBrandDtos);
+            var count = await _productBrandService.CountAllAsync(specParams);
+            return Ok(new Pagination<ProductBrandDto>(specParams.PageNumber, specParams.PageSize, count, productBrandDtos));
         }
 
 

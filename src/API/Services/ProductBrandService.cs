@@ -4,6 +4,7 @@ using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
+using Core.Specifications.Categories;
 using Core.Specifications.Products;
 
 namespace API.Services
@@ -34,9 +35,11 @@ namespace API.Services
             return await _productBrandRepository.Complete();
         }
 
-        public async Task<IReadOnlyList<ProductBrand>> GetAllProductBrandsAsync()
+        public async Task<IReadOnlyList<ProductBrand>> GetAllProductBrandsAsync(ProductBrandSpecParams specParams)
         {
-            return await _productBrandRepository.GetAllAsync();
+            var spec = new ProductBrandWithParamsAndPaginationSpec(specParams);
+
+            return await _productBrandRepository.GetAllWithSpecAsync(spec);
         }
 
         public async Task<ProductBrand> UpdateProductBrandAsync(int id, CreateProductBrandDto productBrandDto)
@@ -61,6 +64,12 @@ namespace API.Services
         public async Task<ProductBrand> GetProductBrandByIdAsync(int id)
         {
             return await _productBrandRepository.GetByIdAsync(id);
+        }
+
+        public async Task<int> CountAllAsync(ProductBrandSpecParams specParams)
+        {
+            var countSpec = new ProductBrandWithParamsSpec(specParams);
+            return await _productBrandRepository.CountAsync(countSpec);
         }
     }
 }
