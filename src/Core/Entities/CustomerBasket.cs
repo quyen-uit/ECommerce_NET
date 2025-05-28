@@ -1,4 +1,6 @@
 ﻿
+using Core.Entities.Identity;
+
 namespace Core.Entities
 {
     public class CustomerBasket
@@ -18,6 +20,8 @@ namespace Core.Entities
         public string ClientSecret { get; set; }
         public string PaymentIntentId { get; set; }
         public decimal ShippingPrice { get; set; }
+        //public string AppUserId { get; set; }
+        //public AppUser AppUser { get; set; }
 
     }
 }

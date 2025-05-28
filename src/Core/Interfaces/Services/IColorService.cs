@@ -10,11 +10,11 @@ namespace Core.Interfaces.Services
     {
         Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams);
         Task<int> CountAllAsync(ColorSpecParams specParams);
-        Task<Color> GetColorByIdAsync(int id);
+        Task<Color> GetColorByIdAsync(long id);
         Task<Color> AddColorAsync(CreateColorDto colorDto);
         Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
-        Task<Color> UpdateColorAsync(int id, CreateColorDto colorDto);
-        Task<int> DeleteColorAsync(int id);
+        Task<Color> UpdateColorAsync(long id, CreateColorDto colorDto);
+        Task<long> DeleteColorAsync(long id);
     }
 
 }

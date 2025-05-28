@@ -1,11 +1,6 @@
 ﻿using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Configurations
 {
@@ -23,26 +18,12 @@ namespace Infrastructure.Data.Configurations
                 .IsRequired();
 
             builder
-                .Property(p => p.Price)
-                .HasPrecision(14, 2);
-
-            builder
-                .HasOne(pt => pt.Category)
-                .WithMany(p => p.Products)
-                .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-
-            builder
-               .HasOne(pb => pb.ProductBrand)
-               .WithMany(p => p.Products)
-               .HasForeignKey(p => p.ProductBrandId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-            builder
                .HasMany(rv => rv.Reviews)
                .WithOne(p => p.Product)
                .HasForeignKey(rv => rv.ProductId);
+
+            builder
+                .OwnsMany(p => p.Properties, builder => builder.ToJson());
 
         }
     }

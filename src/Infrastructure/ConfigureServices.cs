@@ -19,12 +19,12 @@ namespace Infrastructure
         {
             // add service for infrastructure
             services.AddDbContext<ApplicationDbContext>(options =>
-                           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                           options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                                builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
             // identity context
             services.AddDbContext<AppIdentityDbContext>(options =>
-                          options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                          options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                                builder => builder.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName)));
 
             services.AddSingleton<IConnectionMultiplexer>(c =>

@@ -29,7 +29,7 @@ namespace API.Services
             return productBrand;
         }
 
-        public async Task<int> DeleteProductBrandAsync(int id)
+        public async Task<long> DeleteProductBrandAsync(long id)
         {
             _productBrandRepository.Delete(id);
             return await _productBrandRepository.Complete();
@@ -42,7 +42,7 @@ namespace API.Services
             return await _productBrandRepository.GetAllWithSpecAsync(spec);
         }
 
-        public async Task<ProductBrand> UpdateProductBrandAsync(int id, CreateProductBrandDto productBrandDto)
+        public async Task<ProductBrand> UpdateProductBrandAsync(long id, CreateProductBrandDto productBrandDto)
         {
             var productBrand = _mapper.Map<ProductBrand>(productBrandDto);
             productBrand.Id = id;
@@ -61,7 +61,7 @@ namespace API.Services
             return productBrands;
         }
 
-        public async Task<ProductBrand> GetProductBrandByIdAsync(int id)
+        public async Task<ProductBrand> GetProductBrandByIdAsync(long id)
         {
             return await _productBrandRepository.GetByIdAsync(id);
         }

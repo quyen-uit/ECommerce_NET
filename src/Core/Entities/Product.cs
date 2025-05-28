@@ -1,4 +1,5 @@
 ﻿using Core.Common;
+using Core.Entities;
 using Core.Enums;
 
 namespace Core.Entities
@@ -7,20 +8,28 @@ namespace Core.Entities
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
         public string PhotoUrl { get; set; }
-        public int Stock { get; set; }
-        public List<ProductSize> Size { get; set; }
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
-        public int PurchasedNumber { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public Category Category { get; set; }
-        public int CategoryId { get; set; }
+        public long CategoryId { get; set; }
         public ProductBrand ProductBrand { get; set; }
-        public int ProductBrandId { get; set; }
-        public ICollection<ProductColor> ProductColors { get; set; }
-        public ICollection<Review> Reviews { get; set; }
+        public long ProductBrandId { get; set; }
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<ProductSku> ProductSkus { get; set; } = new List<ProductSku>();
+        public ICollection<ProductProperty> Properties { get; set; }
+
+        public int Price { get; set; }
+        public List<ProductSize> Size { get; set; }
 
     }
+
+}
+
+public class ProductProperty
+{
+    public string Key { get; set; }
+    public string Value { get; set; }
 }

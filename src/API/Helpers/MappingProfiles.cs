@@ -17,11 +17,6 @@ namespace API.Helpers
                 .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
             CreateMap<CreateProductDto, Product>();
 
-            CreateMap<CreateProductColorDto, ProductColor>();
-            CreateMap<ProductColor, ProductColorDto>()
-                .ForMember(p => p.HexCode, opt => opt.MapFrom(p => p.Color.HexCode))
-                .ForMember(p => p.ColorName, opt => opt.MapFrom(p => p.Color.Name));
-
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<ProductBrand, ProductBrandDto>().ReverseMap();
@@ -42,7 +37,7 @@ namespace API.Helpers
                 .ForMember(d => d.ShippingPrice, o => o.MapFrom(s => s.DeliveryMethod.Price));
 
             CreateMap<OrderItem, OrderItemDto>()
-                .ForMember(d => d.ProductId, o => o.MapFrom(s => s.Item.ProductId))
+                .ForMember(d => d.ProductSkuId, o => o.MapFrom(s => s.Item.ProductSkuId))
                 .ForMember(d => d.ProductName, o => o.MapFrom(s => s.Item.ProductName))
                 .ForMember(d => d.PhotoUrl, o => o.MapFrom(s => s.Item.PhotoUrl))
                 .ForMember(d => d.PhotoUrl, o => o.MapFrom<OrderItemUrlResolver>());

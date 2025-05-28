@@ -35,7 +35,7 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).CountAsync();
         }
 
-        public async void Delete(int id)
+        public async void Delete(long id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if (entity != null)
@@ -54,7 +54,7 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(long id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

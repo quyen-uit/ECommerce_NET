@@ -11,11 +11,10 @@ namespace Core.Specifications.Products
             AddInclude(x => x.ProductBrand);
         }
 
-        public ProductWithTypesAndBrandsSpecification(int id) : base(x => x.Id == id)
+        public ProductWithTypesAndBrandsSpecification(long id) : base(x => x.Id == id)
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
-            AddInclude(x => x.ProductColors);
             AddIncludeString("ProductColors.Color");
         }
 
@@ -30,7 +29,6 @@ namespace Core.Specifications.Products
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
-            AddInclude(x => x.ProductColors);
             AddIncludeString("ProductColors.Color");
 
             AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);

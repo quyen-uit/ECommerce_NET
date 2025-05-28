@@ -5,7 +5,7 @@ namespace Core.Specifications.Products
 {
     public class ProductColorSpecification : BaseSpecification<ProductColor>
     {
-        public ProductColorSpecification(int productId, int colorId) : base(x => x.ProductId == productId && x.ColorId == colorId)
+        public ProductColorSpecification(long productId, long colorId) : base(x => x.ProductId == productId && x.ColorId == colorId)
         {
         }
     }

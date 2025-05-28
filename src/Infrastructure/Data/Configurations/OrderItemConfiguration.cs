@@ -18,7 +18,6 @@ namespace Infrastructure.Data.Configurations
                 i.WithOwner();
             });
 
-            builder.Property(i => i.Price).HasPrecision(18, 2);
         }
     }
 }

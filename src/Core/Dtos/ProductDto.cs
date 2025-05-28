@@ -19,7 +19,6 @@ namespace Core.Dtos
         public List<ProductSize> Size { get; set; }
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
-        public List<ProductColorDto> ProductColors { get; set; }
 
     }
 }

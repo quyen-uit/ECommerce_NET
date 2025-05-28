@@ -10,13 +10,11 @@ namespace API.Services
     public class ProductService : IProductService
     {
         private readonly IGenericRepository<Product> _productRepository;
-        private readonly IGenericRepository<ProductColor> _productColorRepository;
         private readonly IMapper _mapper;
 
-        public ProductService(IGenericRepository<Product> productRepository, IGenericRepository<ProductColor> productColorRepository, IMapper mapper)
+        public ProductService(IGenericRepository<Product> productRepository, IMapper mapper)
         {
             _productRepository = productRepository;
-            _productColorRepository = productColorRepository;
             _mapper = mapper;
         }
 
@@ -36,7 +34,7 @@ namespace API.Services
             return await _productRepository.CountAsync(countSpec);
         }
 
-        public async Task<int> DeleteProductAsync(int id)
+        public async Task<long> DeleteProductAsync(long id)
         {
             _productRepository.Delete(id);
             return await _productRepository.Complete();
@@ -49,14 +47,14 @@ namespace API.Services
             return products;
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<Product> GetProductByIdAsync(long id)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
             var products = await _productRepository.GetEntityWithSpecAsync(spec);
             return products;
         }
 
-        public async Task<Product> UpdateProductAsync(int id, CreateProductDto productDto)
+        public async Task<Product> UpdateProductAsync(long id, CreateProductDto productDto)
         {
 
             var product = _mapper.Map<Product>(productDto);
@@ -68,50 +66,5 @@ namespace API.Services
             return await GetProductByIdAsync(id);
         }
 
-        // product color
-        public async Task<ProductColor> AddProductColorAsync(CreateProductColorDto productColorDto)
-        {
-            if (await CheckExistColorInProduct(productColorDto.ProductId, productColorDto.ColorId))
-            {
-                throw new Exception("Color existed in this product");
-            }
-
-            var productColor = _mapper.Map<ProductColor>(productColorDto);
-
-            _productColorRepository.Add(productColor);
-            await _productColorRepository.Complete();
-
-            return await GetProductColorsByIdAsync(productColor.Id);
-        }
-
-        public async Task<ProductColor> UpdateProductColorAsync(int id, CreateProductColorDto productColorDto)
-        {
-            var productColor = _mapper.Map<ProductColor>(productColorDto);
-            productColor.Id = id;
-
-            _productColorRepository.Update(productColor);
-            await _productColorRepository.Complete();
-
-            return await GetProductColorsByIdAsync(id);
-        }
-
-        public async Task<ProductColor> GetProductColorsByIdAsync(int productId)
-        {
-            var productColor = await _productColorRepository.GetByIdAsync(productId);
-            return productColor;
-        }
-
-        public async Task<int> DeleteProductColorAsync(int id)
-        {
-            _productColorRepository.Delete(id);
-            return await _productColorRepository.Complete();
-        }
-
-        private async Task<bool> CheckExistColorInProduct(int productId, int colorId)
-        {
-            var spec = new ProductColorSpecification(productId, colorId);
-            var existProductColor = await _productColorRepository.GetEntityWithSpecAsync(spec);
-            return existProductColor != null;
-        }
     }
 }

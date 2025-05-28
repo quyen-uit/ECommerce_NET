@@ -10,10 +10,8 @@ namespace Core.Dtos.CreateDto
         [MaxLength(50)]
         public string Name { get; set; }
         public string Description { get; set; }
-        [Range(0, Int32.MaxValue)]
-        public decimal Price { get; set; }
+
         public string PhotoUrl { get; set; }
-        public int Stock { get; set; }
         public List<ProductSize> Size { get; set; }
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }

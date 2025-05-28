@@ -11,16 +11,10 @@ namespace Core.Interfaces.Services
     {
         Task<IReadOnlyList<Product>> GetAllProductsAsync(ProductSpecParams productSpecParams);
         Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams);
-        Task<Product> GetProductByIdAsync(int id);
+        Task<Product> GetProductByIdAsync(long id);
         Task<Product> AddProductAsync(CreateProductDto productDto);
-        Task<Product> UpdateProductAsync(int id, CreateProductDto productDto);
-        Task<int> DeleteProductAsync(int id);
-
-        //product color
-        Task<ProductColor> AddProductColorAsync(CreateProductColorDto productColorDto);
-        Task<ProductColor> UpdateProductColorAsync(int id, CreateProductColorDto productColorDto);
-        Task<ProductColor> GetProductColorsByIdAsync(int productId);
-        Task<int> DeleteProductColorAsync(int id);
+        Task<Product> UpdateProductAsync(long id, CreateProductDto productDto);
+        Task<long> DeleteProductAsync(long id);
 
     }
 }

@@ -26,8 +26,6 @@ namespace Infrastructure.Data.Configurations
                 o => (OrderStatus)Enum.Parse(typeof(OrderStatus), o)
                 );
 
-            builder.Property(o => o.Subtotal).HasPrecision(18, 2);
-
             builder.HasMany(o => o.OrderItems).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }

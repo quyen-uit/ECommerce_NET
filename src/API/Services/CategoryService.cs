@@ -41,7 +41,7 @@ namespace API.Services
         }
 
 
-        public async Task<int> DeleteCategoryAsync(int id)
+        public async Task<long> DeleteCategoryAsync(long id)
         {
             _categoryRepository.Delete(id);
             return await _categoryRepository.Complete();
@@ -53,12 +53,12 @@ namespace API.Services
             return await _categoryRepository.GetAllWithSpecAsync(spec);
         }
 
-        public async Task<Category> GetCategoryByIdAsync(int id)
+        public async Task<Category> GetCategoryByIdAsync(long id)
         {
             return await _categoryRepository.GetByIdAsync(id);
         }
 
-        public async Task<Category> UpdateCategoryAsync(int id, CreateCategoryDto categoryDto)
+        public async Task<Category> UpdateCategoryAsync(long id, CreateCategoryDto categoryDto)
         {
             var category = _mapper.Map<Category>(categoryDto);
             category.Id = id;

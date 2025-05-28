@@ -10,6 +10,10 @@ namespace Core.Enums
         [EnumMember(Value = "PaymentReceived")]
         PaymentReceived,
         [EnumMember(Value = "PaymentFailed")]
-        PaymentFailed
+        PaymentFailed,
+        [EnumMember(Value = "Shipping")]
+        Shipping,
+        [EnumMember(Value = "Completed")]
+        Completed
     }
 }

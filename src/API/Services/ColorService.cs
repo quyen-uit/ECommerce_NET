@@ -30,7 +30,7 @@ namespace API.Services
             return color;
         }
 
-        public async Task<int> DeleteColorAsync(int id)
+        public async Task<long> DeleteColorAsync(long id)
         {
             _colorRepository.Delete(id);
             return await _colorRepository.Complete();
@@ -42,7 +42,7 @@ namespace API.Services
             return await _colorRepository.GetAllWithSpecAsync(spec);
         }
 
-        public async Task<Color> UpdateColorAsync(int id, CreateColorDto colorDto)
+        public async Task<Color> UpdateColorAsync(long id, CreateColorDto colorDto)
         {
             var color = _mapper.Map<Color>(colorDto);
             color.Id = id;
@@ -61,7 +61,7 @@ namespace API.Services
             return colors;
         }
 
-        public async Task<Color> GetColorByIdAsync(int id)
+        public async Task<Color> GetColorByIdAsync(long id)
         {
             return await _colorRepository.GetByIdAsync(id);
         }
