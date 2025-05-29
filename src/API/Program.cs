@@ -4,7 +4,6 @@ using Core;
 using Core.Entities.Identity;
 using Infrastructure;
 using Infrastructure.Data;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,15 +45,12 @@ app.MapControllers();
 using var scope = app.Services.CreateScope();
 var service = scope.ServiceProvider;
 var context = service.GetRequiredService<ApplicationDbContext>();
-var contextIdentity = service.GetRequiredService<AppIdentityDbContext>();
 var userManager = service.GetRequiredService<UserManager<AppUser>>();
 var logger = service.GetRequiredService<ILogger<Program>>();
 try
 {
     await context.Database.MigrateAsync(); 
-    await contextIdentity.Database.MigrateAsync();
-    await AppIdentityDbContextSeed.SeedUserAync(userManager);
-    //await ApplicationDbContextSeed.SeedAsync(context);
+    await ApplicationDbContextSeed.SeedAsync(context, userManager);
 }
 catch (Exception ex)
 {

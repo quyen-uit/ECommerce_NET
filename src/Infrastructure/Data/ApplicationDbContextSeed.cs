@@ -1,13 +1,37 @@
 ﻿using Core.Entities;
+using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
+using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
 
 namespace Infrastructure.Data
 {
     public class ApplicationDbContextSeed
     {
-        public static async Task SeedAsync(ApplicationDbContext context)
+        public static async Task SeedAsync(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var user = new AppUser
+                {
+                    DisplayName = "Quyen",
+                    UserName = "quyen123",
+                    Email = "quyen@mail.com",
+                    Address = new Core.Entities.Identity.Address
+                    {
+                        FirstName = "Quyen",
+                        LastName = "Dang",
+                        HouseNumber = "1/1",
+                        Ward = "W",
+                        District = "D",
+                        City = "C",
+
+                    }
+                };
+
+                await userManager.CreateAsync(user, "Admin@123");
+            }
+
             if (!context.ProductBrands.Any())
             {
                 var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");

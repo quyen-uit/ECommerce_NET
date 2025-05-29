@@ -4,7 +4,6 @@ using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,11 +21,6 @@ namespace Infrastructure
                            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                                builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            // identity context
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                          options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
-                               builder => builder.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName)));
-
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis"));
@@ -35,7 +29,7 @@ namespace Infrastructure
 
             // add identity service
             services.AddIdentityCore<AppUser>(options => { })
-            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager<SignInManager<AppUser>>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
