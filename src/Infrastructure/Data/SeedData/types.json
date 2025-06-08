@@ -1,0 +1,199 @@
+﻿{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Áo",
+      "parentId": null,
+      "order": 1,
+      "isActive": true,
+      "subCategories": [
+        {
+          "id": 2,
+          "name": "Áo thun",
+          "parentId": 1,
+          "order": 1,
+          "isActive": true
+        },
+        {
+          "id": 3,
+          "name": "Áo sơ mi",
+          "parentId": 1,
+          "order": 2,
+          "isActive": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Quần",
+      "parentId": null,
+      "order": 2,
+      "isActive": true,
+      "subCategories": [
+        {
+          "id": 5,
+          "name": "Quần jeans",
+          "parentId": 4,
+          "order": 1,
+          "isActive": true
+        },
+        {
+          "id": 6,
+          "name": "Quần tây",
+          "parentId": 4,
+          "order": 2,
+          "isActive": true
+        }
+      ]
+    }
+  ],
+  "sizes": [
+    {
+      "id": 1,
+      "name": "S",
+      "sortOrder": 1,
+      "categoryId": 2
+    },
+    {
+      "id": 2,
+      "name": "M",
+      "sortOrder": 2,
+      "categoryId": 2
+    },
+    {
+      "id": 3,
+      "name": "L",
+      "sortOrder": 3,
+      "categoryId": 2
+    },
+    {
+      "id": 4,
+      "name": "S",
+      "sortOrder": 1,
+      "categoryId": 5
+    },
+    {
+      "id": 5,
+      "name": "M",
+      "sortOrder": 2,
+      "categoryId": 5
+    },
+    {
+      "id": 6,
+      "name": "L",
+      "sortOrder": 3,
+      "categoryId": 5
+    }
+  ],
+  "colors": [
+    {
+      "id": 1,
+      "name": "Đỏ",
+      "hexCode": "#FF0000"
+    },
+    {
+      "id": 2,
+      "name": "Xanh dương",
+      "hexCode": "#0000FF"
+    },
+    {
+      "id": 3,
+      "name": "Xanh lá",
+      "hexCode": "#00FF00"
+    }
+  ],
+  "brands": [
+    {
+      "id": 1,
+      "name": "Thương hiệu A",
+      "description": "Quần áo chất lượng cao",
+      "logoUrl": "https://example.com/brand_a_logo.png"
+    },
+    {
+      "id": 2,
+      "name": "Thương hiệu B",
+      "description": "Thời trang giá rẻ, chất lượng",
+      "logoUrl": "https://example.com/brand_b_logo.png"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Áo thun thoải mái",
+      "description": "Áo thun chất lượng cao, thoáng mát",
+      "photoUrl": "https://example.com/products/tshirt1.png",
+      "isTrending": true,
+      "isNew": false,
+      "isActive": true,
+      "genderType": 0,
+      "categoryId": 2,
+      "productBrandId": 1,
+      "price": 200000,
+      "properties": [
+        {
+          "key": "Chất liệu",
+          "value": "Cotton"
+        },
+        {
+          "key": "Kiểu tay",
+          "value": "Ngắn"
+        }
+      ],
+      "productSkus": [
+        {
+          "id": 1,
+          "skuCode": "TSHIRT001_DO_S",
+          "colorId": 1,
+          "sizeId": 1,
+          "isActive": true
+        },
+        {
+          "id": 2,
+          "skuCode": "TSHIRT001_XANHDUONG_M",
+          "colorId": 2,
+          "sizeId": 2,
+          "isActive": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Quần jeans thời trang",
+      "description": "Quần jeans phù hợp mọi phong cách",
+      "photoUrl": "https://example.com/products/jeans1.png",
+      "isTrending": false,
+      "isNew": true,
+      "isActive": true,
+      "genderType": 0,
+      "categoryId": 5,
+      "productBrandId": 2,
+      "price": 400000,
+      "properties": [
+        {
+          "key": "Chất liệu",
+          "value": "Denim"
+        },
+        {
+          "key": "Kiểu",
+          "value": "Slim-fit"
+        }
+      ],
+      "productSkus": [
+        {
+          "id": 3,
+          "skuCode": "JEANS001_XANHLA_S",
+          "colorId": 3,
+          "sizeId": 4,
+          "isActive": true
+        },
+        {
+          "id": 4,
+          "skuCode": "JEANS001_XANHDUONG_M",
+          "colorId": 2,
+          "sizeId": 5,
+          "isActive": true
+        }
+      ]
+    }
+  ]
+}

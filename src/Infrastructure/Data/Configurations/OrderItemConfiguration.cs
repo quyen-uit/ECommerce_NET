@@ -1,11 +1,6 @@
 ﻿using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Configurations
 {
@@ -16,6 +11,9 @@ namespace Infrastructure.Data.Configurations
             builder.OwnsOne(oi => oi.Item, i =>
             {
                 i.WithOwner();
+                i.Property(p => p.ProductName)
+                .HasMaxLength(100)
+                .IsRequired();
             });
 
         }

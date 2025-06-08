@@ -25,15 +25,17 @@ namespace Infrastructure.Data
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Color> Colors => Set<Color>();
         public DbSet<Size> Sizes => Set<Size>();
-        public DbSet<Vendor> Vendors  => Set<Vendor>();
-        public DbSet<InventoryImport> InventoryImports  => Set<InventoryImport>();
-        public DbSet<InventoryAdjustment> InventoryAdjustments  => Set<InventoryAdjustment>();
-        public DbSet<InventoryTransaction> InventoryTransactions  => Set<InventoryTransaction>();
-        public DbSet<ReturnOrder> ReturnOrders  => Set<ReturnOrder>();
-        public DbSet<ReturnOrderItem> ReturnOrderItems  => Set<ReturnOrderItem>();
+        public DbSet<Vendor> Vendors => Set<Vendor>();
+        public DbSet<InventoryImport> InventoryImports => Set<InventoryImport>();
+        public DbSet<InventoryAdjustment> InventoryAdjustments => Set<InventoryAdjustment>();
+        public DbSet<InventoryTransaction> InventoryTransactions => Set<InventoryTransaction>();
+        public DbSet<ReturnOrder> ReturnOrders => Set<ReturnOrder>();
+        public DbSet<ReturnOrderItem> ReturnOrderItems => Set<ReturnOrderItem>();
         public DbSet<Image> Images => Set<Image>();
         public DbSet<PriceAdjustment> PriceAdjustments => Set<PriceAdjustment>();
         public DbSet<ProductSku> ProductSkus => Set<ProductSku>();
+        public DbSet<Collection> Collections { get; set; }
+
         public DbSet<Wishlist> Wishlists => Set<Wishlist>();
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,6 +9,11 @@ namespace Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            builder
+                .HasMany(p => p.Collections)
+                .WithMany(c => c.Products)
+                .UsingEntity(j => j.ToTable("ProductCollections"));
+
             builder
                 .Property(p => p.Name)
                 .HasMaxLength(100)
@@ -25,6 +31,10 @@ namespace Infrastructure.Data.Configurations
             builder
                 .OwnsMany(p => p.Properties, builder => builder.ToJson());
 
+            builder.Property(s => s.GenderType).HasConversion(
+                o => o.ToString(),
+                o => (GenderType)Enum.Parse(typeof(GenderType), o)
+                );
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Infrastructure.Data.Configurations
                 .HasOne(u => u.Address)
                 .WithOne(a => a.AppUser);
 
+            builder.Property(a => a.DisplayName).HasMaxLength(100);
+
         }
     }
 }

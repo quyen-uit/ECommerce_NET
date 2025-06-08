@@ -19,6 +19,9 @@ namespace Infrastructure.Data.Configurations
                 .HasForeignKey(pc => pc.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(s => s.Name)
+                .HasMaxLength(100)
+                .IsRequired();
         }
     }
 }

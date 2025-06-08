@@ -15,6 +15,10 @@ namespace Infrastructure.Data.Configurations
         {
             builder.Property(i => i.Price).HasPrecision(18, 2);
             builder.Property(i => i.DeliveryTime).IsRequired();
+            builder
+                .Property(p => p.ShortName)
+                .HasMaxLength(100)
+                .IsRequired();
         }
     }
 }

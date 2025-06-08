@@ -16,10 +16,10 @@ namespace Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Vendor> builder)
         {
 
-            builder.Property(s => s.Name).IsRequired();
-            builder.Property(s => s.Address).IsRequired();
-            builder.Property(s => s.Email).IsRequired();
-            builder.Property(s => s.Phone).IsRequired();
+            builder.Property(s => s.Name).HasMaxLength(100).IsRequired();
+            builder.Property(s => s.Address).HasMaxLength(100).IsRequired();
+            builder.Property(s => s.Email).HasMaxLength(100).IsRequired();
+            builder.Property(s => s.Phone).HasMaxLength(100).IsRequired();
 
         }
     }

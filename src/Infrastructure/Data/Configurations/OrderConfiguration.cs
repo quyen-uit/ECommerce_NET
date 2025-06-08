@@ -2,11 +2,6 @@
 using Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Configurations
 {
@@ -17,6 +12,33 @@ namespace Infrastructure.Data.Configurations
             builder.OwnsOne(o => o.ShipToAddress, a =>
             {
                 a.WithOwner();
+                a.Property(s => s.FirstName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                a.Property(s => s.LastName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                a.Property(s => s.Street)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                a.Property(s => s.Ward)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                a.Property(s => s.District)
+                    .HasMaxLength(100)
+                    .IsRequired(); ;
+
+                a.Property(s => s.City)
+                        .HasMaxLength(100)
+                        .IsRequired();
+
+                a.Property(s => s.HouseNumber)
+                        .HasMaxLength(100)
+                        .IsRequired();
             });
 
             builder.Navigation(o => o.ShipToAddress).IsRequired();

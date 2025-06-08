@@ -1,4 +1,5 @@
 ﻿using Core.Common;
+using Core.Enums;
 
 namespace Core.Entities
 {
@@ -6,7 +7,6 @@ namespace Core.Entities
     {
         public string Name { get; set; }
         public int SortOrder { get; set; }
-        public long CategoryId { get; set; }
-        public ICollection<Category> Category { get; set; }
+        public SizeType SizeType { get; set; }
     }
 }

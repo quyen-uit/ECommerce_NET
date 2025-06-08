@@ -12,7 +12,5 @@ namespace Core.Entities
 
         public Category Parent { get; set; }
         public ICollection<Category> SubCategories { get; set; }
-        public ICollection<Size> Sizes { get; set; }
-
     }
 } 
