@@ -1,72 +1,77 @@
 ﻿using AutoMapper;
 using Core.Dtos;
-using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
 using Core.Specifications.Products;
+using Mapster;
 
 namespace API.Services
 {
     public class CategoryService : ICategoryService
     {
         private readonly IGenericRepository<Category> _categoryRepository;
-        private readonly IMapper _mapper;
 
-        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
+        public CategoryService(IGenericRepository<Category> categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            _mapper = mapper;
         }
 
-        public async Task<Category> AddCategoryAsync(CreateCategoryDto categoryDto)
+        public async Task<CategoryDto> AddCategoryAsync(CreateCategoryDto dto)
         {
-            var category = _mapper.Map<Category>(categoryDto);
-
-            _categoryRepository.Add(category);
+            var entity = dto.Adapt<Category>();
+            _categoryRepository.Add(entity);
             await _categoryRepository.Complete();
-
-            return category;
+            return entity.Adapt<CategoryDto>();
         }
 
-        public async Task<IReadOnlyList<Category>> AddRangeCategoryAsync(IReadOnlyList<CreateCategoryDto> categoryDtos)
+        public async Task<IReadOnlyList<CategoryDto>> AddRangeCategoryAsync(
+            IReadOnlyList<CreateCategoryDto> dtos
+        )
         {
-            var categories = _mapper.Map<IReadOnlyList<Category>>(categoryDtos);
-
-            _categoryRepository.AddRange(categories);
+            var entities = dtos.Adapt<IReadOnlyList<Category>>();
+            _categoryRepository.AddRange(entities);
             await _categoryRepository.Complete();
-
-            return categories;
+            return entities.Adapt<IReadOnlyList<CategoryDto>>();
         }
 
-
-        public async Task<long> DeleteCategoryAsync(long id)
+        public async Task<bool> DeleteCategoryAsync(long id)
         {
+            var existing = await _categoryRepository.GetByIdAsync(id);
+            if (existing == null)
+                return false;
+
             _categoryRepository.Delete(id);
-            return await _categoryRepository.Complete();
-        }
-
-        public async Task<IReadOnlyList<Category>> GetAllCategoriesAsync(CategorySpecParams specParams)
-        {
-            var spec = new CategoryWithParamsSpec(specParams);
-            return await _categoryRepository.GetAllWithSpecAsync(spec);
-        }
-
-        public async Task<Category> GetCategoryByIdAsync(long id)
-        {
-            return await _categoryRepository.GetByIdAsync(id);
-        }
-
-        public async Task<Category> UpdateCategoryAsync(long id, CreateCategoryDto categoryDto)
-        {
-            var category = _mapper.Map<Category>(categoryDto);
-            category.Id = id;
-
-            _categoryRepository.Update(category);
             await _categoryRepository.Complete();
-            return category;
+            return true;
+        }
 
+        public async Task<IReadOnlyList<CategoryDto>> GetAllCategoriesAsync(
+            CategorySpecParams specParams
+        )
+        {
+            var spec = new CategoryWithParamsAndPaginationSpec(specParams);
+            var entities = await _categoryRepository.GetAllWithSpecAsync(spec);
+            return entities.Adapt<IReadOnlyList<CategoryDto>>();
+        }
+
+        public async Task<CategoryDto> GetCategoryByIdAsync(long id)
+        {
+            var entity = await _categoryRepository.GetByIdAsync(id);
+            return entity?.Adapt<CategoryDto>();
+        }
+
+        public async Task<CategoryDto> UpdateCategoryAsync(UpdateCategoryDto dto)
+        {
+            var existing = await _categoryRepository.GetByIdAsync(dto.Id);
+            if (existing == null)
+                return null;
+
+            existing = dto.Adapt<Category>();
+            _categoryRepository.Update(existing);
+            await _categoryRepository.Complete();
+            return existing.Adapt<CategoryDto>();
         }
     }
 }

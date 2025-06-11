@@ -1,0 +1,49 @@
+[
+    {
+        "id": 1,
+        "name": "Áo thun thoải mái",
+        "description": "Áo thun chất lượng cao, thoáng mát",
+        "photoUrl": "https://example.com/products/tshirt1.png",
+        "isTrending": true,
+        "isNew": false,
+        "isActive": true,
+        "genderType": 0,
+        "categoryId": 2,
+        "productBrandId": 1,
+        "price": 200000,
+        "properties": [
+            {
+                "key": "Chất liệu",
+                "value": "Cotton"
+            },
+            {
+                "key": "Kiểu tay",
+                "value": "Ngắn"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Quần jeans thời trang",
+        "description": "Quần jeans phù hợp mọi phong cách",
+        "photoUrl": "https://example.com/products/jeans1.png",
+        "isTrending": false,
+        "isNew": true,
+        "isActive": true,
+        "genderType": 0,
+        "categoryId": 5,
+        "productBrandId": 2,
+        "price": 400000,
+        "properties": [
+            {
+                "key": "Chất liệu",
+                "value": "Denim"
+            },
+            {
+                "key": "Kiểu",
+                "value": "Slim-fit"
+            }
+        ]
+        
+    }
+]

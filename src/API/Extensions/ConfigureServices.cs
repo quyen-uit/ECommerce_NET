@@ -2,6 +2,8 @@
 using API.Helpers;
 using API.Services;
 using Core.Interfaces.Services;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +98,9 @@ namespace API.Extensions
             services.AddScoped<IProductService, ProductService>();
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
+            services.AddSingleton(TypeAdapterConfig.GlobalSettings);
+            services.AddScoped<IMapper, ServiceMapper>();
 
             return services;
         }

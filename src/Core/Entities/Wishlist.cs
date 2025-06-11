@@ -3,7 +3,7 @@ using Core.Entities.Identity;
 
 namespace Core.Entities
 {
-    public class Wishlist : BaseEntity
+    public class Wishlist : AuditableEntity
     {
         public long ProductSkuId { get; set; }
         public string AppUserId { get; set; }

@@ -4,7 +4,7 @@ using Core.Enums;
 
 namespace Core.Entities.ReturnOrder
 {
-    public class ReturnOrder : BaseEntity
+    public class ReturnOrder : AuditableEntity
     {
         public long OrderId { get; set; }
         public DateTime ReturnDate { get; set; } = DateTime.UtcNow;

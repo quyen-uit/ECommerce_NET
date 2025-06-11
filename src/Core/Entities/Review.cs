@@ -3,7 +3,7 @@ using Core.Entities.Identity;
 
 namespace Core.Entities
 {
-    public class Review : BaseEntity
+    public class Review : AuditableEntity
     {
         public long ProductId { get; set; }
         public Product Product { get; set; }

@@ -1,20 +1,26 @@
-﻿using Core.Common;
-using Core.Entities;
-using Core.Specifications.Products;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Core.Common;
+using Core.Entities;
+using Core.Specifications.Products;
 
-namespace Core.Specifications.Categories
+namespace Core.Specifications.ProductBrands
 {
     public class ProductBrandWithParamsSpec : BaseSpecification<ProductBrand>
     {
         public ProductBrandWithParamsSpec() { }
+
         public ProductBrandWithParamsSpec(ProductBrandSpecParams specParams)
-            : base(x => (string.IsNullOrEmpty(specParams.Search) || x.Name.ToLower().Contains(specParams.Search)))
+            : base(x =>
+                (
+                    string.IsNullOrEmpty(specParams.Search)
+                    || x.Name.ToLower().Contains(specParams.Search)
+                )
+            )
         {
             switch (specParams.Sort)
             {

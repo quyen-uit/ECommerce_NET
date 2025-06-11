@@ -2,7 +2,7 @@
 
 namespace Core.Entities
 {
-    public class ProductSku : BaseEntity
+    public class ProductSku : AuditableEntity
     {
         public long ProductId { get; set; }
         public string SkuCode { get; set; }

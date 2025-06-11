@@ -1,10 +1,14 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Core.Common
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedDate { get; set; }
     }
 }

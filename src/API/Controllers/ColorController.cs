@@ -1,113 +1,94 @@
-﻿using Core.Dtos;
-using Core.Dtos.CreateDto;
-using API.Errors;
-using AutoMapper;
-using Core.Entities;
-using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
-using API.Services;
-using Core.Specifications.Categories;
+﻿using API.Errors;
 using API.Helpers;
-using Core.Specifications.Products;
-using Stripe;
+using Core.Dtos;
+using Core.Interfaces.Services;
+using Core.Specifications.Colors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     public class ColorController : ApiControllerBase
     {
         private readonly IColorService _colorService;
-        private readonly IMapper _mapper;
 
-        public ColorController(IColorService colorService, IMapper mapper)
+        public ColorController(IColorService colorService)
         {
             _colorService = colorService;
-            _mapper = mapper;
         }
 
-        // GET: api/Color
-        [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<ColorDto>>> GetColors([FromQuery]ColorSpecParams specParams)
-        {
-            var colors = await _colorService.GetAllColorsAsync(specParams);
-            var colorDtos = _mapper.Map<IReadOnlyList<ColorDto>>(colors);
-
-            var count = await _colorService.CountAllAsync(specParams);
-            return Ok(new Pagination<ColorDto>(specParams.PageNumber, specParams.PageSize, count, colorDtos));
-        }
-
-
-        // POST: api/Color
-        [HttpPost]
-        public async Task<ActionResult<ColorDto>> PostColor(CreateColorDto colorDto)
-        {
-            var result = await _colorService.AddColorAsync(colorDto);
-
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<ColorDto>(result));
-        }
-
-
-        // GET: api/Color/5
+        // ✅ GET: api/color/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ColorDto>> GetColor(int id)
+        public async Task<ActionResult<ColorDto>> GetColor(long id)
         {
-            var color = await _colorService.GetColorByIdAsync(id);
-
-            if (color == null)
-            {
-                return NotFound(new ApiException(404));
-            }
-            var colorDto = _mapper.Map<ColorDto>(color);
+            var colorDto = await _colorService.GetColorByIdAsync(id);
+            if (colorDto == null)
+                return NotFound(new ApiException(404, "Color not found"));
 
             return Ok(colorDto);
         }
 
-        // POST: api/Color/many
-        [HttpPost("many")]
-        public async Task<ActionResult<ColorDto>> PostColors(IReadOnlyList<CreateColorDto> colorDtos)
+        // 🔄 POST: api/color/get-all
+        [HttpPost("get-all")]
+        public async Task<ActionResult<Pagination<ColorDto>>> GetColors(
+            [FromBody] ColorSpecParams specParams
+        )
+        {
+            var colorDtos = await _colorService.GetAllColorsAsync(specParams);
+
+            return Ok(
+                new Pagination<ColorDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: colorDtos.Count,
+                    data: colorDtos
+                )
+            );
+        }
+
+        // ✅ POST: api/color/create
+        [HttpPost("create")]
+        public async Task<ActionResult<ColorDto>> CreateColor([FromBody] CreateColorDto colorDto)
+        {
+            var result = await _colorService.AddColorAsync(colorDto);
+            if (result == null)
+                return BadRequest(new ApiResponse(400, "Failed to create color"));
+
+            return CreatedAtAction(nameof(GetColor), new { id = result.Id }, result);
+        }
+
+        // ✅ POST: api/color/create-many
+        [HttpPost("create-many")]
+        public async Task<ActionResult<IReadOnlyList<ColorDto>>> CreateColors(
+            [FromBody] IReadOnlyList<CreateColorDto> colorDtos
+        )
         {
             var result = await _colorService.AddRangeColorAsync(colorDtos);
+            if (result == null || !result.Any())
+                return BadRequest(new ApiResponse(400, "Failed to create colors"));
 
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<IReadOnlyList<ColorDto>>(result));
+            return Ok(result);
         }
 
-        // PUT: api/Color/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutColor(int id, CreateColorDto colorDto)
+        // ✅ POST: api/color/update
+        [HttpPost("update")]
+        public async Task<ActionResult<ColorDto>> UpdateColor([FromBody] UpdateColorDto colorDto)
         {
-            var result = await _colorService.UpdateColorAsync(id, colorDto);
-
+            var result = await _colorService.UpdateColorAsync(colorDto);
             if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Updating fail"));
-            }
-            return Ok(_mapper.Map<ColorDto>(result));
+                return NotFound(new ApiException(404, "Color not found"));
+
+            return Ok(result);
         }
 
-        // DELETE: api/Color/5
+        // ✅ DELETE: api/color/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteColor(int id)
+        public async Task<ActionResult<ApiResponse>> DeleteColor(long id)
         {
-            var color = await _colorService.GetColorByIdAsync(id);
-            if (color == null)
-            {
-                return NotFound(new ApiException(404));
-            }
+            var success = await _colorService.DeleteColorAsync(id);
+            if (!success)
+                return NotFound(new ApiException(404, "Color not found"));
 
-            var result = await _colorService.DeleteColorAsync(id);
-
-            if (result < 0)
-            {
-                return BadRequest(new ApiResponse(400, "Deleting fail"));
-            }
-            return Ok(new ApiResponse(200, "Deleting succesfully"));
+            return Ok(new ApiResponse(200, "Color deleted successfully"));
         }
     }
 }

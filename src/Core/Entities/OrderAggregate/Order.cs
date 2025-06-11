@@ -3,7 +3,7 @@ using Core.Enums;
 
 namespace Core.Entities.OrderAggregate
 {
-    public class Order : BaseEntity
+    public class Order : AuditableEntity
     {
         public Order()
         {

@@ -1,75 +1,81 @@
-﻿using AutoMapper;
-using Core.Dtos;
-using Core.Dtos.CreateDto;
+﻿using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
-using Core.Specifications.Categories;
-using Core.Specifications.Products;
+using Core.Specifications.ProductBrands;
+using Mapster;
 
 namespace API.Services
 {
     public class ProductBrandService : IProductBrandService
     {
-        private readonly IGenericRepository<ProductBrand> _productBrandRepository;
-        private readonly IMapper _mapper;
+        private readonly IGenericRepository<ProductBrand> _brandRepository;
 
-        public ProductBrandService(IGenericRepository<ProductBrand> productBrandRepository, IMapper mapper)
+        public ProductBrandService(IGenericRepository<ProductBrand> brandRepository)
         {
-            _productBrandRepository = productBrandRepository;
-            _mapper = mapper;
-        }
-        public async Task<ProductBrand> AddProductBrandAsync(CreateProductBrandDto productBrandDto)
-        {
-            var productBrand = _mapper.Map<ProductBrand>(productBrandDto);
-
-            _productBrandRepository.Add(productBrand);
-            await _productBrandRepository.Complete();
-
-            return productBrand;
+            _brandRepository = brandRepository;
         }
 
-        public async Task<long> DeleteProductBrandAsync(long id)
+        public async Task<ProductBrandDto> AddProductBrandAsync(CreateProductBrandDto brandDto)
         {
-            _productBrandRepository.Delete(id);
-            return await _productBrandRepository.Complete();
+            var brand = brandDto.Adapt<ProductBrand>();
+            _brandRepository.Add(brand);
+            await _brandRepository.Complete();
+            return brand.Adapt<ProductBrandDto>();
         }
 
-        public async Task<IReadOnlyList<ProductBrand>> GetAllProductBrandsAsync(ProductBrandSpecParams specParams)
+        public async Task<IReadOnlyList<ProductBrandDto>> AddRangeProductBrandAsync(
+            IReadOnlyList<CreateProductBrandDto> brandDtos
+        )
         {
-            var spec = new ProductBrandWithParamsAndPaginationSpec(specParams);
-
-            return await _productBrandRepository.GetAllWithSpecAsync(spec);
-        }
-
-        public async Task<ProductBrand> UpdateProductBrandAsync(long id, CreateProductBrandDto productBrandDto)
-        {
-            var productBrand = _mapper.Map<ProductBrand>(productBrandDto);
-            productBrand.Id = id;
-
-            _productBrandRepository.Update(productBrand);
-            await _productBrandRepository.Complete();
-            return productBrand;
-        }
-
-        public async Task<IReadOnlyList<ProductBrand>> AddRangeProductBrandAsync(IReadOnlyList<CreateProductBrandDto> productBrandDtos)
-        {
-            var productBrands = _mapper.Map<IReadOnlyList<ProductBrand>>(productBrandDtos);
-
-            _productBrandRepository.AddRange(productBrands);
-            await _productBrandRepository.Complete();
-            return productBrands;
-        }
-
-        public async Task<ProductBrand> GetProductBrandByIdAsync(long id)
-        {
-            return await _productBrandRepository.GetByIdAsync(id);
+            var brands = brandDtos.Adapt<IReadOnlyList<ProductBrand>>();
+            _brandRepository.AddRange(brands);
+            await _brandRepository.Complete();
+            return brands.Adapt<IReadOnlyList<ProductBrandDto>>();
         }
 
         public async Task<int> CountAllAsync(ProductBrandSpecParams specParams)
         {
-            var countSpec = new ProductBrandWithParamsSpec(specParams);
-            return await _productBrandRepository.CountAsync(countSpec);
+            var spec = new ProductBrandWithParamsSpec(specParams);
+            return await _brandRepository.CountAsync(spec);
+        }
+
+        public async Task<bool> DeleteProductBrandAsync(long id)
+        {
+            var existing = await _brandRepository.GetByIdAsync(id);
+            if (existing == null)
+                return false;
+
+            _brandRepository.Delete(id);
+            await _brandRepository.Complete();
+            return true;
+        }
+
+        public async Task<IReadOnlyList<ProductBrandDto>> GetAllProductBrandsAsync(
+            ProductBrandSpecParams specParams
+        )
+        {
+            var spec = new ProductBrandWithParamsAndPaginationSpec(specParams);
+            var brands = await _brandRepository.GetAllWithSpecAsync(spec);
+            return brands.Adapt<IReadOnlyList<ProductBrandDto>>();
+        }
+
+        public async Task<ProductBrandDto> GetProductBrandByIdAsync(long id)
+        {
+            var brand = await _brandRepository.GetByIdAsync(id);
+            return brand?.Adapt<ProductBrandDto>();
+        }
+
+        public async Task<ProductBrandDto> UpdateProductBrandAsync(UpdateProductBrandDto brandDto)
+        {
+            var existing = await _brandRepository.GetByIdAsync(brandDto.Id);
+            if (existing == null)
+                return null;
+
+            existing = brandDto.Adapt<ProductBrand>();
+            _brandRepository.Update(existing);
+            await _brandRepository.Complete();
+            return existing.Adapt<ProductBrandDto>();
         }
     }
 }

@@ -1,112 +1,98 @@
-﻿using Core.Dtos;
-using Core.Dtos.CreateDto;
-using API.Errors;
-using AutoMapper;
-using Core.Entities;
-using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
-using API.Services;
-using Core.Specifications.Categories;
+﻿using API.Errors;
 using API.Helpers;
+using Core.Dtos;
+using Core.Interfaces.Services;
+using Core.Specifications.ProductBrands;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/brand")]
     public class ProductBrandController : ApiControllerBase
     {
-        private readonly IProductBrandService _productBrandService;
-        private readonly IMapper _mapper;
+        private readonly IProductBrandService _brandService;
 
-        public ProductBrandController(IProductBrandService productBrandService, IMapper mapper)
+        public ProductBrandController(IProductBrandService brandService)
         {
-            _productBrandService = productBrandService;
-            _mapper = mapper;
+            _brandService = brandService;
         }
 
-        // GET: api/ProductBrand
-        [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> GetProductBrands([FromQuery] ProductBrandSpecParams specParams)
-        {
-            var productBrands = await _productBrandService.GetAllProductBrandsAsync(specParams);
-            var productBrandDtos = _mapper.Map<IReadOnlyList<ProductBrandDto>>(productBrands);
-
-            var count = await _productBrandService.CountAllAsync(specParams);
-            return Ok(new Pagination<ProductBrandDto>(specParams.PageNumber, specParams.PageSize, count, productBrandDtos));
-        }
-
-
-        // POST: api/ProductBrand
-        [HttpPost]
-        public async Task<ActionResult<ProductBrandDto>> PostProductBrand(CreateProductBrandDto productBrandDto)
-        {
-            var result = await _productBrandService.AddProductBrandAsync(productBrandDto);
-
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<ProductBrandDto>(result));
-        }
-
-
-        // GET: api/ProductBrand/5
+        // ✅ GET: api/productbrand/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductBrandDto>> GetProductBrand(int id)
+        public async Task<ActionResult<ProductBrandDto>> GetProductBrand(long id)
         {
-            var productBrand = await _productBrandService.GetProductBrandByIdAsync(id);
+            var brandDto = await _brandService.GetProductBrandByIdAsync(id);
+            if (brandDto == null)
+                return NotFound(new ApiException(404, "Brand not found"));
 
-            if (productBrand == null)
-            {
-                return NotFound(new ApiException(404));
-            }
-
-            var productBrandDto = _mapper.Map<ProductBrandDto>(productBrand);
-            return Ok(productBrandDto);
+            return Ok(brandDto);
         }
 
-        // POST: api/ProductBrand/many
-        [HttpPost("many")]
-        public async Task<ActionResult<ProductBrandDto>> PostProductBrands(IReadOnlyList<CreateProductBrandDto> productBrandDtos)
+        // 🔄 POST: api/productbrand/get-all
+        [HttpPost("get-all")]
+        public async Task<ActionResult<Pagination<ProductBrandDto>>> GetProductBrands(
+            [FromBody] ProductBrandSpecParams specParams
+        )
         {
-            var result = await _productBrandService.AddRangeProductBrandAsync(productBrandDtos);
+            var brandDtos = await _brandService.GetAllProductBrandsAsync(specParams);
 
+            return Ok(
+                new Pagination<ProductBrandDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: await _brandService.CountAllAsync(specParams),
+                    data: brandDtos
+                )
+            );
+        }
+
+        // ✅ POST: api/productbrand/create
+        [HttpPost("create")]
+        public async Task<ActionResult<ProductBrandDto>> CreateProductBrand(
+            [FromBody] CreateProductBrandDto brandDto
+        )
+        {
+            var result = await _brandService.AddProductBrandAsync(brandDto);
             if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<IReadOnlyList<ProductBrandDto>>(result));
+                return BadRequest(new ApiResponse(400, "Failed to create brand"));
+
+            return CreatedAtAction(nameof(GetProductBrand), new { id = result.Id }, result);
         }
 
-        // PUT: api/ProductBrand/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProductBrand(int id, CreateProductBrandDto productBrandDto)
+        // ✅ POST: api/productbrand/create-many
+        [HttpPost("create-many")]
+        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> CreateProductBrands(
+            [FromBody] IReadOnlyList<CreateProductBrandDto> brandDtos
+        )
         {
-            var result = await _productBrandService.UpdateProductBrandAsync(id, productBrandDto);
+            var result = await _brandService.AddRangeProductBrandAsync(brandDtos);
+            if (result == null || !result.Any())
+                return BadRequest(new ApiResponse(400, "Failed to create brands"));
 
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Updating fail"));
-            }
-            return Ok(_mapper.Map<ProductBrandDto>(result));
+            return Ok(result);
         }
 
-        // DELETE: api/ProductBrand/5
+        // ✅ POST: api/productbrand/update
+        [HttpPost("update")]
+        public async Task<ActionResult<ProductBrandDto>> UpdateProductBrand(
+            [FromBody] UpdateProductBrandDto brandDto
+        )
+        {
+            var result = await _brandService.UpdateProductBrandAsync(brandDto);
+            if (result == null)
+                return NotFound(new ApiException(404, "Brand not found"));
+
+            return Ok(result);
+        }
+
+        // ✅ DELETE: api/productbrand/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductBrand(int id)
+        public async Task<ActionResult<ApiResponse>> DeleteProductBrand(long id)
         {
-            var productBrand = await _productBrandService.GetProductBrandByIdAsync(id);
-            if (productBrand == null)
-            {
-                return NotFound(new ApiException(404));
-            }
+            var success = await _brandService.DeleteProductBrandAsync(id);
+            if (!success)
+                return NotFound(new ApiException(404, "Brand not found"));
 
-            var result = await _productBrandService.DeleteProductBrandAsync(id);
-
-            if (result < 0)
-            {
-                return BadRequest(new ApiResponse(400, "Deleting fail"));
-            }
-            return Ok(new ApiResponse(200, "Deleting succesfully"));
+            return Ok(new ApiResponse(200, "Brand deleted successfully"));
         }
     }
 }

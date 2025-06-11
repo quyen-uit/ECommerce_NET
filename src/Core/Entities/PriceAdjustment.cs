@@ -2,7 +2,7 @@
 
 namespace Core.Entities
 {
-    public class PriceAdjustment : BaseEntity
+    public class PriceAdjustment : AuditableEntity
     {
         public long ProductSkuId { get; set; }
         public DateTime StartDate { get; set; }

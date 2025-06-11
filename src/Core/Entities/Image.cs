@@ -4,7 +4,7 @@ using Core.Enums;
 namespace Core.Entities
 {
 
-    public class Image : BaseEntity
+    public class Image : AuditableEntity
     {
         public string Url { get; set; }
 

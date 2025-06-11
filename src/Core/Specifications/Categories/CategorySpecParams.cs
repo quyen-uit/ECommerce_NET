@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Common;
 
 namespace Core.Specifications.Categories
 {
-    public class CategorySpecParams
+    public class CategorySpecParams : QueryStringParameter
     {
         public bool? IsActive { get; set; }
         public string Sort { get; set; }

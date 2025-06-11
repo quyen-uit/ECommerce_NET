@@ -3,10 +3,10 @@ using Core.Interfaces;
 using Core.Interfaces.Reposiories;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Infrastructure.Data.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T> : IGenericRepository<T>
+        where T : BaseEntity
     {
         private readonly ApplicationDbContext _context;
 
@@ -56,7 +56,10 @@ namespace Infrastructure.Data.Repositories
 
         public async Task<T> GetByIdAsync(long id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context
+                .Set<T>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(entity => entity.Id == id);
         }
 
         public async Task<T> GetEntityWithSpecAsync(ISpecification<T> specification)
@@ -72,7 +75,10 @@ namespace Infrastructure.Data.Repositories
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
         {
-            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable<T>(), specification);
+            return SpecificationEvaluator<T>.GetQuery(
+                _context.Set<T>().AsQueryable<T>(),
+                specification
+            );
         }
     }
 }

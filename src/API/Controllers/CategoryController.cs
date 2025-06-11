@@ -1,107 +1,87 @@
-﻿using Core.Dtos;
-using Core.Dtos.CreateDto;
-using API.Errors;
+﻿using API.Errors;
+using API.Helpers;
 using AutoMapper;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
 using Core.Specifications.Categories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     public class CategoryController : ApiControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryService categoryService, IMapper mapper)
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _mapper = mapper;
         }
 
-        // GET: api/Category
-        [HttpGet("all")]
-        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetCategories([FromQuery] CategorySpecParams specParams)
-        {
-            var categories = await _categoryService.GetAllCategoriesAsync(specParams);
-            var categoryDtos = _mapper.Map<IReadOnlyList<CategoryDto>>(categories);
-
-            return Ok(categoryDtos);
-        }
-
-        // GET: api/Category/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetCategory(int id)
+        public async Task<ActionResult<CategoryDto>> GetCategory(long id)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
-            
-            if (category == null)
-            {
-                return NotFound(new ApiException(404));
-            }
+            var dto = await _categoryService.GetCategoryByIdAsync(id);
+            if (dto == null)
+                return NotFound(new ApiException(404, "Category not found"));
 
-            var categoryDto = _mapper.Map<CategoryDto>(category);
-            return Ok(categoryDto);
+            return Ok(dto);
         }
 
-
-        // POST: api/Category
-        [HttpPost]
-        public async Task<ActionResult<CategoryDto>> PostCategory(CreateCategoryDto categoryDto)
+        [HttpPost("get-all")]
+        public async Task<ActionResult<Pagination<CategoryDto>>> GetCategories(
+            [FromBody] CategorySpecParams specParams
+        )
         {
-            var result = await _categoryService.AddCategoryAsync(categoryDto);
+            var dtos = await _categoryService.GetAllCategoriesAsync(specParams);
+            return Ok(
+                new Pagination<CategoryDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: dtos.Count,
+                    data: dtos
+                )
+            );
+        }
 
+        [HttpPost("create")]
+        public async Task<ActionResult<CategoryDto>> CreateCategory(
+            [FromBody] CreateCategoryDto dto
+        )
+        {
+            var result = await _categoryService.AddCategoryAsync(dto);
+            return CreatedAtAction(nameof(GetCategory), new { id = result.Id }, result);
+        }
+
+        [HttpPost("create-many")]
+        public async Task<ActionResult<IReadOnlyList<CategoryDto>>> CreateCategories(
+            [FromBody] IReadOnlyList<CreateCategoryDto> dtos
+        )
+        {
+            var result = await _categoryService.AddRangeCategoryAsync(dtos);
+            return Ok(result);
+        }
+
+        [HttpPost("update")]
+        public async Task<ActionResult<CategoryDto>> UpdateCategory(
+            [FromBody] UpdateCategoryDto dto
+        )
+        {
+            var result = await _categoryService.UpdateCategoryAsync(dto);
             if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<CategoryDto>(result));
+                return NotFound(new ApiException(404, "Category not found"));
+
+            return Ok(result);
         }
 
-        // POST: api/Category/many
-        [HttpPost("many")]
-        public async Task<ActionResult<CategoryDto>> PostCategories(IReadOnlyList<CreateCategoryDto> categoryDtos)
-        {
-            var result = await _categoryService.AddRangeCategoryAsync(categoryDtos);
-
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<IReadOnlyList<CategoryDto>>(result));
-        }
-
-        // PUT: api/Category/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, CreateCategoryDto categoryDto)
-        {
-            var result = await _categoryService.UpdateCategoryAsync(id, categoryDto);
-
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Updating fail"));
-            }
-            return Ok(_mapper.Map<CategoryDto>(result));
-        }
-
-        // DELETE: api/Category/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<ActionResult<ApiResponse>> DeleteCategory(long id)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
-            if (category == null)
-            {
-                return NotFound(new ApiException(404));
-            }
+            var success = await _categoryService.DeleteCategoryAsync(id);
+            if (!success)
+                return NotFound(new ApiException(404, "Category not found"));
 
-            var result = await _categoryService.DeleteCategoryAsync(id);
-
-            if (result < 0)
-            {
-                return BadRequest(new ApiResponse(400, "Deleting fail"));
-            }
-            return Ok(new ApiResponse(200, "Deleting succesfully"));
+            return Ok(new ApiResponse(200, "Category deleted successfully"));
         }
     }
 }

@@ -20,7 +20,10 @@ namespace Infrastructure.Data.Configurations
             builder.Property(s => s.Name)
                     .HasMaxLength(100)
                     .IsRequired();
-
+            builder.Property(s => s.SizeType).HasConversion(
+                o => o.ToString(),
+                o => (SizeType)Enum.Parse(typeof(SizeType), o)
+                );
 
         }
     }

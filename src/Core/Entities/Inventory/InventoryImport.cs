@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities.Inventory
 {
-    public class InventoryImport : BaseEntity
+    public class InventoryImport : AuditableEntity
     {
         public long ProductSkuId { get; set; }
         public int Quantity { get; set; }

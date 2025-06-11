@@ -3,7 +3,7 @@ using Core.Enums;
 
 namespace Core.Entities.Inventory
 {
-    public class InventoryTransaction : BaseEntity
+    public class InventoryTransaction : AuditableEntity
     {
         public long ProductSkuId { get; set; }
         public InventoryTransactionType TransactionType { get; set; }

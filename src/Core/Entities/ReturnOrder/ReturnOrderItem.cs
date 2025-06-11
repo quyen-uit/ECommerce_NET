@@ -2,7 +2,7 @@
 
 namespace Core.Entities.ReturnOrder
 {
-    public class ReturnOrderItem : BaseEntity
+    public class ReturnOrderItem : AuditableEntity
     {
         public long ReturnOrderId { get; set; }
         public long ProductSkuId { get; set; }

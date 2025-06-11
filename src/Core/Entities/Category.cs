@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Entities
 {
-    public class Category:BaseEntity
+    public class Category : BaseEntity
     {
         public string Name { get; set; }
         public long? ParentId { get; set; }
@@ -13,4 +13,4 @@ namespace Core.Entities
         public Category Parent { get; set; }
         public ICollection<Category> SubCategories { get; set; }
     }
-} 
+}

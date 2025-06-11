@@ -1,4 +1,5 @@
-﻿using Core.Common;
+﻿using System.Reflection;
+using Core.Common;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.Inventory;
@@ -6,15 +7,13 @@ using Core.Entities.OrderAggregate;
 using Core.Entities.ReturnOrder;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
 
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductBrand> ProductBrands => Set<ProductBrand>();
@@ -34,39 +33,68 @@ namespace Infrastructure.Data
         public DbSet<Image> Images => Set<Image>();
         public DbSet<PriceAdjustment> PriceAdjustments => Set<PriceAdjustment>();
         public DbSet<ProductSku> ProductSkus => Set<ProductSku>();
-        public DbSet<Collection> Collections { get; set; }
-
+        public DbSet<Collection> Collections => Set<Collection>();
         public DbSet<Wishlist> Wishlists => Set<Wishlist>();
+        public DbSet<Core.Entities.Identity.Address> Addresses =>
+            Set<Core.Entities.Identity.Address>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    modelBuilder
+                        .Entity(entityType.ClrType)
+                        .Property("Id")
+                        .UseIdentityByDefaultColumn()
+                        .HasIdentityOptions(startValue: 10);
+                }
+            }
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         public override int SaveChanges()
         {
-            var entries = ChangeTracker
-                .Entries()
-                .Where(e => e.Entity is BaseEntity && (
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified));
+            var now = DateTime.UtcNow;
 
-            foreach (var entityEntry in entries)
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
-
-                if (entityEntry.State == EntityState.Added)
+                if (entry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                    entry.Entity.CreatedDatetime = now;
                 }
+
+                entry.Entity.UpdatedDatetime = now;
             }
 
             return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(
+            CancellationToken cancellationToken = default
+        )
+        {
+            var now = DateTime.UtcNow;
+
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedDatetime = now;
+                }
+
+                entry.Entity.UpdatedDatetime = now;
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

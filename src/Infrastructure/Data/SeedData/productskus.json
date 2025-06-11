@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "SkuCode": "AO_DO_S_0001",
+        "colorId": 1,
+        "sizeId": 1,
+        "isActive": true,
+        "productId": 1
+    },
+    {
+        "id": 2,
+        "SkuCode": "AO_XANHDUONG_M_0001",
+        "colorId": 2,
+        "sizeId": 2,
+        "isActive": true,
+        "productId": 1
+    },
+    {
+        "id": 3,
+        "SkuCode": "JEANS_XANHLA_S_0001",
+        "colorId": 3,
+        "sizeId": 4,
+        "isActive": true,
+        "productId": 2
+    },
+    {
+        "id": 4,
+        "SkuCode": "JEANS_XANHDUONG_M_0001",
+        "colorId": 2,
+        "sizeId": 5,
+        "isActive": true,
+        "productId": 2
+    }
+]

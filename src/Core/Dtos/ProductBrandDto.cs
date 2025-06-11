@@ -4,9 +4,23 @@ namespace Core.Dtos
 {
     public class ProductBrandDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string LogoUrl { get; set; }
+    }
+
+    public class CreateProductBrandDto
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public string? LogoUrl { get; set; }
+    }
+
+    public class UpdateProductBrandDto : CreateProductBrandDto
+    {
+        public long Id { get; set; }
     }
 }

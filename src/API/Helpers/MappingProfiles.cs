@@ -18,11 +18,11 @@ namespace API.Helpers
             CreateMap<CreateProductDto, Product>();
 
             CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<CreateCategoryDto, Category>();
-            CreateMap<ProductBrand, ProductBrandDto>().ReverseMap();
-            CreateMap<CreateProductBrandDto, ProductBrand>();
+            // CreateMap<CreateCategoryDto, Category>();
+            // CreateMap<ProductBrand, ProductBrandDto>().ReverseMap();
+            // CreateMap<CreateProductBrandDto, ProductBrand>();
             CreateMap<Color, ColorDto>().ReverseMap();
-            CreateMap<CreateColorDto, Color>();
+            // CreateMap<CreateColorDto, Color>();
 
             CreateMap<Core.Entities.Identity.Address, AddressDto>().ReverseMap();
 
@@ -41,7 +41,6 @@ namespace API.Helpers
                 .ForMember(d => d.ProductName, o => o.MapFrom(s => s.Item.ProductName))
                 .ForMember(d => d.PhotoUrl, o => o.MapFrom(s => s.Item.PhotoUrl))
                 .ForMember(d => d.PhotoUrl, o => o.MapFrom<OrderItemUrlResolver>());
-
         }
     }
 }

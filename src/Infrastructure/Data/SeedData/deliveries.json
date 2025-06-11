@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "shortName": "At store",
+        "deliveryTime": "2025-06-12T00:00:00",
+        "description": "Nhận tại cửa hàng",
+        "price": 0
+    },
+    {
+        "id": 2,
+        "shortName": "Standard",
+        "deliveryTime": "2025-06-12T00:00:00",
+        "description": "Giao hàng tiêu chuẩn",
+        "price": 20000
+    },
+    {
+        "id": 3,
+        "shortName": "Express",
+        "deliveryTime": "2025-06-10T00:00:00",
+        "description": "Giao hàng nhanh - 24h",
+        "price": 40000
+    }
+]

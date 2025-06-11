@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "name": "Thương hiệu A",
+        "description": "Quần áo chất lượng cao",
+        "logoUrl": "https://example.com/brand_a_logo.png"
+    },
+    {
+        "id": 2,
+        "name": "Thương hiệu B",
+        "description": "Thời trang giá rẻ, chất lượng",
+        "logoUrl": "https://example.com/brand_b_logo.png"
+    }
+]

@@ -1,69 +1,39 @@
 ﻿using AutoMapper;
 using Core.Dtos;
-using Core.Dtos.CreateDto;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
-using Core.Specifications.Categories;
+using Core.Specifications.Colors;
 using Core.Specifications.Products;
+using Mapster;
 
 namespace API.Services
 {
     public class ColorService : IColorService
     {
         private readonly IGenericRepository<Color> _colorRepository;
-        private readonly IMapper _mapper;
 
-        public ColorService(IGenericRepository<Color> colorRepository, IMapper mapper)
+        public ColorService(IGenericRepository<Color> colorRepository)
         {
             _colorRepository = colorRepository;
-            _mapper = mapper;
         }
 
-        public async Task<Color> AddColorAsync(CreateColorDto colorDto)
+        public async Task<ColorDto> AddColorAsync(CreateColorDto colorDto)
         {
-            var color = _mapper.Map<Color>(colorDto);
-
+            var color = colorDto.Adapt<Color>();
             _colorRepository.Add(color);
             await _colorRepository.Complete();
-
-            return color;
+            return color.Adapt<ColorDto>();
         }
 
-        public async Task<long> DeleteColorAsync(long id)
+        public async Task<IReadOnlyList<ColorDto>> AddRangeColorAsync(
+            IReadOnlyList<CreateColorDto> colorDtos
+        )
         {
-            _colorRepository.Delete(id);
-            return await _colorRepository.Complete();
-        }
-
-        public async Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams)
-        {
-            var spec = new ColorWithParamsAndPaginationSpec(specParams);
-            return await _colorRepository.GetAllWithSpecAsync(spec);
-        }
-
-        public async Task<Color> UpdateColorAsync(long id, CreateColorDto colorDto)
-        {
-            var color = _mapper.Map<Color>(colorDto);
-            color.Id = id;
-
-            _colorRepository.Update(color);
-            await _colorRepository.Complete();
-            return color;
-        }
-
-        public async Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos)
-        {
-            var colors = _mapper.Map<IReadOnlyList<Color>>(colorDtos);
-
+            var colors = colorDtos.Adapt<IReadOnlyList<Color>>();
             _colorRepository.AddRange(colors);
             await _colorRepository.Complete();
-            return colors;
-        }
-
-        public async Task<Color> GetColorByIdAsync(long id)
-        {
-            return await _colorRepository.GetByIdAsync(id);
+            return colors.Adapt<IReadOnlyList<ColorDto>>();
         }
 
         public async Task<int> CountAllAsync(ColorSpecParams specParams)
@@ -72,5 +42,39 @@ namespace API.Services
             return await _colorRepository.CountAsync(countSpec);
         }
 
+        public async Task<bool> DeleteColorAsync(long id)
+        {
+            var existing = await _colorRepository.GetByIdAsync(id);
+            if (existing == null)
+                return false;
+            _colorRepository.Delete(id);
+            await _colorRepository.Complete();
+            return true;
+        }
+
+        public async Task<IReadOnlyList<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams)
+        {
+            var spec = new ColorWithParamsAndPaginationSpec(specParams);
+            var colors = await _colorRepository.GetAllWithSpecAsync(spec);
+            return colors.Adapt<IReadOnlyList<ColorDto>>();
+        }
+
+        public async Task<ColorDto> GetColorByIdAsync(long id)
+        {
+            var color = await _colorRepository.GetByIdAsync(id);
+            return color?.Adapt<ColorDto>();
+        }
+
+        public async Task<ColorDto> UpdateColorAsync(UpdateColorDto colorDto)
+        {
+            var existing = await _colorRepository.GetByIdAsync(colorDto.Id);
+            if (existing == null)
+                return null;
+
+            existing = colorDto.Adapt<Color>();
+            await _colorRepository.Complete();
+
+            return existing.Adapt<ColorDto>();
+        }
     }
 }

@@ -3,7 +3,7 @@
 
 namespace Core.Entities.OrderAggregate
 {
-    public class OrderItem : BaseEntity
+    public class OrderItem : AuditableEntity
     {
         public OrderItem()
         {

@@ -1,19 +1,21 @@
 ﻿using Core.Dtos;
-using Core.Dtos.CreateDto;
 using Core.Entities;
-using Core.Specifications.Categories;
+using Core.Specifications.ProductBrands;
 
 namespace Core.Interfaces.Services
 {
     public interface IProductBrandService
     {
-        Task<IReadOnlyList<ProductBrand>> GetAllProductBrandsAsync(ProductBrandSpecParams specParams);
-        Task<ProductBrand> GetProductBrandByIdAsync(long id);
-        Task<ProductBrand> AddProductBrandAsync(CreateProductBrandDto productBrandDto);
-        Task<IReadOnlyList<ProductBrand>> AddRangeProductBrandAsync(IReadOnlyList<CreateProductBrandDto> productBrandDto);
-        Task<ProductBrand> UpdateProductBrandAsync(long id, CreateProductBrandDto productBrandDto);
-        Task<long> DeleteProductBrandAsync(long id);
+        Task<IReadOnlyList<ProductBrandDto>> GetAllProductBrandsAsync(
+            ProductBrandSpecParams specParams
+        );
         Task<int> CountAllAsync(ProductBrandSpecParams specParams);
+        Task<ProductBrandDto> GetProductBrandByIdAsync(long id);
+        Task<ProductBrandDto> AddProductBrandAsync(CreateProductBrandDto brandDto);
+        Task<IReadOnlyList<ProductBrandDto>> AddRangeProductBrandAsync(
+            IReadOnlyList<CreateProductBrandDto> brandDtos
+        );
+        Task<ProductBrandDto> UpdateProductBrandAsync(UpdateProductBrandDto brandDto);
+        Task<bool> DeleteProductBrandAsync(long id);
     }
-
 }

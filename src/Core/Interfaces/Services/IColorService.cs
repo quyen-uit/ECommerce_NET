@@ -1,20 +1,17 @@
 ﻿using Core.Dtos;
-using Core.Dtos.CreateDto;
 using Core.Entities;
-using Core.Specifications.Categories;
-using Core.Specifications.Products;
+using Core.Specifications.Colors;
 
 namespace Core.Interfaces.Services
 {
     public interface IColorService
     {
-        Task<IReadOnlyList<Color>> GetAllColorsAsync(ColorSpecParams specParams);
+        Task<IReadOnlyList<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams);
         Task<int> CountAllAsync(ColorSpecParams specParams);
-        Task<Color> GetColorByIdAsync(long id);
-        Task<Color> AddColorAsync(CreateColorDto colorDto);
-        Task<IReadOnlyList<Color>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
-        Task<Color> UpdateColorAsync(long id, CreateColorDto colorDto);
-        Task<long> DeleteColorAsync(long id);
+        Task<ColorDto> GetColorByIdAsync(long id);
+        Task<ColorDto> AddColorAsync(CreateColorDto colorDto);
+        Task<IReadOnlyList<ColorDto>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
+        Task<ColorDto> UpdateColorAsync(UpdateColorDto colorDto);
+        Task<bool> DeleteColorAsync(long id);
     }
-
 }

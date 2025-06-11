@@ -3,7 +3,7 @@ using Core.Entities.Identity;
 
 namespace Core.Entities
 {
-    public class Collection : BaseEntity
+    public class Collection : AuditableEntity
     {
 
         public string Name { get; set; }

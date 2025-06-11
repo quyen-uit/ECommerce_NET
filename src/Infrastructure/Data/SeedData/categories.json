@@ -1,0 +1,40 @@
+[
+    {
+        "id": 1,
+        "Name": "Áo",
+        "parentId": null,
+        "order": 1,
+        "isActive": true
+    },
+    {
+        "id": 2,
+        "name": "Áo thun",
+        "order": 1,
+        "isActive": true
+    },
+    {
+        "id": 3,
+        "name": "Áo sơ mi",
+        "order": 2,
+        "isActive": true
+    },
+    {
+        "id": 4,
+        "name": "Quần",
+        "parentId": null,
+        "order": 2,
+        "isActive": true
+    },
+    {
+        "id": 5,
+        "name": "Quần jeans",
+        "order": 1,
+        "isActive": true
+    },
+    {
+        "id": 6,
+        "name": "Quần tây",
+        "order": 2,
+        "isActive": true
+    }
+]

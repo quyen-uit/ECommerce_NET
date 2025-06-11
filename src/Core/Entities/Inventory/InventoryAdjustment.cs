@@ -2,7 +2,7 @@
 
 namespace Core.Entities.Inventory
 {
-    public class InventoryAdjustment : BaseEntity
+    public class InventoryAdjustment : AuditableEntity
     {
         public long ProductSkuId { get; set; }
         public int Quantity { get; set; }
