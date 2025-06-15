@@ -6,8 +6,8 @@ namespace Core.Dtos.CreateDto
     {
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; }
-        public string Description { get; set; }  
-        public string LogoUrl { get; set; }   
+        public required string Name { get; set; }
+        public string? Description { get; set; }  
+        public string? LogoUrl { get; set; }   
     }
 }

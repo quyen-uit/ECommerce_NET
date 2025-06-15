@@ -18,6 +18,7 @@ namespace Core.Specifications.Sizes
                 || x.Name.ToLower().Contains(specParams.Search.ToLower())
             )
         {
+            AddPagination(specParams.PageSize, specParams.PageNumber);
             switch (specParams.Sort)
             {
                 case "name_asc":
@@ -25,6 +26,12 @@ namespace Core.Specifications.Sizes
                     break;
                 case "name_desc":
                     AddOrderByDescending(x => x.Name);
+                    break;
+                case "sort_order_asc":
+                    AddOrderBy(x => x.SortOrder);
+                    break;
+                case "sort_order_desc":
+                    AddOrderByDescending(x => x.SortOrder);
                     break;
                 default:
                     AddOrderBy(x => x.SortOrder);

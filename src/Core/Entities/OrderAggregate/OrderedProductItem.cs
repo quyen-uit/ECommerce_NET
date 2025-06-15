@@ -16,7 +16,7 @@ namespace Core.Entities.OrderAggregate
         }
 
         public long ProductSkuId { get; set; }
-        public string ProductName { get; set; }
-        public string PhotoUrl { get; set; }
+        public string? ProductName { get; set; }
+        public string? PhotoUrl { get; set; }
     }
 }

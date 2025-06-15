@@ -9,7 +9,7 @@ namespace Core.Entities.ReturnOrder
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
-        public ReturnOrder ReturnOrder { get; set; }
-        public ProductSku ProductSku { get; set; }
+        public ReturnOrder ReturnOrder { get; set; } = default!; // Navigation property
+        public ProductSku ProductSku { get; set; } = default!;
     }
 }

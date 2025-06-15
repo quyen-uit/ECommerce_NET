@@ -5,7 +5,7 @@ namespace Core.Dtos
     public class CategoryDto
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public long? ParentId { get; set; }
         public int Order { get; set; }
         public bool IsActive { get; set; }
@@ -15,7 +15,7 @@ namespace Core.Dtos
     {
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public long? ParentId { get; set; }
         public int Order { get; set; } = 0;

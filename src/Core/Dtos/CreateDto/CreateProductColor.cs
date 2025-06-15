@@ -9,7 +9,7 @@ namespace Core.Dtos.CreateDto
         [Required]
         public int ProductId { get; set; }
         [Required] 
-        public List<string> PhotoUrls { get; set; }
+        public List<string> PhotoUrls { get; set; } = new List<string>();
 
     }
 

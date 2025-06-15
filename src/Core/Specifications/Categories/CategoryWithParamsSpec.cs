@@ -22,6 +22,7 @@ namespace Core.Specifications.Categories
                 ) && (!specParams.IsActive.HasValue || x.IsActive == specParams.IsActive)
             )
         {
+            AddPagination(specParams.PageSize, specParams.PageNumber);
             switch (specParams.Sort)
             {
                 case "name_asc":

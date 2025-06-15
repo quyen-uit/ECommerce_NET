@@ -5,16 +5,16 @@ namespace Core.Dtos
     public class ProductBrandDto
     {
         public long Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string LogoUrl { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
+        public string? LogoUrl { get; set; }
     }
 
     public class CreateProductBrandDto
     {
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public string? Description { get; set; }
         public string? LogoUrl { get; set; }
     }

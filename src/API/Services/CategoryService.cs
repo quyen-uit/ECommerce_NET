@@ -51,7 +51,7 @@ namespace API.Services
             CategorySpecParams specParams
         )
         {
-            var spec = new CategoryWithParamsAndPaginationSpec(specParams);
+            var spec = new CategoryWithParamsSpec(specParams);
             var entities = await _categoryRepository.GetAllWithSpecAsync(spec);
             return entities.Adapt<IReadOnlyList<CategoryDto>>();
         }

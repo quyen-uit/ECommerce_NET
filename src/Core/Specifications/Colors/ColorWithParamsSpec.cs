@@ -22,6 +22,7 @@ namespace Core.Specifications.Colors
                 )
             )
         {
+            AddPagination(specParams.PageSize, specParams.PageNumber);
             switch (specParams.Sort)
             {
                 case "name_asc":

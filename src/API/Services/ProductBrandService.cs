@@ -55,7 +55,7 @@ namespace API.Services
             ProductBrandSpecParams specParams
         )
         {
-            var spec = new ProductBrandWithParamsAndPaginationSpec(specParams);
+            var spec = new ProductBrandWithParamsSpec(specParams);
             var brands = await _brandRepository.GetAllWithSpecAsync(spec);
             return brands.Adapt<IReadOnlyList<ProductBrandDto>>();
         }

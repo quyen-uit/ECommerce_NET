@@ -5,9 +5,9 @@ namespace Core.Entities.OrderAggregate
 {
     public class OrderItem : AuditableEntity
     {
-        public OrderItem()
-        {
-        }
+        //public OrderItem()
+        //{
+        //}
 
         public OrderItem(OrderedProductItem item, decimal price, int quantity)
         {

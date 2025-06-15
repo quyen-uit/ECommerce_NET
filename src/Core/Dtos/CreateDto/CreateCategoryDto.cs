@@ -7,7 +7,7 @@ namespace Core.Dtos.CreateDto
     {
         [Required]
         [MaxLength(20)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         [Required]
         public int Order { get; set; }
         public bool IsActive { get; set; }

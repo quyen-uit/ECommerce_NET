@@ -8,11 +8,11 @@ namespace Core.Dtos.CreateDto
     {
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
 
-        public string PhotoUrl { get; set; }
-        public List<ProductSize> Size { get; set; }
+        public string? PhotoUrl { get; set; }
+        public List<ProductSize> Size { get; set; } = new List<ProductSize>();
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
         [Required]

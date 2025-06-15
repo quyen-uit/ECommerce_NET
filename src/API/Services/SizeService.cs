@@ -51,7 +51,7 @@ namespace API.Services
 
         public async Task<IReadOnlyList<SizeDto>> GetAllSizesAsync(SizeSpecParams specParams)
         {
-            var spec = new SizeWithParamsAndPaginationSpec(specParams);
+            var spec = new SizeWithParamsSpec(specParams);
             var entities = await _sizeRepository.GetAllWithSpecAsync(spec);
             return entities.Adapt<IReadOnlyList<SizeDto>>();
         }

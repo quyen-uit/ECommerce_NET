@@ -6,13 +6,13 @@ namespace Core.Entities
     public class Review : AuditableEntity
     {
         public long ProductId { get; set; }
-        public Product Product { get; set; }
+        public Product Product { get; set; } = default!;
 
-        public string AppUserId { get; set; }
-        public AppUser AppUser { get; set; }
+        public string AppUserId { get; set; } = string.Empty;
+        public AppUser AppUser { get; set; } = default!;
 
         public int Rating { get; set; }
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 
 }

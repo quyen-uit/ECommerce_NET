@@ -10,8 +10,8 @@ namespace Core.Specifications.Categories
     public class CategorySpecParams : QueryStringParameter
     {
         public bool? IsActive { get; set; }
-        public string Sort { get; set; }
-        private string _search;
+        public string? Sort { get; set; }
+        private string _search = string.Empty;
         public string Search
         {
             get => _search;

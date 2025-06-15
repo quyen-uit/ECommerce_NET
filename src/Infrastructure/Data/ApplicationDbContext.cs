@@ -58,6 +58,7 @@ namespace Infrastructure.Data
                         .HasIdentityOptions(startValue: 10);
                 }
             }
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 

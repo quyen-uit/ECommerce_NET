@@ -5,19 +5,19 @@ namespace Core.Dtos
     public class AddressDto
     {
         [Required]
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
         [Required]
-        public string LastName { get; set; }
+        public required string LastName { get; set; }
         [Required]
-        public string HouseNumber { get; set; }
+        public required string HouseNumber { get; set; }
         [Required]
-        public string Street { get; set; }
+        public required string Street { get; set; }
         [Required]
-        public string Ward { get; set; }
+        public required string Ward { get; set; }
         [Required]
-        public string District { get; set; }
+        public required string District { get; set; }
         [Required]
-        public string City { get; set; }
+        public required string City { get; set; }
         [Required]
         public int ZipCode { get; set; }
     }

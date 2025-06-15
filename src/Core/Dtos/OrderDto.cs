@@ -2,8 +2,8 @@
 {
     public class OrderDto
     {
-        public string BasketId { get; set; }
+        public required string BasketId { get; set; }
         public int DeliveryMethod { get; set; }
-        public AddressDto ShipToAddress { get; set; }
+        public required AddressDto ShipToAddress { get; set; }
     }
 }

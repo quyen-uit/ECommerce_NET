@@ -6,11 +6,11 @@ namespace Core.Dtos.CreateDto
     {
         [Required]
         [MaxLength(20)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         [Required]
         [MaxLength(7)]
         [MinLength(7)]
-        public string HexCode { get; set; }
+        public required string HexCode { get; set; }
 
     }
 

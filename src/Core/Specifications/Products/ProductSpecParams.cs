@@ -8,8 +8,8 @@ namespace Core.Specifications.Products
         public int? CategoryId { get; set; }
         public bool? IsNew { get; set; }
         public bool? IsTrending { get; set; }
-        public string Sort { get; set; }
-        private string _search;
+        public string? Sort { get; set; }
+        private string _search = string.Empty;
         public string Search
         {
             get => _search;

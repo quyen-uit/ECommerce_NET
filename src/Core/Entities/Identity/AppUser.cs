@@ -4,8 +4,8 @@ namespace Core.Entities.Identity
 {
     public class AppUser : IdentityUser
     {
-        public string DisplayName { get; set; }
-        public Address Address { get; set; }
-        public ICollection<Wishlist> Wishlists { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
+        public Address Address { get; set; } = default!; // Navigation property
+        public ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
     }
 }

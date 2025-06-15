@@ -54,7 +54,7 @@ namespace API.Services
 
         public async Task<IReadOnlyList<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams)
         {
-            var spec = new ColorWithParamsAndPaginationSpec(specParams);
+            var spec = new ColorWithParamsSpec(specParams);
             var colors = await _colorRepository.GetAllWithSpecAsync(spec);
             return colors.Adapt<IReadOnlyList<ColorDto>>();
         }

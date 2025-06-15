@@ -5,19 +5,19 @@ namespace Core.Dtos
     public class ColorDto
     {
         public long Id { get; set; }
-        public string Name { get; set; }
-        public string HexCode { get; set; }
+        public required string Name { get; set; }
+        public required string HexCode { get; set; }
     }
 
     public class CreateColorDto
     {
         [Required]
         [MaxLength(20)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [RegularExpression(@"^#(?:[0-9a-fA-F]{3}){1,2}$", ErrorMessage = "Hex code is not valid")]
-        public string HexCode { get; set; }
+        public required string HexCode { get; set; }
     }
 
     public class UpdateColorDto : CreateColorDto

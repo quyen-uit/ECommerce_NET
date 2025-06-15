@@ -22,6 +22,7 @@ namespace Core.Specifications.ProductBrands
                 )
             )
         {
+            AddPagination(specParams.PageSize, specParams.PageNumber);
             switch (specParams.Sort)
             {
                 case "name_asc":

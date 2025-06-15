@@ -6,7 +6,7 @@ namespace Core.Dtos
     public class SizeDto
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public int SortOrder { get; set; }
         public SizeType SizeType { get; set; }
     }
@@ -15,7 +15,7 @@ namespace Core.Dtos
     {
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public int SortOrder { get; set; }
         public SizeType SizeType { get; set; }

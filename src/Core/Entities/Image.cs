@@ -6,7 +6,7 @@ namespace Core.Entities
 
     public class Image : AuditableEntity
     {
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
 
         public long ReferenceId { get; set; }
 

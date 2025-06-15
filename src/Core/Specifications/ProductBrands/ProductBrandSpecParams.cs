@@ -9,8 +9,8 @@ namespace Core.Specifications.ProductBrands
 {
     public class ProductBrandSpecParams : QueryStringParameter
     {
-        public string Sort { get; set; }
-        private string _search;
+        public string? Sort { get; set; }
+        private string _search = string.Empty;
         public string Search
         {
             get => _search;

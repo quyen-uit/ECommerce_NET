@@ -3,9 +3,9 @@ namespace Core.Entities.OrderAggregate
 {
     public class Address
     {
-        public Address()
-        {
-        }
+        //public Address()
+        //{
+        //}
 
         public Address(string firstName, string lastName, string houseNumber, string street, string ward, string district, string city, int zipCode)
         {

@@ -15,13 +15,13 @@ namespace Core.Common
             Criteria = criteria;
         }
 
-        public Expression<Func<T, bool>> Criteria { get; }
+        public Expression<Func<T, bool>> Criteria { get; } = null!;
 
         public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
 
-        public Expression<Func<T, object>> OrderBy { get; private set; }
+        public Expression<Func<T, object>> OrderBy { get; private set; } = null!;
 
-        public Expression<Func<T, object>> OrderByDescending { get; private set; }
+        public Expression<Func<T, object>> OrderByDescending { get; private set; } = null!;
 
         public List<string> IncludeStrings { get; } = new List<string>();
 
