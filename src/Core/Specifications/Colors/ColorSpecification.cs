@@ -4,18 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Core.Common;
+using Core.Common.Specifications;
 using Core.Entities;
 using Core.Specifications.Products;
 
-namespace Core.Specifications.Sizes
+namespace Core.Specifications.Colors
 {
-    public class SizeWithParamsSpec : BaseSpecification<Size>
+    public class ColorSpecification : BaseSpecification<Color>
     {
-        public SizeWithParamsSpec(SizeSpecParams specParams)
+        public ColorSpecification() { }
+
+        public ColorSpecification(ColorSpecParams specParams)
             : base(x =>
-                string.IsNullOrEmpty(specParams.Search)
-                || x.Name.ToLower().Contains(specParams.Search.ToLower())
+                (
+                    (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
+                    && (string.IsNullOrEmpty(specParams.Filter.HexCode) || x.HexCode.ToLower().Contains(specParams.Filter.HexCode.ToLower()))
+                )
             )
         {
             AddPagination(specParams.PageSize, specParams.PageNumber);
@@ -27,14 +31,8 @@ namespace Core.Specifications.Sizes
                 case "name_desc":
                     AddOrderByDescending(x => x.Name);
                     break;
-                case "sort_order_asc":
-                    AddOrderBy(x => x.SortOrder);
-                    break;
-                case "sort_order_desc":
-                    AddOrderByDescending(x => x.SortOrder);
-                    break;
                 default:
-                    AddOrderBy(x => x.SortOrder);
+                    AddOrderBy(x => x.Name);
                     break;
             }
         }

@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using Core.Entities;
 using Core.Enums;
 
@@ -23,14 +23,11 @@ namespace Core.Entities
         public ICollection<ProductProperty> Properties { get; set; } = new List<ProductProperty>();
         public ICollection<Collection> Collections { get; set; } = new List<Collection>();
         public int Price { get; set; }
-        public List<ProductSize> Size { get; set; } = new List<ProductSize>();
-
     }
-
+    public class ProductProperty
+    {
+        public string Key { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
 }
 
-public class ProductProperty
-{
-    public string Key { get; set; } = string.Empty;
-    public string Value { get; set; } = string.Empty;
-}

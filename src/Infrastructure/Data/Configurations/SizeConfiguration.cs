@@ -18,8 +18,7 @@ namespace Infrastructure.Data.Configurations
         {
 
             builder.Property(s => s.Name)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .HasMaxLength(100);
             builder.Property(s => s.SizeType).HasConversion(
                 o => o.ToString(),
                 o => (SizeType)Enum.Parse(typeof(SizeType), o)

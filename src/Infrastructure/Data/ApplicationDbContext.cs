@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Core.Common;
+using Core.Common.Entities;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.Inventory;
@@ -35,8 +35,7 @@ namespace Infrastructure.Data
         public DbSet<ProductSku> ProductSkus => Set<ProductSku>();
         public DbSet<Collection> Collections => Set<Collection>();
         public DbSet<Wishlist> Wishlists => Set<Wishlist>();
-        public DbSet<Core.Entities.Identity.Address> Addresses =>
-            Set<Core.Entities.Identity.Address>();
+        public DbSet<Address> Addresses => Set<Address>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

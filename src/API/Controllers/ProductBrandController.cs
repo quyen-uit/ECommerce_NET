@@ -1,5 +1,7 @@
 ﻿using API.Errors;
 using API.Helpers;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
@@ -21,9 +23,6 @@ namespace API.Controllers
         public async Task<ActionResult<ProductBrandDto>> GetProductBrand(long id)
         {
             var brandDto = await _brandService.GetProductBrandByIdAsync(id);
-            if (brandDto == null)
-                return NotFound(new ApiException(404, "Brand not found"));
-
             return Ok(brandDto);
         }
 
@@ -33,16 +32,9 @@ namespace API.Controllers
             [FromBody] ProductBrandSpecParams specParams
         )
         {
-            var brandDtos = await _brandService.GetAllProductBrandsAsync(specParams);
+            var result = await _brandService.GetAllProductBrandsAsync(specParams);
 
-            return Ok(
-                new Pagination<ProductBrandDto>(
-                    pageNumber: specParams.PageNumber,
-                    pageSize: specParams.PageSize,
-                    pageCount: await _brandService.CountAllAsync(specParams),
-                    data: brandDtos
-                )
-            );
+            return Ok(result);
         }
 
         // ✅ POST: api/productbrand/create
@@ -53,9 +45,9 @@ namespace API.Controllers
         {
             var result = await _brandService.AddProductBrandAsync(brandDto);
             if (result == null)
-                return BadRequest(new ApiResponse(400, "Failed to create brand"));
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
-            return CreatedAtAction(nameof(GetProductBrand), new { id = result.Id }, result);
+            return Ok(result);
         }
 
         // ✅ POST: api/productbrand/create-many
@@ -66,7 +58,7 @@ namespace API.Controllers
         {
             var result = await _brandService.AddRangeProductBrandAsync(brandDtos);
             if (result == null || !result.Any())
-                return BadRequest(new ApiResponse(400, "Failed to create brands"));
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
             return Ok(result);
         }
@@ -78,9 +70,6 @@ namespace API.Controllers
         )
         {
             var result = await _brandService.UpdateProductBrandAsync(brandDto);
-            if (result == null)
-                return NotFound(new ApiException(404, "Brand not found"));
-
             return Ok(result);
         }
 
@@ -88,11 +77,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse>> DeleteProductBrand(long id)
         {
-            var success = await _brandService.DeleteProductBrandAsync(id);
-            if (!success)
-                return NotFound(new ApiException(404, "Brand not found"));
-
-            return Ok(new ApiResponse(200, "Brand deleted successfully"));
+            await _brandService.DeleteProductBrandAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
         }
     }
 }

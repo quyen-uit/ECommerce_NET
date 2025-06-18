@@ -1,17 +1,10 @@
-﻿using Core.Common;
+﻿using Core.Common.Specifications;
 
 namespace Core.Specifications.Colors
 {
     public class ColorSpecParams : QueryStringParameter
     {
-        public string? Sort { get; set; }
-        public ColorFilterParameter Filter { get; set; } = null!;
-        private string _search = string.Empty;
-        public string Search
-        {
-            get => _search;
-            set => _search = value != null ? value.ToLower() : "";
-        }
+        public ColorFilterParameter Filter { get; set; } = new ColorFilterParameter();
     }
     public class ColorFilterParameter
     {

@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using Core.Interfaces;
 using Core.Interfaces.Reposiories;
 using Infrastructure.Data.Repositories;
@@ -16,7 +16,7 @@ namespace Infrastructure.Data
             _context = context;
         }
 
-        private Hashtable _repositories;
+        private Hashtable _repositories = new Hashtable();
         public async Task<int> Complete()
         {
             return await _context.SaveChangesAsync();
@@ -43,7 +43,7 @@ namespace Infrastructure.Data
                 _repositories.Add(entityType, repositoryInstance);
             }
 
-            return (IGenericRepository<TEntity>) _repositories[entityType];
+            return (IGenericRepository<TEntity>) _repositories[entityType]!;
         }
     }
 }

@@ -9,39 +9,7 @@ namespace Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.OwnsOne(o => o.ShipToAddress, a =>
-            {
-                a.WithOwner();
-                a.Property(s => s.FirstName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-                a.Property(s => s.LastName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-                a.Property(s => s.Street)
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                a.Property(s => s.Ward)
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                a.Property(s => s.District)
-                    .HasMaxLength(100)
-                    .IsRequired(); ;
-
-                a.Property(s => s.City)
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-                a.Property(s => s.HouseNumber)
-                        .HasMaxLength(100)
-                        .IsRequired();
-            });
-
-            builder.Navigation(o => o.ShipToAddress).IsRequired();
+            // builder.Navigation(o => o.ShipToAddress).IsRequired();
 
             builder.Property(s => s.Status).HasConversion(
                 o => o.ToString(),

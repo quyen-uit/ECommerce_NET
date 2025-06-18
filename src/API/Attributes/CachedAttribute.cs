@@ -39,7 +39,7 @@ namespace API.Attributes
 
             if (excecutedContext.Result is OkObjectResult okObjectResult)
             {
-                await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds));
+                await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value!, TimeSpan.FromSeconds(_timeToLiveSeconds));
             }
         }
 

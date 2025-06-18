@@ -89,6 +89,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Slug")
@@ -134,11 +135,12 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Identity.Address", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
@@ -148,6 +150,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedDatetime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("District")
                         .IsRequired()
@@ -174,6 +179,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<DateTime?>("UpdatedDatetime")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Ward")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -181,8 +189,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId")
-                        .IsUnique();
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("Addresses");
                 });
@@ -200,6 +207,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -278,6 +286,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -418,12 +427,10 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -486,7 +493,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDatetime")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<long?>("DeliveryMethodId")
+                    b.Property<long>("DeliveryMethodId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("OrderDate")
@@ -497,6 +504,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("PaymentType")
                         .HasColumnType("integer");
+
+                    b.Property<long>("ShipToAddressId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -511,6 +521,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeliveryMethodId");
+
+                    b.HasIndex("ShipToAddressId");
 
                     b.ToTable("Orders");
                 });
@@ -626,9 +638,6 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductBrandId")
                         .HasColumnType("bigint");
 
-                    b.PrimitiveCollection<int[]>("Size")
-                        .HasColumnType("integer[]");
-
                     b.Property<DateTime?>("UpdatedDatetime")
                         .HasColumnType("timestamp without time zone");
 
@@ -728,7 +737,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Reason")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ReturnDate")
@@ -801,9 +809,11 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
                     b.Property<string>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Comment")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDatetime")
@@ -863,6 +873,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
                     b.Property<string>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDatetime")
@@ -1043,8 +1054,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Identity.Address", b =>
                 {
                     b.HasOne("Core.Entities.Identity.AppUser", "AppUser")
-                        .WithOne("Address")
-                        .HasForeignKey("Core.Entities.Identity.Address", "AppUserId")
+                        .WithMany("Addresses")
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1096,63 +1107,19 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Entities.OrderAggregate.DeliveryMethod", "DeliveryMethod")
                         .WithMany()
-                        .HasForeignKey("DeliveryMethodId");
+                        .HasForeignKey("DeliveryMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.OwnsOne("Core.Entities.OrderAggregate.Address", "ShipToAddress", b1 =>
-                        {
-                            b1.Property<long>("OrderId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("District")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("FirstName")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("HouseNumber")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("LastName")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("Ward")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<int>("ZipCode")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
+                    b.HasOne("Core.Entities.Identity.Address", "ShipToAddress")
+                        .WithMany()
+                        .HasForeignKey("ShipToAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DeliveryMethod");
 
-                    b.Navigation("ShipToAddress")
-                        .IsRequired();
+                    b.Navigation("ShipToAddress");
                 });
 
             modelBuilder.Entity("Core.Entities.OrderAggregate.OrderItem", b =>
@@ -1171,7 +1138,6 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("text");
 
                             b1.Property<string>("ProductName")
-                                .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)");
 
@@ -1186,7 +1152,8 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("OrderItemId");
                         });
 
-                    b.Navigation("Item");
+                    b.Navigation("Item")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Core.Entities.PriceAdjustment", b =>
@@ -1214,7 +1181,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("ProductProperty", "Properties", b1 =>
+                    b.OwnsMany("Core.Entities.ProductProperty", "Properties", b1 =>
                         {
                             b1.Property<long>("ProductId")
                                 .HasColumnType("bigint");
@@ -1224,9 +1191,11 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("integer");
 
                             b1.Property<string>("Key")
+                                .IsRequired()
                                 .HasColumnType("text");
 
                             b1.Property<string>("Value")
+                                .IsRequired()
                                 .HasColumnType("text");
 
                             b1.HasKey("ProductId", "__synthesizedOrdinal");
@@ -1307,7 +1276,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Entities.Identity.AppUser", "AppUser")
                         .WithMany()
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Core.Entities.Product", "Product")
                         .WithMany("Reviews")
@@ -1324,7 +1295,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Entities.Identity.AppUser", "AppUser")
                         .WithMany("Wishlists")
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Core.Entities.ProductSku", "ProductSku")
                         .WithMany()
@@ -1395,7 +1368,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("Address");
+                    b.Navigation("Addresses");
 
                     b.Navigation("Wishlists");
                 });

@@ -11,7 +11,6 @@ namespace Infrastructure.Data.Configurations
         {
 
             builder.Property(o => o.TotalAmount).HasPrecision(18, 2);
-            builder.Property(o => o.Reason).IsRequired();
             builder.Property(s => s.Status).HasConversion(
                 o => o.ToString(),
                 o => (ReturnOrderStatus)Enum.Parse(typeof(ReturnOrderStatus), o)

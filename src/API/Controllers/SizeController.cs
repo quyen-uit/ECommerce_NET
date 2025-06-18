@@ -1,8 +1,8 @@
 ﻿using API.Errors;
-using API.Helpers;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
 using Core.Interfaces.Services;
-using Core.Specifications.Colors;
 using Core.Specifications.Sizes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,9 +21,6 @@ namespace API.Controllers
         public async Task<ActionResult<SizeDto>> GetSize(long id)
         {
             var dto = await _sizeService.GetSizeByIdAsync(id);
-            if (dto == null)
-                return NotFound(new ApiException(404, "Size not found"));
-
             return Ok(dto);
         }
 
@@ -32,22 +29,18 @@ namespace API.Controllers
             [FromBody] SizeSpecParams specParams
         )
         {
-            var dtos = await _sizeService.GetAllSizesAsync(specParams);
-            return Ok(
-                new Pagination<SizeDto>(
-                    pageNumber: specParams.PageNumber,
-                    pageSize: specParams.PageSize,
-                    pageCount: dtos.Count,
-                    data: dtos
-                )
-            );
+            var result = await _sizeService.GetAllSizesAsync(specParams);
+            return Ok(result);
         }
 
         [HttpPost("create")]
         public async Task<ActionResult<SizeDto>> CreateSize([FromBody] CreateSizeDto dto)
         {
             var result = await _sizeService.AddSizeAsync(dto);
-            return CreatedAtAction(nameof(GetSize), new { id = result.Id }, result);
+            if (result == null)
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
+
+            return Ok(result);
         }
 
         [HttpPost("create-many")]
@@ -56,6 +49,8 @@ namespace API.Controllers
         )
         {
             var result = await _sizeService.AddRangeSizeAsync(dtos);
+            if (result == null || !result.Any())
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
             return Ok(result);
         }
 
@@ -63,20 +58,14 @@ namespace API.Controllers
         public async Task<ActionResult<SizeDto>> UpdateSize([FromBody] UpdateSizeDto dto)
         {
             var result = await _sizeService.UpdateSizeAsync(dto);
-            if (result == null)
-                return NotFound(new ApiException(404, "Size not found"));
-
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse>> DeleteSize(long id)
         {
-            var success = await _sizeService.DeleteSizeAsync(id);
-            if (!success)
-                return NotFound(new ApiException(404, "Size not found"));
-
-            return Ok(new ApiResponse(200, "Size deleted successfully"));
+            await _sizeService.DeleteSizeAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
         }
     }
 }

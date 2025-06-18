@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Common;
+using Core.Common.Specifications;
 
 namespace Core.Specifications.Categories
 {
     public class CategorySpecParams : QueryStringParameter
     {
+        public CategoryFilter Filter { get; set; } = new CategoryFilter();
+    }
+
+    public class CategoryFilter
+    {
+        public string? Name { get; set; }
+        public string? ParentName { get; set; }
         public bool? IsActive { get; set; }
-        public string? Sort { get; set; }
-        private string _search = string.Empty;
-        public string Search
-        {
-            get => _search;
-            set => _search = value != null ? value.ToLower() : "";
-        }
     }
 }

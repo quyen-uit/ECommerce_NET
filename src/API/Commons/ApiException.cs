@@ -2,12 +2,12 @@
 {
     public class ApiException : ApiResponse
     {
-        public ApiException(int statusCode, string message = null, string detail = null)
+        public ApiException(int statusCode, string? message = null, string? detail = null)
             : base(statusCode, message)
         {
             Detail = detail;
         }
 
-        public string Detail { get; set; }
+        public string? Detail { get; set; }
     }
 }

@@ -1,101 +1,70 @@
-﻿using Core.Dtos;
-using API.Errors;
-using API.Helpers;
-using AutoMapper;
-using Core.Entities;
-using Core.Interfaces.Reposiories;
-using Core.Specifications;
-using Core.Specifications.Products;
-using Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
+﻿using API.Errors;
+using Core.Common;
+using Core.Constants;
+using Core.Dtos;
 using Core.Interfaces.Services;
-using API.Services;
-using Core.Dtos.CreateDto;
-using Stripe;
+using Core.Specifications.Products;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     public class ProductsController : ApiControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper;
 
-        public ProductsController(IMapper mapper, IProductService productService)
+        public ProductsController(IProductService productService)
         {
-            _mapper = mapper;
             _productService = productService;
         }
+        #region Admin APIs
+        //[Cached(600)]
+        [HttpPost("get-all")]
+        public async Task<ActionResult<Pagination<ProductDto>>> GetProductsFilterByName([FromBody] ProductFilterByNameSpecParams productSpecParams)
+        {
+            var result = await _productService.GetAllProductFilterByNameAsync(productSpecParams);
+            return Ok(result);
+        }
+        #endregion
 
         //[Cached(600)]
-        [HttpGet]
-        public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductSpecParams productSpecParams)
+        [HttpPost("get-all-by-id")]
+        public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromBody] ProductSpecParams productSpecParams)
         {
-            var products = await _productService.GetAllProductsAsync(productSpecParams);
-            var produtDtos = _mapper.Map<IReadOnlyList<ProductDto>>(products);
-
-            var count = await _productService.CountAllProductsAsync(productSpecParams);
-            return Ok(new Pagination<ProductDto>(productSpecParams.PageNumber, productSpecParams.PageSize, count, produtDtos));
+            var result = await _productService.GetAllProductsAsync(productSpecParams);
+            return Ok(result);
         }
 
         //[Cached(600)]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<Core.Entities.Product>>> GetProduct(int id)
+        public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-
-            if (product != null)
-            {
-                return Ok(_mapper.Map<ProductDto>(product));
-            }
-            else
-            {
-                return NotFound(new ApiException(404));
-            }
+            return Ok(product);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<ProductDto>> PostProduct(CreateProductDto productDto)
         {
             var result = await _productService.AddProductAsync(productDto);
-
             if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating fail"));
-            }
-            return Ok(_mapper.Map<ProductDto>(result));
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
+
+            return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, CreateProductDto productDto)
+        [HttpPost("update")]
+        public async Task<IActionResult> PutProduct(UpdateProductDto productDto)
         {
-            var result = await _productService.UpdateProductAsync(id, productDto);
-
-            if (result == null)
-            {
-                return BadRequest(new ApiResponse(400, "Updating fail"));
-            }
-            return Ok(_mapper.Map<ProductDto>(result));
+            var result = await _productService.UpdateProductAsync(productDto);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
-            {
-                return NotFound(new ApiException(404));
-            }
-
-            var result = await _productService.DeleteProductAsync(id);
-
-            if (result < 0)
-            {
-                return BadRequest(new ApiResponse(400, "Deleting fail"));
-            }
-            return Ok(new ApiResponse(200, "Deleting succesfully"));
+            await _productService.DeleteProductAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
         }
 
 

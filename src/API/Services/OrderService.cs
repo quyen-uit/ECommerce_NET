@@ -1,4 +1,6 @@
-﻿using Core.Entities;
+﻿using Core.Constants;
+using Core.Entities;
+using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
 using Core.Interfaces.Reposiories;
@@ -19,7 +21,7 @@ namespace API.Services
             _basketRepository = basketRepository;
         }
 
-        public async Task<Order> CreateOrderAsync(string buyerEmail, long deliveryId, string basketId, Address shipAddress)
+        public async Task<Order?> CreateOrderAsync(string buyerEmail, long deliveryId, string basketId, Address shipAddress)
         {
             // get basket   
             var basket = await _basketRepository.GetBasketAsync(basketId);
@@ -27,22 +29,25 @@ namespace API.Services
             //get item from product
             var items = new List<OrderItem>();
 
-            foreach (var basketItem in basket.Items)
+            foreach (var basketItem in basket!.Items)
             {
                 var product = await _unitOfWork.Repository<Product>().GetByIdAsync(basketItem.Id);
-
-                OrderedProductItem orderProductItem = new OrderedProductItem(product.Id, product.Name, product.PhotoUrl);
+                if (product == null)
+                    throw new NotFoundException(CommonMessage.NotFoundProduct);
+                OrderedProductItem orderProductItem = new OrderedProductItem(product.Id, product.Name, product.PhotoUrl!);
                 OrderItem orderItem = new OrderItem(orderProductItem, basketItem.Price, basketItem.Quantity);
 
                 items.Add(orderItem);
             }
             // get delivery method
             var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryId);
+            if (deliveryMethod == null)
+                throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
 
             decimal subTotal = items.Sum(i => i.Price * i.Quantity);
 
             // check order exist
-            var spec = new OrderByPaymentIntentIdSpecification(basket.PaymentIntentId);
+            var spec = new OrderByPaymentIntentIdSpecification(basket.PaymentIntentId!);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
 
             if (order != null)
@@ -51,11 +56,11 @@ namespace API.Services
                 order.DeliveryMethod = deliveryMethod;
                 order.Subtotal = subTotal;
                 _unitOfWork.Repository<Order>().Update(order);
-            } 
+            }
             else
             {
                 //create order
-                order = new Order(items, buyerEmail, shipAddress, subTotal, deliveryMethod, basket.PaymentIntentId);
+                order = new Order(items, buyerEmail, shipAddress, subTotal, deliveryMethod, basket.PaymentIntentId!);
                 _unitOfWork.Repository<Order>().Add(order);
             }
 
@@ -80,6 +85,8 @@ namespace API.Services
         {
             var spec = new OrdersWithItemsAndOrderingSpecification(id, email);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
+            if (order == null)
+                throw new NotFoundException(CommonMessage.NotFoundOrder);
             return order;
         }
 

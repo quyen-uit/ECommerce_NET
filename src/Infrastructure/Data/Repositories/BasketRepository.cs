@@ -19,19 +19,19 @@ namespace Infrastructure.Data.Repositories
             return await _database.KeyDeleteAsync(id);
         }
 
-        public async Task<CustomerBasket> GetBasketAsync(string id)
+        public async Task<CustomerBasket?> GetBasketAsync(string id)
         {
             var data = await _database.StringGetAsync(id);
-            return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data);
+            return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data!);
         }
 
-        public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
+        public async Task<CustomerBasket?> UpdateBasketAsync(CustomerBasket basket)
         {
             var created = await _database.StringSetAsync(basket.Id, JsonSerializer.Serialize(basket), TimeSpan.FromHours(1));
 
             if (!created) return null;
 
-            return await GetBasketAsync(basket.Id);
+            return await GetBasketAsync(basket.Id!);
         }
     }
 }

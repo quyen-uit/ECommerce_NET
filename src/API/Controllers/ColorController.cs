@@ -1,5 +1,6 @@
 ﻿using API.Errors;
-using API.Helpers;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
@@ -21,9 +22,6 @@ namespace API.Controllers
         public async Task<ActionResult<ColorDto>> GetColor(long id)
         {
             var colorDto = await _colorService.GetColorByIdAsync(id);
-            if (colorDto == null)
-                return NotFound(new ApiException(404, "Color not found"));
-
             return Ok(colorDto);
         }
 
@@ -33,16 +31,8 @@ namespace API.Controllers
             [FromBody] ColorSpecParams specParams
         )
         {
-            var colorDtos = await _colorService.GetAllColorsAsync(specParams);
-
-            return Ok(
-                new Pagination<ColorDto>(
-                    pageNumber: specParams.PageNumber,
-                    pageSize: specParams.PageSize,
-                    pageCount: colorDtos.Count,
-                    data: colorDtos
-                )
-            );
+            var result = await _colorService.GetAllColorsAsync(specParams);
+            return Ok(result);
         }
 
         // ✅ POST: api/color/create
@@ -51,9 +41,9 @@ namespace API.Controllers
         {
             var result = await _colorService.AddColorAsync(colorDto);
             if (result == null)
-                return BadRequest(new ApiResponse(400, "Failed to create color"));
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
-            return CreatedAtAction(nameof(GetColor), new { id = result.Id }, result);
+            return Ok(result);
         }
 
         // ✅ POST: api/color/create-many
@@ -64,7 +54,7 @@ namespace API.Controllers
         {
             var result = await _colorService.AddRangeColorAsync(colorDtos);
             if (result == null || !result.Any())
-                return BadRequest(new ApiResponse(400, "Failed to create colors"));
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
             return Ok(result);
         }
@@ -74,9 +64,6 @@ namespace API.Controllers
         public async Task<ActionResult<ColorDto>> UpdateColor([FromBody] UpdateColorDto colorDto)
         {
             var result = await _colorService.UpdateColorAsync(colorDto);
-            if (result == null)
-                return NotFound(new ApiException(404, "Color not found"));
-
             return Ok(result);
         }
 
@@ -84,11 +71,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse>> DeleteColor(long id)
         {
-            var success = await _colorService.DeleteColorAsync(id);
-            if (!success)
-                return NotFound(new ApiException(404, "Color not found"));
-
-            return Ok(new ApiResponse(200, "Color deleted successfully"));
+            await _colorService.DeleteColorAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
         }
     }
 }

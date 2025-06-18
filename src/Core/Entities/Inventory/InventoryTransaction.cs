@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using Core.Enums;
 
 namespace Core.Entities.Inventory

@@ -21,7 +21,7 @@ namespace API.Helpers.ValueResolvers
             {
                 return _config["ApiUrl"] + source.Item.PhotoUrl; 
             }
-            return null;
+            return string.Empty;
         }
     }
 }

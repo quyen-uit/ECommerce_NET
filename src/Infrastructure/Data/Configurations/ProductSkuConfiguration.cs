@@ -10,8 +10,7 @@ namespace Infrastructure.Data.Configurations
         {
             builder
                 .Property(p => p.SkuCode)
-                .HasMaxLength(50)
-                .IsRequired();
+                .HasMaxLength(50);
         }
     }
 }

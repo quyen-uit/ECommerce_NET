@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Core.Common;
+using Core.Common.Specifications;
 using Core.Entities;
 using Core.Specifications.Products;
 
 namespace Core.Specifications.ProductBrands
 {
-    public class ProductBrandWithParamsSpec : BaseSpecification<ProductBrand>
+    public class ProductBrandSpecification : BaseSpecification<ProductBrand>
     {
-        public ProductBrandWithParamsSpec() { }
+        public ProductBrandSpecification() { }
 
-        public ProductBrandWithParamsSpec(ProductBrandSpecParams specParams)
+        public ProductBrandSpecification(ProductBrandSpecParams specParams)
             : base(x =>
                 (
-                    string.IsNullOrEmpty(specParams.Search)
-                    || x.Name.ToLower().Contains(specParams.Search)
+                    string.IsNullOrEmpty(specParams.Filter.Name)
+                    || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower())
                 )
             )
         {

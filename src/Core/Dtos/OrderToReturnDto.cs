@@ -7,7 +7,7 @@ namespace Core.Dtos
         public int Id { get; set; }
         public string? BuyerEmail { get; set; }
         public DateTime OrderDate { get; set; }
-        public required Address ShipToAddress { get; set; }
+        // public required Address ShipToAddress { get; set; }
         public required string DeliveryMethod { get; set; }
         public decimal ShippingPrice { get; set; }
         public decimal Subtotal { get; set; }

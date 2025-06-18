@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 
 namespace Core.Entities.ReturnOrder
 {

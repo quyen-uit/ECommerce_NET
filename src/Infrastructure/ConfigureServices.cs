@@ -23,7 +23,7 @@ namespace Infrastructure
 
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
-                var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis"));
+                var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis")!);
                 return ConnectionMultiplexer.Connect(options);
             });
 

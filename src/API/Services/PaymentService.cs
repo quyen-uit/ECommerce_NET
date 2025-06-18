@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Core.Constants;
+using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Enums;
 using Core.Interfaces;
@@ -29,12 +30,16 @@ namespace API.Services
             StripeConfiguration.ApiKey = _config["StripeSettings:SecretKey"];
 
             var basket = await _basketRepository.GetBasketAsync(basketId);
-            if (basket == null) { return null; }
+            if (basket == null)
+                throw new NotFoundException(CommonMessage.NotFoundBasket);
 
             var shippingPrice = 0m;
             if (basket.DeliveryMethodId.HasValue)
             {
                 var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(basket.DeliveryMethodId.Value);
+                if (deliveryMethod == null)
+                    throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
+
                 shippingPrice = deliveryMethod.Price;
             }
 
@@ -42,6 +47,9 @@ namespace API.Services
             foreach (var item in basket.Items)
             {
                 var product = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
+                if (product == null)
+                    throw new NotFoundException(CommonMessage.NotFoundProduct);
+
                 if (product.Price != item.Price)
                 {
                     item.Price = product.Price;
@@ -83,7 +91,8 @@ namespace API.Services
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
 
-            if (order == null) return null;
+            if (order == null)
+                throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentFailed;
             await _unitOfWork.Complete();
@@ -95,7 +104,8 @@ namespace API.Services
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
 
-            if (order == null) return null;
+            if (order == null)
+                throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentReceived;
             await _unitOfWork.Complete();

@@ -1,69 +1,93 @@
-﻿using AutoMapper;
-using Core.Dtos.CreateDto;
+﻿using Core.Common;
+using Core.Constants;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
+using Mapster;
 
 namespace API.Services
 {
     public class ProductService : IProductService
     {
         private readonly IGenericRepository<Product> _productRepository;
-        private readonly IMapper _mapper;
 
-        public ProductService(IGenericRepository<Product> productRepository, IMapper mapper)
+        public ProductService(IGenericRepository<Product> productRepository)
         {
             _productRepository = productRepository;
-            _mapper = mapper;
         }
 
-        public async Task<Product> AddProductAsync(CreateProductDto productDto)
+        public async Task<ProductDto> AddProductAsync(CreateProductDto productDto)
         {
-            var product = _mapper.Map<Product>(productDto);
+            var product = productDto.Adapt<Product>();
 
             _productRepository.Add(product);
             await _productRepository.Complete();
 
-            return await GetProductByIdAsync(product.Id);
+            return product.Adapt<ProductDto>();
         }
 
-        public async Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams)
-        {
-            var countSpec = new ProductsWithFiltersForCountSpecification(productSpecParams);
-            return await _productRepository.CountAsync(countSpec);
-        }
+        // public async Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams)
+        // {
+        //     var countSpec = new ProductsWithFiltersForCountSpecification(productSpecParams);
+        //     return await _productRepository.CountAsync(countSpec);
+        // }
 
-        public async Task<long> DeleteProductAsync(long id)
+        public async Task DeleteProductAsync(long id)
         {
+            var existing = await _productRepository.GetByIdAsync(id);
+            if (existing == null)
+                throw new NotFoundException(CommonMessage.NotFoundProduct);
             _productRepository.Delete(id);
-            return await _productRepository.Complete();
+            await _productRepository.Complete();
         }
 
-        public async Task<IReadOnlyList<Product>> GetAllProductsAsync(ProductSpecParams productSpecParams)
+        public async Task<Pagination<ProductDto>> GetAllProductFilterByNameAsync(ProductFilterByNameSpecParams productSpecParams)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
             var products = await _productRepository.GetAllWithSpecAsync(spec);
-            return products;
+            var count = await _productRepository.CountAsync(spec);
+            return new Pagination<ProductDto>(
+                    pageNumber: productSpecParams.PageNumber,
+                    pageSize: productSpecParams.PageSize,
+                    pageCount: count,
+                    data: products.Adapt<IReadOnlyList<ProductDto>>()
+                );
         }
 
-        public async Task<Product> GetProductByIdAsync(long id)
+        public async Task<Pagination<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpecParams)
+        {
+            var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
+            var products = await _productRepository.GetAllWithSpecAsync(spec);
+            var count = await _productRepository.CountAsync(spec);
+            return new Pagination<ProductDto>(
+                    pageNumber: productSpecParams.PageNumber,
+                    pageSize: productSpecParams.PageSize,
+                    pageCount: count,
+                    data: products.Adapt<IReadOnlyList<ProductDto>>()
+                );
+        }
+
+        public async Task<ProductDto> GetProductByIdAsync(long id)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
-            var products = await _productRepository.GetEntityWithSpecAsync(spec);
-            return products;
+            var product = await _productRepository.GetEntityWithSpecAsync(spec);
+            if (product == null)
+                throw new NotFoundException(CommonMessage.NotFoundProduct);
+            return product.Adapt<ProductDto>();
         }
 
-        public async Task<Product> UpdateProductAsync(long id, CreateProductDto productDto)
+        public async Task<ProductDto> UpdateProductAsync(UpdateProductDto productDto)
         {
+            var existing = await _productRepository.GetByIdAsync(productDto.Id);
+            if (existing == null)
+                throw new NotFoundException(CommonMessage.NotFoundProduct);
 
-            var product = _mapper.Map<Product>(productDto);
-            product.Id = id;
-
-            _productRepository.Update(product);
+            existing = productDto.Adapt<Product>();
             await _productRepository.Complete();
 
-            return await GetProductByIdAsync(id);
+            return existing.Adapt<ProductDto>();
         }
 
     }

@@ -1,8 +1,7 @@
 ﻿using API.Errors;
-using API.Helpers;
-using AutoMapper;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
-using Core.Entities;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +21,6 @@ namespace API.Controllers
         public async Task<ActionResult<CategoryDto>> GetCategory(long id)
         {
             var dto = await _categoryService.GetCategoryByIdAsync(id);
-            if (dto == null)
-                return NotFound(new ApiException(404, "Category not found"));
-
             return Ok(dto);
         }
 
@@ -33,15 +29,15 @@ namespace API.Controllers
             [FromBody] CategorySpecParams specParams
         )
         {
-            var dtos = await _categoryService.GetAllCategoriesAsync(specParams);
-            return Ok(
-                new Pagination<CategoryDto>(
-                    pageNumber: specParams.PageNumber,
-                    pageSize: specParams.PageSize,
-                    pageCount: dtos.Count,
-                    data: dtos
-                )
-            );
+            var result = await _categoryService.GetAllCategoriesAsync(specParams);
+            return Ok(result);
+        }
+
+        [HttpGet("hierarchy")]
+        public async Task<ActionResult<List<CategoryNodeDto>>> GetHierarchyCategories()
+        {
+            var result = await _categoryService.GetCategoriesHierarchyAsync();
+            return Ok(result);
         }
 
         [HttpPost("create")]
@@ -50,7 +46,10 @@ namespace API.Controllers
         )
         {
             var result = await _categoryService.AddCategoryAsync(dto);
-            return CreatedAtAction(nameof(GetCategory), new { id = result.Id }, result);
+            if (result == null)
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
+
+            return Ok(result);
         }
 
         [HttpPost("create-many")]
@@ -59,6 +58,8 @@ namespace API.Controllers
         )
         {
             var result = await _categoryService.AddRangeCategoryAsync(dtos);
+            if (result == null || !result.Any())
+                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
             return Ok(result);
         }
 
@@ -68,20 +69,14 @@ namespace API.Controllers
         )
         {
             var result = await _categoryService.UpdateCategoryAsync(dto);
-            if (result == null)
-                return NotFound(new ApiException(404, "Category not found"));
-
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse>> DeleteCategory(long id)
         {
-            var success = await _categoryService.DeleteCategoryAsync(id);
-            if (!success)
-                return NotFound(new ApiException(404, "Category not found"));
-
-            return Ok(new ApiResponse(200, "Category deleted successfully"));
+            await _categoryService.DeleteCategoryAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
         }
     }
 }

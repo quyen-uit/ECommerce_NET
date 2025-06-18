@@ -8,7 +8,7 @@ public static class MapsterConfig
     {
         TypeAdapterConfig<CreateColorDto, Color>.NewConfig();
         TypeAdapterConfig<UpdateColorDto, Color>.NewConfig();
-        TypeAdapterConfig<Color, ColorDto>.NewConfig();
+        TypeAdapterConfig<Color, ColorDto>.NewConfig().TwoWays();
 
         TypeAdapterConfig<CreateSizeDto, Size>.NewConfig();
         TypeAdapterConfig<UpdateSizeDto, Size>.NewConfig();
@@ -16,10 +16,20 @@ public static class MapsterConfig
 
         TypeAdapterConfig<CreateCategoryDto, Category>.NewConfig();
         TypeAdapterConfig<UpdateCategoryDto, Category>.NewConfig();
-        TypeAdapterConfig<Category, CategoryDto>.NewConfig();
+        TypeAdapterConfig<Category, CategoryDto>.NewConfig().TwoWays();
 
-        TypeAdapterConfig<ProductBrandDto, ProductBrand>.NewConfig();
+        TypeAdapterConfig<CreateProductBrandDto, ProductBrand>.NewConfig();
         TypeAdapterConfig<UpdateProductBrandDto, ProductBrand>.NewConfig();
-        TypeAdapterConfig<ProductBrand, ProductBrandDto>.NewConfig();
+        TypeAdapterConfig<ProductBrand, ProductBrandDto>.NewConfig().TwoWays();
+
+        TypeAdapterConfig<CreateProductDto, Product>.NewConfig();
+        TypeAdapterConfig<UpdateProductDto, Product>.NewConfig();
+        TypeAdapterConfig<Product, ProductDto>.NewConfig().TwoWays();;
+        TypeAdapterConfig<ProductPropertyDto, ProductProperty>.NewConfig().TwoWays();
+
+        TypeAdapterConfig<CreateProductSkuDto, ProductSku>.NewConfig();
+        TypeAdapterConfig<UpdateProductSkuDto, ProductSku>.NewConfig();
+        TypeAdapterConfig<ProductSku, ProductSkuDto>.NewConfig().TwoWays(); ;
+
     }
 }

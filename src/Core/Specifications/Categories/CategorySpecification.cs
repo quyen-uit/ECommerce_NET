@@ -4,22 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Core.Common;
+using Core.Common.Specifications;
 using Core.Entities;
 using Core.Specifications.Products;
 
 namespace Core.Specifications.Categories
 {
-    public class CategoryWithParamsSpec : BaseSpecification<Category>
+    public class CategorySpecification : BaseSpecification<Category>
     {
-        public CategoryWithParamsSpec() { }
+        public CategorySpecification() { }
 
-        public CategoryWithParamsSpec(CategorySpecParams specParams)
-            : base(x =>
-                (
-                    string.IsNullOrEmpty(specParams.Search)
-                    || x.Name.ToLower().Contains(specParams.Search)
-                ) && (!specParams.IsActive.HasValue || x.IsActive == specParams.IsActive)
+        public CategorySpecification(CategorySpecParams specParams)
+            : base(x => (
+                string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
+                 && (string.IsNullOrEmpty(specParams.Filter.ParentName) || x.Parent!.Name.ToLower().Contains(specParams.Filter.ParentName.ToLower()))
+                 && (!specParams.Filter.IsActive.HasValue || x.IsActive == specParams.Filter.IsActive)
             )
         {
             AddPagination(specParams.PageSize, specParams.PageNumber);

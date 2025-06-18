@@ -2,7 +2,7 @@
 {
     public class ApiResponse
     {
-        public ApiResponse(int statusCode, string message = null)
+        public ApiResponse(int statusCode, string? message = null)
         {
             StatusCode = statusCode;
             Message = message ?? GetDefaultMessageFromStatusCode(statusCode);
@@ -20,7 +20,7 @@
                 401 => "Not authorized.",
                 404 => "Not found.",
                 500 => "Server errors.",
-                _ => null
+                _ => "Server errors."
             };
         }
     }

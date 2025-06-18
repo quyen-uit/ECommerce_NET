@@ -18,8 +18,7 @@ namespace Infrastructure.Data.Configurations
         {
 
             builder.Property(s => s.Name)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .HasMaxLength(100);
 
             
         }

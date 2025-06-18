@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
@@ -38,38 +40,45 @@ namespace API.Services
 
         public async Task<int> CountAllAsync(ColorSpecParams specParams)
         {
-            var countSpec = new ColorWithParamsSpec(specParams);
+            var countSpec = new ColorSpecification(specParams);
             return await _colorRepository.CountAsync(countSpec);
         }
 
-        public async Task<bool> DeleteColorAsync(long id)
+        public async Task DeleteColorAsync(long id)
         {
             var existing = await _colorRepository.GetByIdAsync(id);
             if (existing == null)
-                return false;
+                throw new NotFoundException(CommonMessage.NotFoundColor);
             _colorRepository.Delete(id);
             await _colorRepository.Complete();
-            return true;
         }
 
-        public async Task<IReadOnlyList<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams)
+        public async Task<Pagination<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams)
         {
-            var spec = new ColorWithParamsSpec(specParams);
+            var spec = new ColorSpecification(specParams);
             var colors = await _colorRepository.GetAllWithSpecAsync(spec);
-            return colors.Adapt<IReadOnlyList<ColorDto>>();
+            var count = await _colorRepository.CountAsync(spec);
+            return new Pagination<ColorDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: count,
+                    data: colors.Adapt<IReadOnlyList<ColorDto>>()
+                );
         }
 
         public async Task<ColorDto> GetColorByIdAsync(long id)
         {
             var color = await _colorRepository.GetByIdAsync(id);
-            return color?.Adapt<ColorDto>();
+            if (color == null)
+                throw new NotFoundException(CommonMessage.NotFoundColor);
+            return color.Adapt<ColorDto>();
         }
 
         public async Task<ColorDto> UpdateColorAsync(UpdateColorDto colorDto)
         {
             var existing = await _colorRepository.GetByIdAsync(colorDto.Id);
             if (existing == null)
-                return null;
+                throw new NotFoundException(CommonMessage.NotFoundColor);
 
             existing = colorDto.Adapt<Color>();
             await _colorRepository.Complete();

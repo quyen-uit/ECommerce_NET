@@ -22,7 +22,7 @@ namespace API.Controllers
         public ActionResult GetServerError()
         {
             var product = _context.Products.Find(-1);
-            var str = product.ToString();
+            var str = product!.ToString();
             return Ok();
         }
         [HttpGet("badrequest")]

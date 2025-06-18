@@ -16,12 +16,10 @@ namespace Infrastructure.Data.Configurations
 
             builder
                 .Property(p => p.Name)
-                .HasMaxLength(100)
-                .IsRequired();
+                .HasMaxLength(100);
 
             builder
-                .Property(p => p.Description)
-                .IsRequired();
+                .Property(p => p.Description);
 
             builder
                .HasMany(rv => rv.Reviews)

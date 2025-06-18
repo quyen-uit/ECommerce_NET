@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Entities

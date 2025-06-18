@@ -12,8 +12,7 @@ namespace Infrastructure.Data.Configurations
             {
                 i.WithOwner();
                 i.Property(p => p.ProductName)
-                .HasMaxLength(100)
-                .IsRequired();
+                .HasMaxLength(100);
             });
 
         }

@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using Core.Interfaces;
 using Core.Interfaces.Reposiories;
 using Microsoft.EntityFrameworkCore;
@@ -54,15 +54,15 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(long id)
+        public async Task<T?> GetByIdAsync(long id)
         {
             return await _context
                 .Set<T>()
                 .AsNoTracking()
-                .SingleOrDefaultAsync(entity => entity.Id == id);
+                .FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
-        public async Task<T> GetEntityWithSpecAsync(ISpecification<T> specification)
+        public async Task<T?> GetEntityWithSpecAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).FirstOrDefaultAsync();
         }

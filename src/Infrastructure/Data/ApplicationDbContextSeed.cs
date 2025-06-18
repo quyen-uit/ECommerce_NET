@@ -15,21 +15,22 @@ namespace Infrastructure.Data
         {
             if (!userManager.Users.Any())
             {
+                var listAddress = new List<Address>{new Address
+                {
+                    FirstName = "Quyen",
+                    LastName = "Dang",
+                    HouseNumber = "1/1",
+                    Ward = "W",
+                    District = "D",
+                    City = "C",
+                    Street = "11",
+                }};
                 var user = new AppUser
                 {
                     DisplayName = "Quyen",
                     UserName = "quyen123",
                     Email = "quyen@mail.com",
-                    Address = new Core.Entities.Identity.Address
-                    {
-                        FirstName = "Quyen",
-                        LastName = "Dang",
-                        HouseNumber = "1/1",
-                        Ward = "W",
-                        District = "D",
-                        City = "C",
-                        Street = "11",
-                    },
+                    Addresses = listAddress
                 };
 
                 await userManager.CreateAsync(user, "Admin@123");

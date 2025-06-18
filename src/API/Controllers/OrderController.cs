@@ -23,24 +23,24 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
-        {
-            var email = HttpContext.User.RetrieveEmailFromPrinciple();
-            var address = _mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);
-            var order = await _orderService.CreateOrderAsync(email, orderDto.DeliveryMethod, orderDto.BasketId, address);
-            if (order == null)
-            {
-                return BadRequest(new ApiResponse(400, "Creating order fail"));
-            }
-            return Ok(_mapper.Map<OrderToReturnDto>(order));
-        }
+        // [HttpPost]
+        // public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
+        // {
+        //     var email = HttpContext.User.RetrieveEmailFromPrinciple();
+        //     var address = _mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);
+        //     var order = await _orderService.CreateOrderAsync(email!, orderDto.DeliveryMethod, orderDto.BasketId, address);
+        //     if (order == null)
+        //     {
+        //         return BadRequest(new ApiResponse(400, "Creating order fail"));
+        //     }
+        //     return Ok(_mapper.Map<OrderToReturnDto>(order));
+        // }
 
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetOrders()
         {
             var email = HttpContext.User.RetrieveEmailFromPrinciple();
-            var orders = await _orderService.GetOrdersByEmailAsync(email);
+            var orders = await _orderService.GetOrdersByEmailAsync(email!);
             return Ok(_mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders));
         }
 
@@ -48,7 +48,7 @@ namespace API.Controllers
         public async Task<ActionResult<OrderToReturnDto>> GetOrderById(int id)
         {
             var email = HttpContext.User.RetrieveEmailFromPrinciple();
-            var order = await _orderService.GetOrderByIdAsync(id, email);
+            var order = await _orderService.GetOrderByIdAsync(id, email!);
             if (order == null)
             {
                 return NotFound(new ApiResponse(404));

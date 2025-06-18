@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Common;
+using Core.Common.Specifications;
 
 namespace Core.Specifications.ProductBrands
 {
     public class ProductBrandSpecParams : QueryStringParameter
     {
-        public string? Sort { get; set; }
-        private string _search = string.Empty;
-        public string Search
-        {
-            get => _search;
-            set => _search = value != null ? value.ToLower() : "";
-        }
+        public ProductBrandFilter Filter { get; set; } = new ProductBrandFilter();
+    }
+
+    public class ProductBrandFilter
+    {
+        public string? Name { get; set; }
     }
 }

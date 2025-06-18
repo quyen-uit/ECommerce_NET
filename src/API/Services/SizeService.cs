@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Core.Common;
+using Core.Constants;
 using Core.Dtos;
 using Core.Dtos.CreateDto;
 using Core.Entities;
@@ -38,35 +40,42 @@ namespace API.Services
             return entities.Adapt<IReadOnlyList<SizeDto>>();
         }
 
-        public async Task<bool> DeleteSizeAsync(long id)
+        public async Task DeleteSizeAsync(long id)
         {
             var existing = await _sizeRepository.GetByIdAsync(id);
             if (existing == null)
-                return false;
+                throw new NotFoundException(CommonMessage.NotFoundSize);
 
             _sizeRepository.Delete(id);
             await _sizeRepository.Complete();
-            return true;
         }
 
-        public async Task<IReadOnlyList<SizeDto>> GetAllSizesAsync(SizeSpecParams specParams)
+        public async Task<Pagination<SizeDto>> GetAllSizesAsync(SizeSpecParams specParams)
         {
-            var spec = new SizeWithParamsSpec(specParams);
+            var spec = new SizeSpecification(specParams);
             var entities = await _sizeRepository.GetAllWithSpecAsync(spec);
-            return entities.Adapt<IReadOnlyList<SizeDto>>();
+            var count = await _sizeRepository.CountAsync(spec);
+            return new Pagination<SizeDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: count,
+                    data: entities.Adapt<IReadOnlyList<SizeDto>>()
+                );
         }
 
         public async Task<SizeDto> GetSizeByIdAsync(long id)
         {
             var entity = await _sizeRepository.GetByIdAsync(id);
-            return entity?.Adapt<SizeDto>();
+            if (entity == null)
+                throw new NotFoundException(CommonMessage.NotFoundSize);
+            return entity.Adapt<SizeDto>();
         }
 
         public async Task<SizeDto> UpdateSizeAsync(UpdateSizeDto dto)
         {
             var existing = await _sizeRepository.GetByIdAsync(dto.Id);
             if (existing == null)
-                return null;
+                throw new NotFoundException(CommonMessage.NotFoundSize);
 
             existing = dto.Adapt<Size>();
             _sizeRepository.Update(existing);

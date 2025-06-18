@@ -18,11 +18,9 @@ namespace Infrastructure.Data.Configurations
         {
 
             builder.Property(s => s.Name)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .HasMaxLength(100);
             builder.Property(s => s.HexCode)
-                    .HasMaxLength(100)
-                    .IsRequired();
+                    .HasMaxLength(100);
 
         }
     }

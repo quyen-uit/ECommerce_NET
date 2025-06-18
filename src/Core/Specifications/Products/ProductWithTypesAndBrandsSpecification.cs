@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Specifications;
 using Core.Entities;
 
 namespace Core.Specifications.Products
@@ -15,34 +15,67 @@ namespace Core.Specifications.Products
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
-            AddIncludeString("ProductColors.Color");
         }
 
         public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams)
             : base(x =>
-            (string.IsNullOrEmpty(productSpecParams.Search) || x.Name.ToLower().Contains(productSpecParams.Search))
-            && (!productSpecParams.BrandId.HasValue || productSpecParams.BrandId == x.ProductBrandId)
-            && (!productSpecParams.CategoryId.HasValue || productSpecParams.CategoryId == x.CategoryId)
-            && (!productSpecParams.IsNew.HasValue || productSpecParams.IsNew == true)
-            && (!productSpecParams.IsTrending.HasValue || productSpecParams.IsTrending == true)
+            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || x.Name.ToLower().Contains(productSpecParams.Filter.Name.ToLower()))
+            && (!productSpecParams.Filter.ProductBrandId.HasValue || productSpecParams.Filter.ProductBrandId == x.ProductBrandId)
+            && (!productSpecParams.Filter.CategoryId.HasValue || productSpecParams.Filter.CategoryId == x.CategoryId)
+            && (!productSpecParams.Filter.IsNew.HasValue || productSpecParams.Filter.IsNew == true)
+            && (!productSpecParams.Filter.IsTrending.HasValue || productSpecParams.Filter.IsTrending == true)
             )
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
-            AddIncludeString("ProductColors.Color");
 
             AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
 
-            switch (productSpecParams.Sort)
+            AddSorting(productSpecParams.Sort);
+        }
+
+        public ProductWithTypesAndBrandsSpecification(ProductFilterByNameSpecParams productSpecParams)
+            : base(x =>
+            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || x.Name.ToLower().Contains(productSpecParams.Filter.Name.ToLower()))
+            && (string.IsNullOrEmpty(productSpecParams.Filter.ProductBrandName) || x.Name.ToLower().Contains(productSpecParams.Filter.ProductBrandName.ToLower()))
+            && (string.IsNullOrEmpty(productSpecParams.Filter.CategoryName) || x.Name.ToLower().Contains(productSpecParams.Filter.CategoryName.ToLower()))
+            && (!productSpecParams.Filter.IsNew.HasValue || productSpecParams.Filter.IsNew == true)
+            && (!productSpecParams.Filter.IsTrending.HasValue || productSpecParams.Filter.IsTrending == true)
+            && (!productSpecParams.Filter.IsActive.HasValue || productSpecParams.Filter.IsActive == true)
+            )
+        {
+            AddInclude(x => x.Category);
+            AddInclude(x => x.ProductBrand);
+
+            AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
+
+            AddSorting(productSpecParams.Sort);
+        }
+
+        private void AddSorting(string? sort)
+        {
+            switch (sort)
             {
-                case "priceAsc":
-                    AddOrderBy(x => x.Price);
+                case "name_asc":
+                    AddOrderBy(x => x.Name);
                     break;
-                case "priceDesc":
-                    AddOrderByDescending(x => x.Price);
+                case "name_desc":
+                    AddOrderByDescending(x => x.Name);
+                    break;
+                case "product_brand_name_asc":
+                    AddOrderBy(x => x.ProductBrand.Name);
+                    break;
+                case "product_brand_name_desc":
+                    AddOrderByDescending(x => x.ProductBrand.Name);
+                    break;
+                case "category_name_asc":
+                    AddOrderBy(x => x.Category.Name);
+                    break;
+                case "category_name_desc":
+                    AddOrderByDescending(x => x.Category.Name);
                     break;
                 default:
-                    AddOrderBy(x => x.Name);
+                    AddOrderByDescending(x => x.UpdatedDatetime!);
                     break;
             }
         }

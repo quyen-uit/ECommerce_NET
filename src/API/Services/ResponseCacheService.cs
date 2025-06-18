@@ -26,13 +26,9 @@ namespace API.Services
             await _database.StringSetAsync(cacheKey, serializedResponse, timeToLive);
         }
 
-        public async Task<string> GetCacheResponseAsync(string cacheKey)
+        public async Task<string?> GetCacheResponseAsync(string cacheKey)
         {
             var cachedResponse = await _database.StringGetAsync(cacheKey);
-
-            if (cachedResponse.IsNullOrEmpty)
-                return null;
-
             return cachedResponse;
         }
     }

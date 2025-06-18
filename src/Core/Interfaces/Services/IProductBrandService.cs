@@ -1,4 +1,5 @@
-﻿using Core.Dtos;
+﻿using Core.Common;
+using Core.Dtos;
 using Core.Entities;
 using Core.Specifications.ProductBrands;
 
@@ -6,7 +7,7 @@ namespace Core.Interfaces.Services
 {
     public interface IProductBrandService
     {
-        Task<IReadOnlyList<ProductBrandDto>> GetAllProductBrandsAsync(
+        Task<Pagination<ProductBrandDto>> GetAllProductBrandsAsync(
             ProductBrandSpecParams specParams
         );
         Task<int> CountAllAsync(ProductBrandSpecParams specParams);
@@ -16,6 +17,6 @@ namespace Core.Interfaces.Services
             IReadOnlyList<CreateProductBrandDto> brandDtos
         );
         Task<ProductBrandDto> UpdateProductBrandAsync(UpdateProductBrandDto brandDto);
-        Task<bool> DeleteProductBrandAsync(long id);
+        Task DeleteProductBrandAsync(long id);
     }
 }

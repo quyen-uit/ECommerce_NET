@@ -1,10 +1,13 @@
-﻿using Core.Common;
+﻿using Core.Common.Specifications;
 
 namespace Core.Specifications.Sizes
 {
     public class SizeSpecParams : QueryStringParameter
     {
-        public string? Search { get; set; }
-        public string? Sort { get; set; }
+        public SizeFilter Filter { get; set; } = new SizeFilter();
+    }
+    public class SizeFilter
+    {
+        public string? Name { get; set; }
     }
 }

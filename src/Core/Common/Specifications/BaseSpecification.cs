@@ -2,7 +2,7 @@
 using Core.Interfaces;
 using Core.Specifications.Products;
 
-namespace Core.Common
+namespace Core.Common.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T>
     {

@@ -11,6 +11,13 @@ namespace Core.Dtos
         public bool IsActive { get; set; }
     }
 
+    public class CategoryNodeDto
+    {
+        public long Id { get; set; }
+        public required string Name { get; set; }
+        public List<CategoryNodeDto> ChildCategories { get; set; } = [];
+    }
+
     public class CreateCategoryDto
     {
         [Required]

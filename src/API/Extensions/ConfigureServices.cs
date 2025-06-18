@@ -55,8 +55,8 @@ namespace API.Extensions
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
                     var errors = actionContext.ModelState
-                    .Where(e => e.Value.Errors.Count > 0)
-                    .SelectMany(x => x.Value.Errors)
+                    .Where(e => e.Value!.Errors.Count > 0)
+                    .SelectMany(x => x.Value!.Errors)
                     .Select(x => x.ErrorMessage)
                     .ToArray();
 
@@ -82,7 +82,7 @@ namespace API.Extensions
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
                         ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]!)),
                         ValidIssuer = configuration["Token:Issuer"]
                     };
                 });

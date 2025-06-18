@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Core.Common.Entities;
 
 namespace Core.Entities.Identity
 {
-    public class Address
+    public class Address : AuditableEntity
     {
-        public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string HouseNumber { get; set; } = string.Empty;
@@ -12,10 +12,7 @@ namespace Core.Entities.Identity
         public string Ward { get; set; } = string.Empty;
         public string District { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
-
-        [Required]
         public string AppUserId { get; set; } = string.Empty;
-        public AppUser AppUser { get; set; } = default!; // Navigation property
-
+        public AppUser AppUser { get; set; } = default!;
     }
 }

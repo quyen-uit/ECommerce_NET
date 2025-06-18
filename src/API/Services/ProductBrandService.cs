@@ -1,4 +1,6 @@
-﻿using Core.Dtos;
+﻿using Core.Common;
+using Core.Constants;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -36,42 +38,48 @@ namespace API.Services
 
         public async Task<int> CountAllAsync(ProductBrandSpecParams specParams)
         {
-            var spec = new ProductBrandWithParamsSpec(specParams);
+            var spec = new ProductBrandSpecification(specParams);
             return await _brandRepository.CountAsync(spec);
         }
 
-        public async Task<bool> DeleteProductBrandAsync(long id)
+        public async Task DeleteProductBrandAsync(long id)
         {
             var existing = await _brandRepository.GetByIdAsync(id);
             if (existing == null)
-                return false;
+                throw new NotFoundException(CommonMessage.NotFoundBrand);
 
             _brandRepository.Delete(id);
             await _brandRepository.Complete();
-            return true;
         }
 
-        public async Task<IReadOnlyList<ProductBrandDto>> GetAllProductBrandsAsync(
+        public async Task<Pagination<ProductBrandDto>> GetAllProductBrandsAsync(
             ProductBrandSpecParams specParams
         )
         {
-            var spec = new ProductBrandWithParamsSpec(specParams);
+            var spec = new ProductBrandSpecification(specParams);
             var brands = await _brandRepository.GetAllWithSpecAsync(spec);
-            return brands.Adapt<IReadOnlyList<ProductBrandDto>>();
+            var count = await _brandRepository.CountAsync(spec);
+            return new Pagination<ProductBrandDto>(
+                    pageNumber: specParams.PageNumber,
+                    pageSize: specParams.PageSize,
+                    pageCount: count,
+                    data: brands.Adapt<IReadOnlyList<ProductBrandDto>>()
+                );
         }
 
         public async Task<ProductBrandDto> GetProductBrandByIdAsync(long id)
         {
             var brand = await _brandRepository.GetByIdAsync(id);
-            return brand?.Adapt<ProductBrandDto>();
+            if (brand == null)
+                throw new NotFoundException(CommonMessage.NotFoundBrand);
+            return brand.Adapt<ProductBrandDto>();
         }
 
         public async Task<ProductBrandDto> UpdateProductBrandAsync(UpdateProductBrandDto brandDto)
         {
             var existing = await _brandRepository.GetByIdAsync(brandDto.Id);
             if (existing == null)
-                return null;
-
+                throw new NotFoundException(CommonMessage.NotFoundBrand);
             existing = brandDto.Adapt<ProductBrand>();
             _brandRepository.Update(existing);
             await _brandRepository.Complete();

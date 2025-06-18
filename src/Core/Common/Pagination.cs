@@ -1,4 +1,4 @@
-﻿namespace API.Helpers
+﻿namespace Core.Common
 {
     public class Pagination<T> where T : class 
     {

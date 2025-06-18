@@ -1,4 +1,4 @@
-﻿using Core.Common;
+﻿using Core.Common.Entities;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
