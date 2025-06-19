@@ -275,6 +275,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDatetime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.Property<long>("ReferenceId")
                         .HasColumnType("bigint");
 
@@ -573,11 +576,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ProductSkuId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("SalePrice")
-                        .HasColumnType("numeric");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone");
@@ -587,9 +589,34 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductSkuId");
-
                     b.ToTable("PriceAdjustments");
+                });
+
+            modelBuilder.Entity("Core.Entities.PriceAdjustmentItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<long>("PriceAdjustmentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PriceAdjustmentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PriceAdjustmentItem");
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -600,6 +627,9 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<int>("AvailableQty")
+                        .HasColumnType("integer");
 
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
@@ -1156,15 +1186,23 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Core.Entities.PriceAdjustment", b =>
+            modelBuilder.Entity("Core.Entities.PriceAdjustmentItem", b =>
                 {
-                    b.HasOne("Core.Entities.ProductSku", "ProductSku")
-                        .WithMany()
-                        .HasForeignKey("ProductSkuId")
+                    b.HasOne("Core.Entities.PriceAdjustment", "PriceAdjustment")
+                        .WithMany("PriceAdjustmentItems")
+                        .HasForeignKey("PriceAdjustmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductSku");
+                    b.HasOne("Core.Entities.Product", "Product")
+                        .WithMany("PriceAdjustmentItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PriceAdjustment");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -1378,8 +1416,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("OrderItems");
                 });
 
+            modelBuilder.Entity("Core.Entities.PriceAdjustment", b =>
+                {
+                    b.Navigation("PriceAdjustmentItems");
+                });
+
             modelBuilder.Entity("Core.Entities.Product", b =>
                 {
+                    b.Navigation("PriceAdjustmentItems");
+
                     b.Navigation("ProductSkus");
 
                     b.Navigation("Reviews");

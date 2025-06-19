@@ -2,6 +2,7 @@
 using Core.Constants;
 using Core.Dtos;
 using Core.Entities;
+using Core.Enums;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
@@ -12,10 +13,12 @@ namespace API.Services
     public class ProductSkuService : IProductSkuService
     {
         private readonly IGenericRepository<ProductSku> _productSkuRepository;
+        private readonly IImageService _imageService;
 
-        public ProductSkuService(IGenericRepository<ProductSku> productSkuRepository)
+        public ProductSkuService(IGenericRepository<ProductSku> productSkuRepository, IImageService imageService)
         {
             _productSkuRepository = productSkuRepository;
+            _imageService = imageService;
         }
 
         public async Task<ProductSkuDto> AddProductSkuAsync(CreateProductSkuDto productSkuDto)
@@ -51,7 +54,10 @@ namespace API.Services
             var productSku = await _productSkuRepository.GetAllWithSpecAsync(spec);
             if (productSku == null)
                 throw new NotFoundException(CommonMessage.NotFoundProductSku);
-            return productSku.Adapt<ProductSkuDto>();
+
+            var sku = productSku.Adapt<ProductSkuDto>();
+            sku.Images = await _imageService.GetAllImageByRefIdAsync(id, ImageType.Sku);
+            return sku;
         }
 
         public async Task<ProductSkuDto> UpdateProductSkuAsync(UpdateProductSkuDto productSkuDto)

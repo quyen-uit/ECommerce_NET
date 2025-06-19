@@ -23,6 +23,7 @@ namespace Core.Dtos
 
     public class UpdateSizeDto : CreateSizeDto
     {
+        [Required]
         public long Id { get; set; }
     }
 }

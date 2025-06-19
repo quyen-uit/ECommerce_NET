@@ -12,6 +12,7 @@ namespace Core.Dtos
         public bool IsNew { get; set; }
         public bool IsActive { get; set; }
         public GenderType GenderType { get; set; }
+        public int AvailableQty { get; set; }
 
         public CategoryDto? Category { get; set; }
         public ProductBrandDto? ProductBrand { get; set; }
@@ -40,11 +41,12 @@ namespace Core.Dtos
         public int CategoryId { get; set; }
         [Required]
         public int ProductBrandId { get; set; }
-        public ICollection<ProductPropertyDto> Properties { get; set; } = [];
+        public ICollection<ProductPropertyDto> Properties { get; set; } = new List<ProductPropertyDto>();
     }
 
     public class UpdateProductDto : CreateProductDto
     {
+        [Required]
         public long Id { get; set; }
     }
 

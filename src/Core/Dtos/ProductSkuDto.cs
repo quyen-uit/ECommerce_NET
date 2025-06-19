@@ -10,6 +10,7 @@ namespace Core.Dtos
         public bool IsActive { get; set; } = true;
         public ColorDto Color { get; set; } = default!;
         public SizeDto Size { get; set; } = default!;
+        public ICollection<ImageDto> Images { get; set; } = new List<ImageDto>();
     }
 
     public class CreateProductSkuDto
@@ -28,6 +29,8 @@ namespace Core.Dtos
         public long SizeId { get; set; }
 
         public bool IsActive { get; set; } = true;
+        // public ICollection<CreateOrUpdateImageDto> Images { get; set; } = new List<CreateOrUpdateImageDto>();
+
     }
 
     public class UpdateProductSkuDto : CreateProductSkuDto

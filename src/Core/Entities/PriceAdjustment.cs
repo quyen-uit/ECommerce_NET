@@ -4,10 +4,9 @@ namespace Core.Entities
 {
     public class PriceAdjustment : AuditableEntity
     {
-        public long ProductSkuId { get; set; }
+        public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public decimal SalePrice { get; set; }
-        public ProductSku ProductSku { get; set; } = default!; // Navigation property
+        public ICollection<PriceAdjustmentItem> PriceAdjustmentItems { get; set; } = new List<PriceAdjustmentItem>();
     }
 }

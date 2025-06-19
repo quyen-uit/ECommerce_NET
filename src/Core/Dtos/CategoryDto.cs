@@ -31,6 +31,7 @@ namespace Core.Dtos
 
     public class UpdateCategoryDto : CreateCategoryDto
     {
+        [Required]
         public long Id { get; set; }
     }
 }

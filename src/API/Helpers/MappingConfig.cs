@@ -24,12 +24,20 @@ public static class MapsterConfig
 
         TypeAdapterConfig<CreateProductDto, Product>.NewConfig();
         TypeAdapterConfig<UpdateProductDto, Product>.NewConfig();
-        TypeAdapterConfig<Product, ProductDto>.NewConfig().TwoWays();;
+        TypeAdapterConfig<Product, ProductDto>.NewConfig().TwoWays(); ;
         TypeAdapterConfig<ProductPropertyDto, ProductProperty>.NewConfig().TwoWays();
 
         TypeAdapterConfig<CreateProductSkuDto, ProductSku>.NewConfig();
         TypeAdapterConfig<UpdateProductSkuDto, ProductSku>.NewConfig();
-        TypeAdapterConfig<ProductSku, ProductSkuDto>.NewConfig().TwoWays(); ;
+        TypeAdapterConfig<ProductSku, ProductSkuDto>.NewConfig().TwoWays(); 
 
+        TypeAdapterConfig<CreateOrUpdateImageDto, Image>.NewConfig();
+        TypeAdapterConfig<Image, ImageDto>.NewConfig().TwoWays(); 
+
+        TypeAdapterConfig<CreatePriceAdjustmentDto, PriceAdjustment>.NewConfig();
+        TypeAdapterConfig<UpdatePriceAdjustmentDto, PriceAdjustment>.NewConfig();
+        TypeAdapterConfig<PriceAdjustment, PriceAdjustmentDto>.NewConfig().TwoWays(); 
+        TypeAdapterConfig<CreatePriceAdjustmentItemDto, PriceAdjustmentItem>.NewConfig();
+        TypeAdapterConfig<PriceAdjustmentItem, PriceAdjustmentItemDto>.NewConfig().TwoWays(); 
     }
 }

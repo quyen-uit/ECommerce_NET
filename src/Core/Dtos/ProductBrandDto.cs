@@ -21,6 +21,7 @@ namespace Core.Dtos
 
     public class UpdateProductBrandDto : CreateProductBrandDto
     {
+        [Required]
         public long Id { get; set; }
     }
 }

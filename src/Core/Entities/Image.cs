@@ -9,6 +9,7 @@ namespace Core.Entities
         public string Url { get; set; } = string.Empty;
 
         public long ReferenceId { get; set; }
+        public int Order { get; set; } = 0;
 
         public ImageType Type { get; set; } // Enum: Sku, Brand, Review, etc.
     }

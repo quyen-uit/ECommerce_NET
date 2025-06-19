@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -138,6 +138,7 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Url = table.Column<string>(type: "text", nullable: false),
                     ReferenceId = table.Column<long>(type: "bigint", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
@@ -145,6 +146,24 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Images", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PriceAdjustments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PriceAdjustments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -348,6 +367,7 @@ namespace Infrastructure.Migrations
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
                     ProductBrandId = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
+                    AvailableQty = table.Column<int>(type: "integer", nullable: false),
                     CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Properties = table.Column<string>(type: "jsonb", nullable: true)
@@ -400,6 +420,34 @@ namespace Infrastructure.Migrations
                         name: "FK_Orders_DeliveryMethods_DeliveryMethodId",
                         column: x => x.DeliveryMethodId,
                         principalTable: "DeliveryMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PriceAdjustmentItem",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SalePrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    PriceAdjustmentId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PriceAdjustmentItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PriceAdjustmentItem_PriceAdjustments_PriceAdjustmentId",
+                        column: x => x.PriceAdjustmentId,
+                        principalTable: "PriceAdjustments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PriceAdjustmentItem_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -639,31 +687,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PriceAdjustments",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ProductSkuId = table.Column<long>(type: "bigint", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    SalePrice = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PriceAdjustments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PriceAdjustments_ProductSkus_ProductSkuId",
-                        column: x => x.ProductSkuId,
-                        principalTable: "ProductSkus",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Wishlists",
                 columns: table => new
                 {
@@ -807,9 +830,14 @@ namespace Infrastructure.Migrations
                 column: "ShipToAddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PriceAdjustments_ProductSkuId",
-                table: "PriceAdjustments",
-                column: "ProductSkuId");
+                name: "IX_PriceAdjustmentItem_PriceAdjustmentId",
+                table: "PriceAdjustmentItem",
+                column: "PriceAdjustmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PriceAdjustmentItem_ProductId",
+                table: "PriceAdjustmentItem",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductCollections_ProductsId",
@@ -911,7 +939,7 @@ namespace Infrastructure.Migrations
                 name: "Items");
 
             migrationBuilder.DropTable(
-                name: "PriceAdjustments");
+                name: "PriceAdjustmentItem");
 
             migrationBuilder.DropTable(
                 name: "ProductCollections");
@@ -930,6 +958,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Vendors");
+
+            migrationBuilder.DropTable(
+                name: "PriceAdjustments");
 
             migrationBuilder.DropTable(
                 name: "Collections");

@@ -31,9 +31,10 @@ namespace Infrastructure.Data
                 query = query.Skip(specification.Skip).Take(specification.Take);
             }
 
-            var  queryFirstInclude = specification.Includes.Aggregate(query, (current,include) =>  current.Include(include));
+            var  queryInclude = specification.Includes.Aggregate(query, (current,include) =>  current.Include(include));
+            var  queryQueryableInclude = specification.QueryableIncludes.Aggregate(queryInclude, (current,include) =>  include(current));
 
-            var resultQuery = specification.IncludeStrings.Aggregate(queryFirstInclude, (current, include) => current.Include(include));
+            var resultQuery = specification.IncludeStrings.Aggregate(queryQueryableInclude, (current, include) => current.Include(include));
 
             return resultQuery;
         }
