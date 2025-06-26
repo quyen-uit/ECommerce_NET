@@ -2,6 +2,7 @@
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.Colors;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -20,12 +21,21 @@ namespace API.Services
             _colorRepository = colorRepository;
         }
 
-        public async Task<ColorDto> AddColorAsync(CreateColorDto colorDto)
+        public async Task<ColorDto> AddOrUpdateColorAsync(CreateColorDto dto)
         {
-            var color = colorDto.Adapt<Color>();
-            _colorRepository.Add(color);
+            var entity = await _colorRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<Color>();
+                _colorRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<Color>();
+                _colorRepository.Update(entity);
+            }
             await _colorRepository.Complete();
-            return color.Adapt<ColorDto>();
+            return entity.Adapt<ColorDto>();
         }
 
         public async Task<IReadOnlyList<ColorDto>> AddRangeColorAsync(
@@ -74,16 +84,5 @@ namespace API.Services
             return color.Adapt<ColorDto>();
         }
 
-        public async Task<ColorDto> UpdateColorAsync(UpdateColorDto colorDto)
-        {
-            var existing = await _colorRepository.GetByIdAsync(colorDto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundColor);
-
-            existing = colorDto.Adapt<Color>();
-            await _colorRepository.Complete();
-
-            return existing.Adapt<ColorDto>();
-        }
     }
 }

@@ -3,6 +3,7 @@ using API.Helpers;
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.PriceAdjustments;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace API.Controllers
             [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
         {
-            var result = await _priceAdjustmentService.AddPriceAdjustmentAsync(priceAdjustmentDto);
+            var result = await _priceAdjustmentService.AddOrUpdatePriceAdjustmentAsync(priceAdjustmentDto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -50,10 +51,10 @@ namespace API.Controllers
 
         [HttpPost("update")]
         public async Task<ActionResult<PriceAdjustmentDto>> UpdatePriceAdjustment(
-            [FromBody] UpdatePriceAdjustmentDto priceAdjustmentDto
+            [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
         {
-            var result = await _priceAdjustmentService.UpdatePriceAdjustmentAsync(priceAdjustmentDto);
+            var result = await _priceAdjustmentService.AddOrUpdatePriceAdjustmentAsync(priceAdjustmentDto);
             return Ok(result);
         }
 

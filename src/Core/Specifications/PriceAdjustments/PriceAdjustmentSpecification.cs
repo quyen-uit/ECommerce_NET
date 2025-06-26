@@ -15,7 +15,7 @@ namespace Core.Specifications.PriceAdjustments
     {
         public PriceAdjustmentSpecification(PriceAdjustmentSpecParams specParams)
             : base(x =>
-                (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
+                (string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
                 && (!specParams.Filter.StartDate.HasValue || (x.StartDate >= specParams.Filter.StartDate.Value && x.StartDate <= specParams.Filter.StartDate.Value))
                 && (!specParams.Filter.EndDate.HasValue || (x.EndDate >= specParams.Filter.EndDate.Value && x.EndDate <= specParams.Filter.EndDate.Value))
             )

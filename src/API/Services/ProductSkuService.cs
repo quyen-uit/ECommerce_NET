@@ -1,6 +1,7 @@
 ﻿using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.ProductSkus;
 using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Reposiories;
@@ -21,14 +22,21 @@ namespace API.Services
             _imageService = imageService;
         }
 
-        public async Task<ProductSkuDto> AddProductSkuAsync(CreateProductSkuDto productSkuDto)
+        public async Task<ProductSkuDto> AddOrUpdateProductSkuAsync(CreateProductSkuDto dto)
         {
-            var productSku = productSkuDto.Adapt<ProductSku>();
-
-            _productSkuRepository.Add(productSku);
+            var entity = await _productSkuRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<ProductSku>();
+                _productSkuRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<ProductSku>();
+                _productSkuRepository.Update(entity);
+            }
             await _productSkuRepository.Complete();
-
-            return productSku.Adapt<ProductSkuDto>();
+            return entity.Adapt<ProductSkuDto>();
         }
 
         public async Task DeleteProductSkuAsync(long id)
@@ -58,18 +66,6 @@ namespace API.Services
             var sku = productSku.Adapt<ProductSkuDto>();
             sku.Images = await _imageService.GetAllImageByRefIdAsync(id, ImageType.Sku);
             return sku;
-        }
-
-        public async Task<ProductSkuDto> UpdateProductSkuAsync(UpdateProductSkuDto productSkuDto)
-        {
-            var existing = await _productSkuRepository.GetByIdAsync(productSkuDto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundProductSku);
-
-            existing = productSkuDto.Adapt<ProductSku>();
-            await _productSkuRepository.Complete();
-
-            return existing.Adapt<ProductSkuDto>();
         }
     }
 

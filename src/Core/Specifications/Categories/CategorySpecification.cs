@@ -16,8 +16,8 @@ namespace Core.Specifications.Categories
 
         public CategorySpecification(CategorySpecParams specParams)
             : base(x => (
-                string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
-                 && (string.IsNullOrEmpty(specParams.Filter.ParentName) || x.Parent!.Name.ToLower().Contains(specParams.Filter.ParentName.ToLower()))
+                string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
+                 && (string.IsNullOrEmpty(specParams.Filter.ParentName) || specParams.Filter.ParentName.ToLower().Contains(x.Parent!.Name.ToLower()))
                  && (!specParams.Filter.IsActive.HasValue || x.IsActive == specParams.Filter.IsActive)
             )
         {

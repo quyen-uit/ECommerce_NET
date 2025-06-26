@@ -3,6 +3,7 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos;
 using Core.Dtos.CreateDto;
+using Core.Dtos.Images;
 using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Reposiories;
@@ -32,32 +33,39 @@ namespace API.Services
         }
 
 
-        public async Task ProcessImagesAsync(List<CreateOrUpdateImageDto> imageDtos)
+        public async Task ProcessImagesAsync(CreateListImageDto listImageDto)
         {
-
-            foreach (var dto in imageDtos)
+            if (listImageDto.CreateImageDtos.Count > 0)
             {
-                if (dto.IsDelete)
+                // update Items
+                var spec = new ImageByRefIdSpecification(listImageDto.ReferenceId, listImageDto.CreateImageDtos.First().Type);
+                var existingItems = await _imageRepository.GetAllWithSpecAsync(spec);
+
+                // Remove items not in the new DTO
+                var dtoItemIds = listImageDto.CreateImageDtos.Select(i => i.Id).ToHashSet();
+                var itemsToRemove = existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
+                foreach (var item in itemsToRemove)
                 {
-                    if (dto.Id.HasValue)
-                        _imageRepository.Delete(dto.Id.Value);
+                    _imageRepository.Delete(item.Id);
                 }
-                else if (dto.Id.HasValue)
+
+                // Update or add items
+                foreach (var dtoItem in listImageDto.CreateImageDtos)
                 {
-                    var existingImage = await _imageRepository.GetByIdAsync(dto.Id.Value);
-                    if (existingImage != null)
+                    var existingItem = existingItems.FirstOrDefault(i => i.Id == dtoItem.Id);
+                    if (existingItem != null)
                     {
-                        existingImage = dto.Adapt<Image>();
-                        _imageRepository.Update(existingImage);
+                        existingItem = dtoItem.Adapt<Image>();
+                        _imageRepository.Update(existingItem);
+                    }
+                    else
+                    {
+                        _imageRepository.Add(dtoItem.Adapt<Image>());
                     }
                 }
-                else
-                {
-                    var newImage = dto.Adapt<Image>();
-                    _imageRepository.Add(newImage);
-                }
+                
+                await _imageRepository.Complete();
             }
-            await _imageRepository.Complete();
         }
     }
 }

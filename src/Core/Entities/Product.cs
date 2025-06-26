@@ -24,7 +24,6 @@ namespace Core.Entities
         public ICollection<Collection> Collections { get; set; } = new List<Collection>();
         public ICollection<PriceAdjustmentItem> PriceAdjustmentItems { get; set; } = new List<PriceAdjustmentItem>();
         public int Price { get; set; }
-        public int AvailableQty { get; set; } = 0;
     }
     public class ProductProperty
     {

@@ -17,8 +17,8 @@ namespace Core.Specifications.Colors
         public ColorSpecification(ColorSpecParams specParams)
             : base(x =>
                 (
-                    (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
-                    && (string.IsNullOrEmpty(specParams.Filter.HexCode) || x.HexCode.ToLower().Contains(specParams.Filter.HexCode.ToLower()))
+                    (string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
+                    && (string.IsNullOrEmpty(specParams.Filter.HexCode) || specParams.Filter.HexCode.ToLower().Contains(x.HexCode.ToLower()))
                 )
             )
         {

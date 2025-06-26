@@ -1,6 +1,7 @@
 ﻿using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.ProductBrands;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -18,12 +19,21 @@ namespace API.Services
             _brandRepository = brandRepository;
         }
 
-        public async Task<ProductBrandDto> AddProductBrandAsync(CreateProductBrandDto brandDto)
+        public async Task<ProductBrandDto> AddOrUpdateProductBrandAsync(CreateProductBrandDto dto)
         {
-            var brand = brandDto.Adapt<ProductBrand>();
-            _brandRepository.Add(brand);
+            var entity = await _brandRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<ProductBrand>();
+                _brandRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<ProductBrand>();
+                _brandRepository.Update(entity);
+            }
             await _brandRepository.Complete();
-            return brand.Adapt<ProductBrandDto>();
+            return entity.Adapt<ProductBrandDto>();
         }
 
         public async Task<IReadOnlyList<ProductBrandDto>> AddRangeProductBrandAsync(
@@ -73,17 +83,6 @@ namespace API.Services
             if (brand == null)
                 throw new NotFoundException(CommonMessage.NotFoundBrand);
             return brand.Adapt<ProductBrandDto>();
-        }
-
-        public async Task<ProductBrandDto> UpdateProductBrandAsync(UpdateProductBrandDto brandDto)
-        {
-            var existing = await _brandRepository.GetByIdAsync(brandDto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundBrand);
-            existing = brandDto.Adapt<ProductBrand>();
-            _brandRepository.Update(existing);
-            await _brandRepository.Complete();
-            return existing.Adapt<ProductBrandDto>();
         }
     }
 }

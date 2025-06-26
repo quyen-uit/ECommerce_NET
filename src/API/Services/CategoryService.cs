@@ -3,6 +3,7 @@ using AutoMapper;
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.Categories;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -21,10 +22,19 @@ namespace API.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<CategoryDto> AddCategoryAsync(CreateCategoryDto dto)
+        public async Task<CategoryDto> AddOrUpdateCategoryAsync(CreateCategoryDto dto)
         {
-            var entity = dto.Adapt<Category>();
-            _categoryRepository.Add(entity);
+            var entity = await _categoryRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<Category>();
+                _categoryRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<Category>();
+                _categoryRepository.Update(entity);
+            }
             await _categoryRepository.Complete();
             return entity.Adapt<CategoryDto>();
         }
@@ -91,18 +101,6 @@ namespace API.Services
             if (entity == null)
                 throw new NotFoundException(CommonMessage.NotFoundCategory);
             return entity.Adapt<CategoryDto>();
-        }
-
-        public async Task<CategoryDto> UpdateCategoryAsync(UpdateCategoryDto dto)
-        {
-            var existing = await _categoryRepository.GetByIdAsync(dto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundCategory);
-
-            existing = dto.Adapt<Category>();
-            _categoryRepository.Update(existing);
-            await _categoryRepository.Complete();
-            return existing.Adapt<CategoryDto>();
         }
     }
 }

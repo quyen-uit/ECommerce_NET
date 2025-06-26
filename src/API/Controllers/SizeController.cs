@@ -2,6 +2,7 @@
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.Sizes;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<SizeDto>> CreateSize([FromBody] CreateSizeDto dto)
         {
-            var result = await _sizeService.AddSizeAsync(dto);
+            var result = await _sizeService.AddOrUpdateSizeAsync(dto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -55,9 +56,9 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<ActionResult<SizeDto>> UpdateSize([FromBody] UpdateSizeDto dto)
+        public async Task<ActionResult<SizeDto>> UpdateSize([FromBody] CreateSizeDto dto)
         {
-            var result = await _sizeService.UpdateSizeAsync(dto);
+            var result = await _sizeService.AddOrUpdateSizeAsync(dto);
             return Ok(result);
         }
 

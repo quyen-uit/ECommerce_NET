@@ -17,11 +17,11 @@ namespace API.Helpers
             //     .ForMember(d => d.PhotoUrl, opt => opt.MapFrom<ProductUrlResolver>());
             // CreateMap<CreateProductDto, Product>();
 
-            CreateMap<Category, CategoryDto>().ReverseMap();
+            // CreateMap<Category, CategoryDto>().ReverseMap();
             // CreateMap<CreateCategoryDto, Category>();
             // CreateMap<ProductBrand, ProductBrandDto>().ReverseMap();
             // CreateMap<CreateProductBrandDto, ProductBrand>();
-            CreateMap<Color, ColorDto>().ReverseMap();
+            // CreateMap<Color, ColorDto>().ReverseMap();
             // CreateMap<CreateColorDto, Color>();
 
             CreateMap<Core.Entities.Identity.Address, AddressDto>().ReverseMap();

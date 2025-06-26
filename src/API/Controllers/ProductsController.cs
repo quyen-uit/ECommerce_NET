@@ -1,7 +1,7 @@
 ﻿using API.Errors;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
+using Core.Dtos.Products;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
 using Microsoft.AspNetCore.Mvc;
@@ -44,9 +44,9 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<ProductDto>> PostProduct(CreateProductDto productDto)
+        public async Task<ActionResult<ProductDto>> PostProduct([FromBody] CreateProductDto productDto)
         {
-            var result = await _productService.AddProductAsync(productDto);
+            var result = await _productService.AddOrUpdateProductAsync(productDto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -54,9 +54,9 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> PutProduct(UpdateProductDto productDto)
+        public async Task<IActionResult> PutProduct([FromBody] CreateProductDto productDto)
         {
-            var result = await _productService.UpdateProductAsync(productDto);
+            var result = await _productService.AddOrUpdateProductAsync(productDto);
             return Ok(result);
         }
 

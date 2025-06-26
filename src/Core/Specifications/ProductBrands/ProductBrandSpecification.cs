@@ -18,7 +18,7 @@ namespace Core.Specifications.ProductBrands
             : base(x =>
                 (
                     string.IsNullOrEmpty(specParams.Filter.Name)
-                    || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower())
+                    || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower())
                 )
             )
         {

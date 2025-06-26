@@ -36,6 +36,8 @@ namespace Infrastructure.Data
         public DbSet<Collection> Collections => Set<Collection>();
         public DbSet<Wishlist> Wishlists => Set<Wishlist>();
         public DbSet<Address> Addresses => Set<Address>();
+        public DbSet<Store> Stores => Set<Store>();
+        public DbSet<StoreProductSku> StoreProductSkus => Set<StoreProductSku>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

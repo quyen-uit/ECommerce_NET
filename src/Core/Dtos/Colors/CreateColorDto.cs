@@ -1,16 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.Dtos
+namespace Core.Dtos.Colors
 {
-    public class ColorDto
-    {
-        public long Id { get; set; }
-        public required string Name { get; set; }
-        public required string HexCode { get; set; }
-    }
 
     public class CreateColorDto
     {
+        [Required]
+        public long Id { get; set; }
+
         [Required]
         [MaxLength(20)]
         public required string Name { get; set; }
@@ -20,8 +17,4 @@ namespace Core.Dtos
         public required string HexCode { get; set; }
     }
 
-    public class UpdateColorDto : CreateColorDto
-    {
-        public long Id { get; set; }
-    }
 }

@@ -1,6 +1,6 @@
 ﻿using Core.Common;
 using Core.Constants;
-using Core.Dtos;
+using Core.Dtos.Products;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -18,21 +18,22 @@ namespace API.Services
             _productRepository = productRepository;
         }
 
-        public async Task<ProductDto> AddProductAsync(CreateProductDto productDto)
+        public async Task<ProductDto> AddOrUpdateProductAsync(CreateProductDto dto)
         {
-            var product = productDto.Adapt<Product>();
-
-            _productRepository.Add(product);
+            var entity = await _productRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<Product>();
+                _productRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<Product>();
+                _productRepository.Update(entity);
+            }
             await _productRepository.Complete();
-
-            return product.Adapt<ProductDto>();
+            return entity.Adapt<ProductDto>();
         }
-
-        // public async Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams)
-        // {
-        //     var countSpec = new ProductsWithFiltersForCountSpecification(productSpecParams);
-        //     return await _productRepository.CountAsync(countSpec);
-        // }
 
         public async Task DeleteProductAsync(long id)
         {
@@ -76,18 +77,6 @@ namespace API.Services
             if (product == null)
                 throw new NotFoundException(CommonMessage.NotFoundProduct);
             return product.Adapt<ProductDto>();
-        }
-
-        public async Task<ProductDto> UpdateProductAsync(UpdateProductDto productDto)
-        {
-            var existing = await _productRepository.GetByIdAsync(productDto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundProduct);
-
-            existing = productDto.Adapt<Product>();
-            await _productRepository.Complete();
-
-            return existing.Adapt<ProductDto>();
         }
 
     }

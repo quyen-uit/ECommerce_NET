@@ -1,8 +1,7 @@
 ﻿
 
 using Core.Common;
-using Core.Dtos;
-using Core.Entities;
+using Core.Dtos.Products;
 using Core.Specifications.Products;
 
 namespace Core.Interfaces.Services
@@ -15,8 +14,7 @@ namespace Core.Interfaces.Services
         Task<Pagination<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpecParams);
         // Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams);
         Task<ProductDto> GetProductByIdAsync(long id);
-        Task<ProductDto> AddProductAsync(CreateProductDto productDto);
-        Task<ProductDto> UpdateProductAsync(UpdateProductDto productDto);
+        Task<ProductDto> AddOrUpdateProductAsync(CreateProductDto productDto);
         Task DeleteProductAsync(long id);
 
     }

@@ -3,6 +3,7 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos;
 using Core.Dtos.CreateDto;
+using Core.Dtos.Sizes;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
@@ -22,10 +23,19 @@ namespace API.Services
             _sizeRepository = sizeRepository;
         }
 
-        public async Task<SizeDto> AddSizeAsync(CreateSizeDto dto)
+        public async Task<SizeDto> AddOrUpdateSizeAsync(CreateSizeDto dto)
         {
-            var entity = dto.Adapt<Size>();
-            _sizeRepository.Add(entity);
+            var entity = await _sizeRepository.GetByIdAsync(dto.Id);
+            if (entity == null)
+            {
+                entity = dto.Adapt<Size>();
+                _sizeRepository.Add(entity);
+            }
+            else
+            {
+                entity = dto.Adapt<Size>();
+                _sizeRepository.Update(entity);
+            }
             await _sizeRepository.Complete();
             return entity.Adapt<SizeDto>();
         }
@@ -69,18 +79,6 @@ namespace API.Services
             if (entity == null)
                 throw new NotFoundException(CommonMessage.NotFoundSize);
             return entity.Adapt<SizeDto>();
-        }
-
-        public async Task<SizeDto> UpdateSizeAsync(UpdateSizeDto dto)
-        {
-            var existing = await _sizeRepository.GetByIdAsync(dto.Id);
-            if (existing == null)
-                throw new NotFoundException(CommonMessage.NotFoundSize);
-
-            existing = dto.Adapt<Size>();
-            _sizeRepository.Update(existing);
-            await _sizeRepository.Complete();
-            return existing.Adapt<SizeDto>();
         }
     }
 }

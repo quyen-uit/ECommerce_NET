@@ -1,4 +1,5 @@
 ﻿using Core.Dtos;
+using Core.Dtos.ProductSkus;
 using Core.Specifications.ProductSkus;
 
 namespace Core.Interfaces.Services
@@ -7,8 +8,7 @@ namespace Core.Interfaces.Services
     {
         Task<IReadOnlyList<ProductSkuDto>> GetAllProductSkusAsync(ProductSkuSpecParams specParams);
         Task<ProductSkuDto> GetProductSkuByIdAsync(long id);
-        Task<ProductSkuDto> AddProductSkuAsync(CreateProductSkuDto skuDto);
-        Task<ProductSkuDto> UpdateProductSkuAsync(UpdateProductSkuDto skuDto);
+        Task<ProductSkuDto> AddOrUpdateProductSkuAsync(CreateProductSkuDto skuDto);
         Task DeleteProductSkuAsync(long id);
     }
 }

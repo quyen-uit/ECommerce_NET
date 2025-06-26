@@ -1,4 +1,5 @@
 ﻿using Core.Common.Entities;
+using Core.Entities.Inventory;
 
 namespace Core.Entities
 {
@@ -12,5 +13,6 @@ namespace Core.Entities
         public Product Product { get; set; } = default!;
         public Color Color { get; set; } = default!;
         public Size Size { get; set; } = default!;
+        public ICollection<StoreProductSku> StoreProductSkus { get; set; } = new List<StoreProductSku>();
     }
 }

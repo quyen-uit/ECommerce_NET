@@ -2,6 +2,7 @@
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.ProductSkus;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
 using Microsoft.AspNetCore.Mvc;
@@ -36,9 +37,9 @@ namespace API.Controllers
             }
 
             [HttpPost("create")]
-            public async Task<ActionResult<ProductSkuDto>> PostProductSku(CreateProductSkuDto productSkuDto)
+            public async Task<ActionResult<ProductSkuDto>> PostProductSku([FromBody]CreateProductSkuDto productSkuDto)
             {
-                var result = await _productSkuService.AddProductSkuAsync(productSkuDto);
+                var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
                 if (result == null)
                     return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -46,9 +47,9 @@ namespace API.Controllers
             }
 
             [HttpPost("update")]
-            public async Task<IActionResult> PutProductSku(UpdateProductSkuDto productSkuDto)
+            public async Task<IActionResult> PutProductSku([FromBody]CreateProductSkuDto productSkuDto)
             {
-                var result = await _productSkuService.UpdateProductSkuAsync(productSkuDto);
+                var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
                 return Ok(result);
             }
 

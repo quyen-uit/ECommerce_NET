@@ -3,6 +3,7 @@ using API.Helpers;
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.ProductBrands;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace API.Controllers
             [FromBody] CreateProductBrandDto brandDto
         )
         {
-            var result = await _brandService.AddProductBrandAsync(brandDto);
+            var result = await _brandService.AddOrUpdateProductBrandAsync(brandDto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -66,10 +67,10 @@ namespace API.Controllers
         // ✅ POST: api/productbrand/update
         [HttpPost("update")]
         public async Task<ActionResult<ProductBrandDto>> UpdateProductBrand(
-            [FromBody] UpdateProductBrandDto brandDto
+            [FromBody] CreateProductBrandDto brandDto
         )
         {
-            var result = await _brandService.UpdateProductBrandAsync(brandDto);
+            var result = await _brandService.AddOrUpdateProductBrandAsync(brandDto);
             return Ok(result);
         }
 

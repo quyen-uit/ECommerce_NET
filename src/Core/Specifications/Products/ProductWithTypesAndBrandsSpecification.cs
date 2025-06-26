@@ -19,7 +19,7 @@ namespace Core.Specifications.Products
 
         public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams)
             : base(x =>
-            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || x.Name.ToLower().Contains(productSpecParams.Filter.Name.ToLower()))
+            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || productSpecParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
             && (!productSpecParams.Filter.ProductBrandId.HasValue || productSpecParams.Filter.ProductBrandId == x.ProductBrandId)
             && (!productSpecParams.Filter.CategoryId.HasValue || productSpecParams.Filter.CategoryId == x.CategoryId)
             && (!productSpecParams.Filter.IsNew.HasValue || productSpecParams.Filter.IsNew == true)

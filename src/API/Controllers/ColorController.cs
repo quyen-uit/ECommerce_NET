@@ -2,6 +2,7 @@
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.Colors;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ColorDto>> CreateColor([FromBody] CreateColorDto colorDto)
         {
-            var result = await _colorService.AddColorAsync(colorDto);
+            var result = await _colorService.AddOrUpdateColorAsync(colorDto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -61,9 +62,9 @@ namespace API.Controllers
 
         // ✅ POST: api/color/update
         [HttpPost("update")]
-        public async Task<ActionResult<ColorDto>> UpdateColor([FromBody] UpdateColorDto colorDto)
+        public async Task<ActionResult<ColorDto>> UpdateColor([FromBody] CreateColorDto colorDto)
         {
-            var result = await _colorService.UpdateColorAsync(colorDto);
+            var result = await _colorService.AddOrUpdateColorAsync(colorDto);
             return Ok(result);
         }
 

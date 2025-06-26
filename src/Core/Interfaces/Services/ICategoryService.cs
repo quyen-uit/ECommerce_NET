@@ -1,5 +1,6 @@
 ﻿using Core.Common;
 using Core.Dtos;
+using Core.Dtos.Categories;
 using Core.Specifications.Categories;
 
 namespace Core.Interfaces.Services
@@ -9,11 +10,10 @@ namespace Core.Interfaces.Services
         Task<Pagination<CategoryDto>> GetAllCategoriesAsync(CategorySpecParams specParams);
         Task<List<CategoryNodeDto>> GetCategoriesHierarchyAsync();
         Task<CategoryDto> GetCategoryByIdAsync(long id);
-        Task<CategoryDto> AddCategoryAsync(CreateCategoryDto dto);
+        Task<CategoryDto> AddOrUpdateCategoryAsync(CreateCategoryDto dto);
         Task<IReadOnlyList<CategoryDto>> AddRangeCategoryAsync(
             IReadOnlyList<CreateCategoryDto> dtos
         );
         Task DeleteCategoryAsync(long id);
-        Task<CategoryDto> UpdateCategoryAsync(UpdateCategoryDto dto);
     }
 }

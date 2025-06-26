@@ -2,6 +2,7 @@
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
+using Core.Dtos.Categories;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,7 @@ namespace API.Controllers
             [FromBody] CreateCategoryDto dto
         )
         {
-            var result = await _categoryService.AddCategoryAsync(dto);
+            var result = await _categoryService.AddOrUpdateCategoryAsync(dto);
             if (result == null)
                 return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
 
@@ -65,10 +66,10 @@ namespace API.Controllers
 
         [HttpPost("update")]
         public async Task<ActionResult<CategoryDto>> UpdateCategory(
-            [FromBody] UpdateCategoryDto dto
+            [FromBody] CreateCategoryDto dto
         )
         {
-            var result = await _categoryService.UpdateCategoryAsync(dto);
+            var result = await _categoryService.AddOrUpdateCategoryAsync(dto);
             return Ok(result);
         }
 
