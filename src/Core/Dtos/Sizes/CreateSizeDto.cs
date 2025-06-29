@@ -12,6 +12,7 @@ namespace Core.Dtos.Sizes
         public required string Name { get; set; }
 
         public int SortOrder { get; set; }
-        public SizeType SizeType { get; set; }
+        [Required]
+        public required string SizeType { get; set; }  
     }
 }

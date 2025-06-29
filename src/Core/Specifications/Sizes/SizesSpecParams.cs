@@ -1,4 +1,5 @@
 ﻿using Core.Common.Specifications;
+using Core.Enums;
 
 namespace Core.Specifications.Sizes
 {
@@ -9,7 +10,7 @@ namespace Core.Specifications.Sizes
     public class SizeFilter
     {
         public string? Name { get; set; }
-        public string? SizeStype { get; set; }
+        public SizeType? SizeStype { get; set; }
         public FilterRange<int?> SortOrder { get; set; } = new FilterRange<int?>();
     }
 }

@@ -8,7 +8,7 @@ namespace Core.Dtos.Sizes
         public long Id { get; set; }
         public required string Name { get; set; }
         public int SortOrder { get; set; }
-        public SizeType SizeType { get; set; }
+        public string? SizeType { get; set; }
     }
 
 }

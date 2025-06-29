@@ -64,7 +64,8 @@ namespace API.Services
         {
             var spec = new SizeSpecification(specParams);
             var entities = await _sizeRepository.GetAllWithSpecAsync(spec);
-            var count = await _sizeRepository.CountAsync(spec);
+            var specCount = new SizeSpecification(specParams, false);
+            var count = await _sizeRepository.CountAsync(specCount);
             return new Pagination<SizeDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,

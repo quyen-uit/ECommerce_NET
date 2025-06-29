@@ -96,6 +96,7 @@ namespace API.Extensions
             services.AddScoped<IProductBrandService, ProductBrandService>();
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ISizeService, SizeService>();
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 

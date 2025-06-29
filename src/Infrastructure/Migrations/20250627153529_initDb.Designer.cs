@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250618172105_InitDB")]
-    partial class InitDB
+    [Migration("20250627153529_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -278,6 +278,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDatetime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.Property<long>("ReferenceId")
                         .HasColumnType("bigint");
 
@@ -418,6 +421,68 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ProductSkuId");
 
                     b.ToTable("InventoryTransactions");
+                });
+
+            modelBuilder.Entity("Core.Entities.Inventory.Store", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("Core.Entities.Inventory.StoreProductSku", b =>
+                {
+                    b.Property<long>("StoreId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductSkuId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDatetime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDatetime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("StoreId", "ProductSkuId");
+
+                    b.HasIndex("ProductSkuId");
+
+                    b.ToTable("StoreProductSkus");
                 });
 
             modelBuilder.Entity("Core.Entities.Inventory.Vendor", b =>
@@ -576,11 +641,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<long>("ProductSkuId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("SalePrice")
-                        .HasColumnType("numeric");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone");
@@ -590,9 +654,34 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductSkuId");
-
                     b.ToTable("PriceAdjustments");
+                });
+
+            modelBuilder.Entity("Core.Entities.PriceAdjustmentItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<long>("PriceAdjustmentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PriceAdjustmentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PriceAdjustmentItem");
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -1106,6 +1195,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("ProductSku");
                 });
 
+            modelBuilder.Entity("Core.Entities.Inventory.StoreProductSku", b =>
+                {
+                    b.HasOne("Core.Entities.ProductSku", "ProductSku")
+                        .WithMany("StoreProductSkus")
+                        .HasForeignKey("ProductSkuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Inventory.Store", "Store")
+                        .WithMany("StoreProductSkus")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductSku");
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>
                 {
                     b.HasOne("Core.Entities.OrderAggregate.DeliveryMethod", "DeliveryMethod")
@@ -1159,15 +1267,23 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Core.Entities.PriceAdjustment", b =>
+            modelBuilder.Entity("Core.Entities.PriceAdjustmentItem", b =>
                 {
-                    b.HasOne("Core.Entities.ProductSku", "ProductSku")
-                        .WithMany()
-                        .HasForeignKey("ProductSkuId")
+                    b.HasOne("Core.Entities.PriceAdjustment", "PriceAdjustment")
+                        .WithMany("PriceAdjustmentItems")
+                        .HasForeignKey("PriceAdjustmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductSku");
+                    b.HasOne("Core.Entities.Product", "Product")
+                        .WithMany("PriceAdjustmentItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PriceAdjustment");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -1376,16 +1492,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("Wishlists");
                 });
 
+            modelBuilder.Entity("Core.Entities.Inventory.Store", b =>
+                {
+                    b.Navigation("StoreProductSkus");
+                });
+
             modelBuilder.Entity("Core.Entities.OrderAggregate.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
+            modelBuilder.Entity("Core.Entities.PriceAdjustment", b =>
+                {
+                    b.Navigation("PriceAdjustmentItems");
+                });
+
             modelBuilder.Entity("Core.Entities.Product", b =>
                 {
+                    b.Navigation("PriceAdjustmentItems");
+
                     b.Navigation("ProductSkus");
 
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Core.Entities.ProductSku", b =>
+                {
+                    b.Navigation("StoreProductSkus");
                 });
 #pragma warning restore 612, 618
         }
