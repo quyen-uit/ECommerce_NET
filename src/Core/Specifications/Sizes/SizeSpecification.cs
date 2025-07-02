@@ -1,5 +1,6 @@
 ﻿using Core.Common.Specifications;
 using Core.Entities;
+using Core.Enums;
 namespace Core.Specifications.Sizes
 {
     public class SizeSpecification : BaseSpecification<Size>
@@ -9,7 +10,7 @@ namespace Core.Specifications.Sizes
                 (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
                 && (!specParams.Filter.SortOrder.From.HasValue || (x.SortOrder >= specParams.Filter.SortOrder.From.Value))
                 && (!specParams.Filter.SortOrder.To.HasValue || (x.SortOrder <= specParams.Filter.SortOrder.To.Value))
-                && x.SizeType == specParams.Filter.SizeStype)
+                && (string.IsNullOrEmpty(specParams.Filter.SizeType) || x.SizeType == Enum.Parse<SizeType>(specParams.Filter.SizeType)))
         {
             if (isSearch)
             {
