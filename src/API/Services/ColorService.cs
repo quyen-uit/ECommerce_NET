@@ -59,7 +59,7 @@ namespace API.Services
             var existing = await _colorRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundColor);
-            _colorRepository.Delete(id);
+            _colorRepository.Delete(existing);
             await _colorRepository.Complete();
         }
 

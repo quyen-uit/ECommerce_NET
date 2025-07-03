@@ -14,5 +14,6 @@ namespace Core.Interfaces.Services
         Task<SizeDto> AddOrUpdateSizeAsync(CreateSizeDto dto);
         Task<IReadOnlyList<SizeDto>> AddRangeSizeAsync(IReadOnlyList<CreateSizeDto> dtos);
         Task DeleteSizeAsync(long id);
+        Task DeleteSizesAsync(List<long> ids);
     }
 }

@@ -70,7 +70,7 @@ namespace API.Services
             var existing = await _priceAdjustmentRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundPriceAdjustment);
-            _priceAdjustmentRepository.Delete(id);
+            _priceAdjustmentRepository.Delete(existing);
             await _priceAdjustmentRepository.Complete();
         }
 

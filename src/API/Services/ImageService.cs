@@ -1,17 +1,9 @@
-﻿using AutoMapper;
-using Core.Common;
-using Core.Constants;
-using Core.Dtos;
-using Core.Dtos.CreateDto;
-using Core.Dtos.Images;
+﻿using Core.Dtos.Images;
 using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
-using Core.Specifications.Colors;
 using Core.Specifications.Images;
-using Core.Specifications.Products;
-using Core.Specifications.Sizes;
 using Mapster;
 
 namespace API.Services
@@ -44,10 +36,8 @@ namespace API.Services
                 // Remove items not in the new DTO
                 var dtoItemIds = listImageDto.CreateImageDtos.Select(i => i.Id).ToHashSet();
                 var itemsToRemove = existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
-                foreach (var item in itemsToRemove)
-                {
-                    _imageRepository.Delete(item.Id);
-                }
+
+                _imageRepository.DeleteRange(itemsToRemove); // test
 
                 // Update or add items
                 foreach (var dtoItem in listImageDto.CreateImageDtos)
@@ -63,7 +53,7 @@ namespace API.Services
                         _imageRepository.Add(dtoItem.Adapt<Image>());
                     }
                 }
-                
+
                 await _imageRepository.Complete();
             }
         }

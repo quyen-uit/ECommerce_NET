@@ -12,7 +12,10 @@ namespace Core.Interfaces.Reposiories
         void Add(T entity);
         void Update(T entity);
         void AddRange(IReadOnlyList<T> entities);
-        void Delete(long id);
+        Task DeleteById(long id);
+        void Delete(T entity);
+        void DeleteRange(List<T> entity);
+        Task DeleteRangeById(List<long> ids);
         Task<int> Complete();
     }
 }

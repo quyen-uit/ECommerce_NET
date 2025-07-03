@@ -35,13 +35,31 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).CountAsync();
         }
 
-        public async void Delete(long id)
+        public async Task DeleteById(long id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if (entity != null)
             {
                 _context.Set<T>().Remove(entity);
             }
+        }
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Deleted;
+        }
+
+        public void DeleteRange(List<T> values)
+        {
+            if (values != null && values.Count > 0)
+            {
+                foreach (var entity in values)
+                {
+                    _context.Set<T>().Attach(entity);
+                    _context.Entry(entity).State = EntityState.Deleted;
+                }
+            }
+
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
@@ -80,5 +98,14 @@ namespace Infrastructure.Data.Repositories
                 specification
             );
         }
+        public async Task DeleteRangeById(List<long> ids)
+        {
+            var entities = await _context.Set<T>().Where(x => ids.Contains(x.Id)).ToListAsync();
+            if (entities != null && entities.Count > 0)
+            {
+                _context.Set<T>().RemoveRange(entities);
+            }
+        }
+
     }
 }

@@ -40,7 +40,7 @@ namespace API.Services
             var existing = await _productRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundProduct);
-            _productRepository.Delete(id);
+            _productRepository.Delete(existing);
             await _productRepository.Complete();
         }
 

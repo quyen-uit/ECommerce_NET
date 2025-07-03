@@ -58,7 +58,7 @@ namespace API.Services
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundBrand);
 
-            _brandRepository.Delete(id);
+            _brandRepository.Delete(existing);
             await _brandRepository.Complete();
         }
 

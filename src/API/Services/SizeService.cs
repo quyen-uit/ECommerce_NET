@@ -56,7 +56,7 @@ namespace API.Services
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundSize);
 
-            _sizeRepository.Delete(id);
+            _sizeRepository.Delete(existing);
             await _sizeRepository.Complete();
         }
 
@@ -80,6 +80,12 @@ namespace API.Services
             if (entity == null)
                 throw new NotFoundException(CommonMessage.NotFoundSize);
             return entity.Adapt<SizeDto>();
+        }
+
+        public async Task DeleteSizesAsync(List<long> ids)
+        {
+            await _sizeRepository.DeleteRangeById(ids);
+            await _sizeRepository.Complete();
         }
     }
 }

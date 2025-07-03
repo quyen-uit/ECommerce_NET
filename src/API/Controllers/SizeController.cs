@@ -1,7 +1,6 @@
 ﻿using API.Errors;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
 using Core.Dtos.Sizes;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
@@ -66,6 +65,13 @@ namespace API.Controllers
         public async Task<ActionResult<ApiResponse>> DeleteSize(long id)
         {
             await _sizeService.DeleteSizeAsync(id);
+            return Ok(CommonMessage.DeleteSuccess);
+        }
+
+        [HttpDelete("delete-many")]
+        public async Task<ActionResult<ApiResponse>> DeleteSizes([FromBody] List<long> ids)
+        {
+            await _sizeService.DeleteSizesAsync(ids);
             return Ok(CommonMessage.DeleteSuccess);
         }
     }

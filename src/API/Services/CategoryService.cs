@@ -55,7 +55,7 @@ namespace API.Services
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundCategory);
 
-            _categoryRepository.Delete(id);
+            _categoryRepository.Delete(existing);
             await _categoryRepository.Complete();
         }
 

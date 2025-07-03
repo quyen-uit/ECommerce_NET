@@ -44,7 +44,7 @@ namespace API.Services
             var existing = await _productSkuRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundProductSku);
-            _productSkuRepository.Delete(id);
+            _productSkuRepository.Delete(existing);
             await _productSkuRepository.Complete();
         }
 
