@@ -36,7 +36,7 @@ namespace Core.Specifications.Sizes
                         AddOrderByDescending(x => x.SizeType);
                         break;
                     default:
-                        AddOrderBy(x => x.SortOrder);
+                        AddOrderBy(x => x.Name);
                         break;
                 }
             }

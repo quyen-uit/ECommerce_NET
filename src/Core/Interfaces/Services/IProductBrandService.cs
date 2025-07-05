@@ -18,5 +18,6 @@ namespace Core.Interfaces.Services
             IReadOnlyList<CreateProductBrandDto> brandDtos
         );
         Task DeleteProductBrandAsync(long id);
+        Task DeleteBrandsAsync(List<long> ids);
     }
 }

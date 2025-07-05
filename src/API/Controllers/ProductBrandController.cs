@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/brand")]
     public class ProductBrandController : ApiControllerBase
     {
         private readonly IProductBrandService _brandService;
@@ -80,6 +81,13 @@ namespace API.Controllers
         {
             await _brandService.DeleteProductBrandAsync(id);
             return Ok(CommonMessage.DeleteSuccess);
+        }
+
+        [HttpDelete("delete-many")]
+        public async Task<ActionResult<ApiResponse>> DeleteBrands([FromBody] List<long> ids)
+        {
+            await _brandService.DeleteBrandsAsync(ids);
+            return Ok(new ApiResponse(CommonMessage.DeleteSuccess));
         }
     }
 }

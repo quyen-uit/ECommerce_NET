@@ -84,5 +84,11 @@ namespace API.Services
                 throw new NotFoundException(CommonMessage.NotFoundBrand);
             return brand.Adapt<ProductBrandDto>();
         }
+
+        public async Task DeleteBrandsAsync(List<long> ids)
+        {
+            await _brandRepository.DeleteRangeById(ids);
+            await _brandRepository.Complete();
+        }
     }
 }
