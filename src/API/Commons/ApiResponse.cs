@@ -8,6 +8,12 @@
             Message = message ?? GetDefaultMessageFromStatusCode(statusCode);
         }
 
+        public ApiResponse(string message)
+        {
+            Message = message;
+            StatusCode = 200;
+        }
+
         public int StatusCode { get; set; }
         public string Message { get; set; }
 

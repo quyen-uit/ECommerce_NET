@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Core.Common.Entities;
+﻿using Core.Common.Entities;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.Inventory;
@@ -7,6 +6,8 @@ using Core.Entities.OrderAggregate;
 using Core.Entities.ReturnOrder;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Infrastructure.Data
 {
@@ -57,6 +58,17 @@ namespace Infrastructure.Data
                         .Property("Id")
                         .UseIdentityByDefaultColumn()
                         .HasIdentityOptions(startValue: 10);
+                }
+
+                if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var body = Expression.Equal(
+                        Expression.Property(parameter, nameof(BaseEntity.IsDeleted)),
+                        Expression.Constant(false)
+                    );
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(Expression.Lambda(body, parameter));
                 }
             }
 

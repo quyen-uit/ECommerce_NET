@@ -15,5 +15,6 @@ namespace Core.Interfaces
         int Take { get; }
         int Skip { get; }
         bool IsPagingEnable { get; }
+        bool IsIgnoreQueryFilters { get; set; }
     }
 }

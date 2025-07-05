@@ -107,5 +107,27 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
+        public async void SoftDeleteById(long id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if (entity != null && !entity.IsDeleted)
+            {
+                entity.IsDeleted = true;
+                _context.Set<T>().Update(entity);
+            }
+        }
+
+        public async Task SoftDeleteRangeById(List<long> ids)
+        {
+            var entities = await _context.Set<T>().Where(x => ids.Contains(x.Id)).ToListAsync();
+            if (entities != null && entities.Count > 0)
+            {
+                foreach (var entity in entities)
+                {
+                    entity.IsDeleted = true;
+                }
+                _context.Set<T>().UpdateRange(entities);
+            }
+        }
     }
 }

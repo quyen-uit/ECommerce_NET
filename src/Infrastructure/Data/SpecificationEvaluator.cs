@@ -36,6 +36,10 @@ namespace Infrastructure.Data
 
             var resultQuery = specification.IncludeStrings.Aggregate(queryQueryableInclude, (current, include) => current.Include(include));
 
+            if (specification.IsIgnoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
             return resultQuery;
         }
     }

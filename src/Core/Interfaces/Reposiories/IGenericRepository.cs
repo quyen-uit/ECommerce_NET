@@ -16,6 +16,9 @@ namespace Core.Interfaces.Reposiories
         void Delete(T entity);
         void DeleteRange(List<T> entity);
         Task DeleteRangeById(List<long> ids);
+
+        void SoftDeleteById(long id);
+        Task SoftDeleteRangeById(List<long> ids);
         Task<int> Complete();
     }
 }

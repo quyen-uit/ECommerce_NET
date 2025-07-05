@@ -32,6 +32,7 @@ namespace Core.Common.Specifications
         public int Skip { get; private set; }
 
         public bool IsPagingEnable { get; private set; }
+        public bool IsIgnoreQueryFilters { get; set; }
 
         protected void AddInclude(Expression<Func<T, object>> include)
         {
