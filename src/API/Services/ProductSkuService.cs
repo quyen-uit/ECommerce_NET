@@ -32,7 +32,7 @@ namespace API.Services
             }
             else
             {
-                entity = dto.Adapt<ProductSku>();
+                dto.Adapt(entity);
                 _productSkuRepository.Update(entity);
             }
             await _productSkuRepository.Complete();
@@ -59,7 +59,7 @@ namespace API.Services
         public async Task<ProductSkuDto> GetProductSkuByIdAsync(long id)
         {
             var spec = new ProductSkuWithColorAndSizeSpecification(id);
-            var productSku = await _productSkuRepository.GetAllWithSpecAsync(spec);
+            var productSku = await _productSkuRepository.GetEntityWithSpecAsync(spec);
             if (productSku == null)
                 throw new NotFoundException(CommonMessage.NotFoundProductSku);
 

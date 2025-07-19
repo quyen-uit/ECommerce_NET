@@ -1,9 +1,11 @@
 ﻿using Core.Entities.Identity;
+using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace API.Services
@@ -12,29 +14,39 @@ namespace API.Services
     {
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
-
-        public TokenService(IConfiguration config)
+        private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
+        private readonly UserManager<AppUser> _userManager;
+        public TokenService(IConfiguration config, IGenericRepository<RefreshToken> refreshTokenRepository, UserManager<AppUser> userManager)
         {
             _config = config;
+            _refreshTokenRepository = refreshTokenRepository;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]!));
+            _userManager = userManager;
         }
 
-        public string CreateToken(AppUser user)
+
+        public async Task<string> CreateToken(AppUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.GivenName, user.DisplayName)
             };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddMinutes(int.Parse(_config["Token:AccessTokenExpiration"] ?? "15")),
                 SigningCredentials = credentials,
-                Issuer = _config["Token:Issuer"]
+                Issuer = _config["Token:Issuer"],
+                Audience = _config["Token:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -43,5 +55,25 @@ namespace API.Services
 
             return tokenHandler.WriteToken(token);
         }
+
+
+        public async Task<string> CreateRefreshToken(string userId)
+
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.Now.AddDays(int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7")),
+                CreatedAt = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            _refreshTokenRepository.Add(refreshToken);
+            await _refreshTokenRepository.Complete();
+
+            return refreshToken.Token;
+        }
+
+
     }
 }

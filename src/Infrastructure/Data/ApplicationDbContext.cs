@@ -39,6 +39,7 @@ namespace Infrastructure.Data
         public DbSet<Address> Addresses => Set<Address>();
         public DbSet<Store> Stores => Set<Store>();
         public DbSet<StoreProductSku> StoreProductSkus => Set<StoreProductSku>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

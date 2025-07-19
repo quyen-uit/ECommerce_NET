@@ -1,4 +1,4 @@
-﻿using API.Errors;
+﻿using API.Commons;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -9,7 +9,7 @@ namespace API.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error(int code)
         {
-            return new ObjectResult(new ApiResponse(code));
+            return new ObjectResult(ResponseFactory.Fail(code, "An error occurred."));
         }
     }
 }

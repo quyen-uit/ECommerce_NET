@@ -1,13 +1,11 @@
-﻿using AutoMapper;
+﻿using API.Exceptions;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
 using Core.Dtos.Colors;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
-using Core.Specifications.Products;
 using Mapster;
 
 namespace API.Services

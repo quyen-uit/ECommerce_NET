@@ -1,4 +1,5 @@
-﻿using Core.Constants;
+﻿using API.Exceptions;
+using Core.Constants;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
@@ -6,7 +7,6 @@ using Core.Interfaces;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Orders;
-
 
 namespace API.Services
 {
@@ -21,10 +21,14 @@ namespace API.Services
             _basketRepository = basketRepository;
         }
 
-        public async Task<Order?> CreateOrderAsync(string buyerEmail, long deliveryId, string basketId, Address shipAddress)
+        public async Task<Order> CreateOrderAsync(string buyerEmail, long deliveryId, string basketId, Address shipAddress)
         {
             // get basket   
             var basket = await _basketRepository.GetBasketAsync(basketId);
+            if (basket == null)
+            {
+                throw new BadRequestException("Basket not found");
+            }
 
             //get item from product
             var items = new List<OrderItem>();
@@ -68,12 +72,11 @@ namespace API.Services
 
             if (result <= 0)
             {
-                return null;
+                throw new BadRequestException("Creating order fail");
             }
 
             //await _basketRepository.DeleteBasketAsync(basketId);
             return order;
-
         }
 
         public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()

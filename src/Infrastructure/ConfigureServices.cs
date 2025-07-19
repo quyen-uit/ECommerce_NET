@@ -28,9 +28,9 @@ namespace Infrastructure
             });
 
             // add identity service
-            services.AddIdentityCore<AppUser>(options => { })
+            services.AddIdentity<AppUser, IdentityRole>(options => { })
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddSignInManager<SignInManager<AppUser>>();
+            .AddDefaultTokenProviders();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

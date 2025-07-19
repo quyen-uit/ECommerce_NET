@@ -1,4 +1,5 @@
-﻿using Core.Common;
+﻿using API.Exceptions;
+using Core.Common;
 using Core.Constants;
 using Core.Dtos.Products;
 using Core.Entities;

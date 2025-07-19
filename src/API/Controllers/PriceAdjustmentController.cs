@@ -1,8 +1,6 @@
-﻿using API.Errors;
-using API.Helpers;
+﻿using API.Commons;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
 using Core.Dtos.PriceAdjustments;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
@@ -20,49 +18,46 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PriceAdjustmentDto>> GetPriceAdjustment(long id)
+        public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> GetPriceAdjustment(long id)
         {
             var priceAdjustmentDto = await _priceAdjustmentService.GetPriceAdjustmentByIdAsync(id);
-            return Ok(priceAdjustmentDto);
+            return Ok(ResponseFactory.Ok(priceAdjustmentDto));
         }
 
         [HttpPost("get-all")]
-        public async Task<ActionResult<Pagination<PriceAdjustmentDto>>> GetPriceAdjustments(
+        public async Task<ActionResult<ApiSuccessResponse<Pagination<PriceAdjustmentDto>>>> GetPriceAdjustments(
             [FromBody] PriceAdjustmentSpecParams specParams
         )
         {
             var result = await _priceAdjustmentService.GetAllPriceAdjustmentAsync(specParams);
 
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<PriceAdjustmentDto>> CreatePriceAdjustment(
+        public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> CreatePriceAdjustment(
             [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
         {
             var result = await _priceAdjustmentService.AddOrUpdatePriceAdjustmentAsync(priceAdjustmentDto);
-            if (result == null)
-                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
-
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
 
         [HttpPost("update")]
-        public async Task<ActionResult<PriceAdjustmentDto>> UpdatePriceAdjustment(
+        public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> UpdatePriceAdjustment(
             [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
         {
             var result = await _priceAdjustmentService.AddOrUpdatePriceAdjustmentAsync(priceAdjustmentDto);
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse>> DeletePriceAdjustment(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeletePriceAdjustment(long id)
         {
             await _priceAdjustmentService.DeletePriceAdjustmentAsync(id);
-            return Ok(CommonMessage.DeleteSuccess);
+            return Ok(ResponseFactory.Ok());
         }
     }
 }

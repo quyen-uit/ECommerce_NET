@@ -1,32 +1,32 @@
-﻿namespace API.Errors
+﻿using System.Net;
+
+namespace API.Commons
 {
-    public class ApiResponse
+    public abstract class ApiResponse
     {
+        public string Message { get; protected set; } = null!;
+        public int StatusCode { get; protected set; }
+        public bool Succeeded { get; protected set; }
+
         public ApiResponse(int statusCode, string? message = null)
         {
             StatusCode = statusCode;
-            Message = message ?? GetDefaultMessageFromStatusCode(statusCode);
+            Message = message ?? GetDefaultMessageForStatusCode(statusCode);
         }
 
-        public ApiResponse(string message)
-        {
-            Message = message;
-            StatusCode = 200;
-        }
-
-        public int StatusCode { get; set; }
-        public string Message { get; set; }
-
-
-        private string GetDefaultMessageFromStatusCode(int statusCode)
+        private static string GetDefaultMessageForStatusCode(int statusCode)
         {
             return statusCode switch
             {
-                400 => "Bad request.",
-                401 => "Not authorized.",
-                404 => "Not found.",
-                500 => "Server errors.",
-                _ => "Server errors."
+                (int)HttpStatusCode.OK => "Success",
+                (int)HttpStatusCode.Created => "Created",
+                (int)HttpStatusCode.NoContent => "No Content",
+                (int)HttpStatusCode.BadRequest => "Bad Request",
+                (int)HttpStatusCode.Unauthorized => "Unauthorized",
+                (int)HttpStatusCode.Forbidden => "Forbidden",
+                (int)HttpStatusCode.NotFound => "Not Found",
+                (int)HttpStatusCode.InternalServerError => "Internal Server Error",
+                _ => string.Empty
             };
         }
     }

@@ -1,5 +1,6 @@
-﻿using Core.Dtos;
+﻿using API.Commons;
 using AutoMapper;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Mvc;
@@ -18,33 +19,27 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<CustomerBasketDto>> GetBasketById(string id)
+        public async Task<ActionResult<ApiSuccessResponse<CustomerBasketDto>>> GetBasketById(string id)
         {
             var basket = await _basketRepository.GetBasketAsync(id);
-            if (basket != null)
-            {
-                var customerBasket = _mapper.Map<CustomerBasketDto>(basket);
-                return customerBasket;
-            }
-            else
-            {
-                return new CustomerBasketDto { Id = id };
-            }
+            var result = _mapper.Map<CustomerBasketDto>(basket) ?? new CustomerBasketDto { Id = id };
+            return Ok(ResponseFactory.Ok(result));
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerBasketDto>> UpdateBasket(CustomerBasketDto basket)
+        public async Task<ActionResult<ApiSuccessResponse<CustomerBasketDto>>> UpdateBasket(CustomerBasketDto basket)
         {
             var customerBasket = _mapper.Map<CustomerBasket>(basket);
             var updatedBasket = await _basketRepository.UpdateBasketAsync(customerBasket);
-            return Ok(updatedBasket);
+            var result = _mapper.Map<CustomerBasketDto>(updatedBasket);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         [HttpDelete]
-        public async Task DeleteBasket(string id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBasket(string id)
         {
             await _basketRepository.DeleteBasketAsync(id);
+            return Ok(ResponseFactory.Ok());
         }
-
     }
 }

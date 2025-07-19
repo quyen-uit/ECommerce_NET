@@ -1,5 +1,4 @@
-﻿using API.Errors;
-using API.Helpers;
+﻿using API.Commons;
 using Core.Common;
 using Core.Constants;
 using Core.Dtos;
@@ -22,72 +21,66 @@ namespace API.Controllers
 
         // ✅ GET: api/productbrand/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductBrandDto>> GetProductBrand(long id)
+        public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> GetProductBrand(long id)
         {
             var brandDto = await _brandService.GetProductBrandByIdAsync(id);
-            return Ok(brandDto);
+            return Ok(ResponseFactory.Ok(brandDto));
         }
 
         // 🔄 POST: api/productbrand/get-all
         [HttpPost("get-all")]
-        public async Task<ActionResult<Pagination<ProductBrandDto>>> GetProductBrands(
+        public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductBrandDto>>>> GetProductBrands(
             [FromBody] ProductBrandSpecParams specParams
         )
         {
             var result = await _brandService.GetAllProductBrandsAsync(specParams);
 
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         // ✅ POST: api/productbrand/create
         [HttpPost("create")]
-        public async Task<ActionResult<ProductBrandDto>> CreateProductBrand(
+        public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> CreateProductBrand(
             [FromBody] CreateProductBrandDto brandDto
         )
         {
             var result = await _brandService.AddOrUpdateProductBrandAsync(brandDto);
-            if (result == null)
-                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
-
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         // ✅ POST: api/productbrand/create-many
         [HttpPost("create-many")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrandDto>>> CreateProductBrands(
+        public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<ProductBrandDto>>>> CreateProductBrands(
             [FromBody] IReadOnlyList<CreateProductBrandDto> brandDtos
         )
         {
             var result = await _brandService.AddRangeProductBrandAsync(brandDtos);
-            if (result == null || !result.Any())
-                return BadRequest(new ApiResponse(400, CommonMessage.CreateFail));
-
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         // ✅ POST: api/productbrand/update
         [HttpPost("update")]
-        public async Task<ActionResult<ProductBrandDto>> UpdateProductBrand(
+        public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> UpdateProductBrand(
             [FromBody] CreateProductBrandDto brandDto
         )
         {
             var result = await _brandService.AddOrUpdateProductBrandAsync(brandDto);
-            return Ok(result);
+            return Ok(ResponseFactory.Ok(result));
         }
 
         // ✅ DELETE: api/productbrand/{id}
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse>> DeleteProductBrand(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductBrand(long id)
         {
             await _brandService.DeleteProductBrandAsync(id);
-            return Ok(CommonMessage.DeleteSuccess);
+            return Ok(ResponseFactory.Ok());
         }
 
         [HttpDelete("delete-many")]
-        public async Task<ActionResult<ApiResponse>> DeleteBrands([FromBody] List<long> ids)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBrands([FromBody] List<long> ids)
         {
             await _brandService.DeleteBrandsAsync(ids);
-            return Ok(new ApiResponse(CommonMessage.DeleteSuccess));
+            return Ok(ResponseFactory.Ok());
         }
     }
 }

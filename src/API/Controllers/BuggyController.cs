@@ -1,4 +1,5 @@
-﻿using API.Errors;
+﻿using API.Commons;
+using API.Exceptions;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +17,9 @@ namespace API.Controllers
         [HttpGet("notfound")]
         public ActionResult GetNotFoundRequest()
         {
-            return NotFound(new ApiResponse(404));
+            throw new NotFoundException("Resource not found");
         }
+
         [HttpGet("servererror")]
         public ActionResult GetServerError()
         {
@@ -25,15 +27,17 @@ namespace API.Controllers
             var str = product!.ToString();
             return Ok();
         }
+
         [HttpGet("badrequest")]
         public ActionResult GetBadRequest()
         {
-            return BadRequest(new ApiResponse(400));
+            throw new BadRequestException("Bad request");
         }
+
         [HttpGet("badrequest/{id}")]
         public ActionResult GetNotFoundRequest(int id)
         {
-            return NotFound(new ApiResponse(404));
+            throw new NotFoundException("Resource not found");
         }
     }
 }

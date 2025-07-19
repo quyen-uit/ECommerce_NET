@@ -1,4 +1,4 @@
-﻿using API.Errors;
+﻿using API.Commons;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces.Services;
@@ -22,14 +22,10 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("{basketId}")]
-        public async Task<ActionResult<CustomerBasket>> CreateOrUpdatePaymentIntent(string basketId)
+        public async Task<ActionResult<ApiSuccessResponse<CustomerBasket>>> CreateOrUpdatePaymentIntent(string basketId)
         {
             var basket = await _paymentService.CreateOrUpdatePaymentIntent(basketId);
-            if (basket == null)
-            {
-                return BadRequest(new ApiResponse(400, "Basket has some problems"));
-            }
-            return Ok(basket);
+            return Ok(ResponseFactory.Ok(basket));
         }
 
         [HttpPost("webhook")]
@@ -51,7 +47,7 @@ namespace API.Controllers
                     break;
                 case "payment_intent.payment_failed":
                     intent = (PaymentIntent)stripeEvent.Data.Object;
-                    _logger.LogInformation("Payment successfully: {id}", intent.Id); 
+                    _logger.LogInformation("Payment successfully: {id}", intent.Id);
                     order = await _paymentService.UpdateOrderPaymentFailed(intent.Id);
                     _logger.LogInformation("Order updated to failed payment: {id}", order.Id);
                     break;

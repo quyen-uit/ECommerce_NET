@@ -1,14 +1,13 @@
-﻿using API.Errors;
-using API.Helpers;
+﻿using API.Commons;
 using API.Services;
 using Core.Interfaces.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net;
 using System.Reflection;
 using System.Text;
 
@@ -60,7 +59,7 @@ namespace API.Extensions
                     .Select(x => x.ErrorMessage)
                     .ToArray();
 
-                    var errorResponse = new ApiValidationErrorResponse { Errors = errors };
+                    var errorResponse = ResponseFactory.Fail((int)HttpStatusCode.BadRequest, "An internal server error occurred", errors);
 
                     return new BadRequestObjectResult(errorResponse);
                 };
@@ -81,9 +80,10 @@ namespace API.Extensions
                     {
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
-                        ValidateAudience = false,
+                        ValidateAudience = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]!)),
-                        ValidIssuer = configuration["Token:Issuer"]
+                        ValidIssuer = configuration["Token:Issuer"],
+                        ValidAudience = configuration["Token:Audience"],
                     };
                 });
 
@@ -97,6 +97,7 @@ namespace API.Extensions
             services.AddScoped<IColorService, ColorService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ISizeService, SizeService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 

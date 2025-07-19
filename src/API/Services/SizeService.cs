@@ -1,14 +1,10 @@
-﻿using AutoMapper;
+﻿using API.Exceptions;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
-using Core.Dtos.CreateDto;
 using Core.Dtos.Sizes;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
-using Core.Specifications.Colors;
-using Core.Specifications.Products;
 using Core.Specifications.Sizes;
 using Mapster;
 
@@ -25,6 +21,10 @@ namespace API.Services
 
         public async Task<SizeDto> AddOrUpdateSizeAsync(CreateSizeDto dto)
         {
+            if (dto == null)
+            {
+                throw new BadRequestException(CommonMessage.CreateFail);
+            }
             var entity = await _sizeRepository.GetByIdAsync(dto.Id);
             if (entity == null)
             {
@@ -44,6 +44,10 @@ namespace API.Services
             IReadOnlyList<CreateSizeDto> dtos
         )
         {
+            if (dtos == null || !dtos.Any())
+            {
+                throw new BadRequestException(CommonMessage.CreateFail);
+            }
             var entities = dtos.Adapt<IReadOnlyList<Size>>();
             _sizeRepository.AddRange(entities);
             await _sizeRepository.Complete();

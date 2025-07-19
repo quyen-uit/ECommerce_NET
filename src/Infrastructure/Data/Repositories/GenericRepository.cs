@@ -32,7 +32,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task<int> CountAsync(ISpecification<T> specification)
         {
-            return await ApplySpecification(specification).CountAsync();
+            return await ApplySpecification(specification).AsNoTracking().CountAsync();
         }
 
         public async Task DeleteById(long id)
@@ -64,12 +64,12 @@ namespace Infrastructure.Data.Repositories
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> specification)
         {
-            return await ApplySpecification(specification).ToListAsync();
+            return await ApplySpecification(specification).AsNoTracking().ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(long id)
@@ -82,7 +82,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task<T?> GetEntityWithSpecAsync(ISpecification<T> specification)
         {
-            return await ApplySpecification(specification).FirstOrDefaultAsync();
+            return await ApplySpecification(specification).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public void Update(T entity)

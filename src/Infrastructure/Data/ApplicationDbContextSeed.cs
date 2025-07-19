@@ -1,8 +1,8 @@
-﻿using System.Text.Json;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace Infrastructure.Data
 {
@@ -10,9 +10,16 @@ namespace Infrastructure.Data
     {
         public static async Task SeedAsync(
             ApplicationDbContext context,
-            UserManager<AppUser> userManager
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager
         )
         {
+            if (!roleManager.Roles.Any())
+            {
+                await roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
+                await roleManager.CreateAsync(new IdentityRole { Name = "User" });
+            }
+
             if (!userManager.Users.Any())
             {
                 var listAddress = new List<Address>{new Address
@@ -30,11 +37,14 @@ namespace Infrastructure.Data
                     DisplayName = "Quyen",
                     UserName = "quyen123",
                     Email = "quyen@mail.com",
-                    Addresses = listAddress
+                    Addresses = listAddress,
+
                 };
 
                 await userManager.CreateAsync(user, "Admin@123");
+                await userManager.AddToRoleAsync(user, "Admin");
             }
+
             var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             if (!context.Categories.Any())
             {

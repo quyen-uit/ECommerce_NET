@@ -1,14 +1,11 @@
-﻿using API.Errors;
-using AutoMapper;
+﻿using API.Exceptions;
 using Core.Common;
 using Core.Constants;
-using Core.Dtos;
 using Core.Dtos.Categories;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
-using Core.Specifications.Products;
 using Mapster;
 
 namespace API.Services
@@ -24,6 +21,10 @@ namespace API.Services
 
         public async Task<CategoryDto> AddOrUpdateCategoryAsync(CreateCategoryDto dto)
         {
+            if (dto == null)
+            {
+                throw new BadRequestException(CommonMessage.CreateFail);
+            }
             var entity = await _categoryRepository.GetByIdAsync(dto.Id);
             if (entity == null)
             {
@@ -43,6 +44,10 @@ namespace API.Services
             IReadOnlyList<CreateCategoryDto> dtos
         )
         {
+            if (dtos == null || !dtos.Any())
+            {
+                throw new BadRequestException(CommonMessage.CreateFail);
+            }
             var entities = dtos.Adapt<IReadOnlyList<Category>>();
             _categoryRepository.AddRange(entities);
             await _categoryRepository.Complete();
