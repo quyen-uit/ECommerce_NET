@@ -82,7 +82,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("BannerImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
@@ -107,7 +107,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ThumbnailUrl")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -160,7 +160,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("District")
@@ -191,7 +191,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Ward")
@@ -284,7 +284,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -300,7 +300,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Url")
@@ -324,7 +324,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("AdjustmentDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -342,7 +342,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Reason")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -361,7 +361,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ImportDate")
@@ -382,7 +382,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<long>("VendorId")
@@ -406,7 +406,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -434,7 +434,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -486,7 +486,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductSkuId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<long>("Id")
@@ -502,7 +502,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("StoreId", "ProductSkuId");
@@ -591,7 +591,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("BuyerEmail")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<long>("DeliveryMethodId")
@@ -619,7 +619,7 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -640,7 +640,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -655,7 +655,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -674,7 +674,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("EndDate")
@@ -691,7 +691,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -741,7 +741,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
@@ -778,7 +778,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductBrandId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -830,7 +830,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ColorId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsActive")
@@ -850,7 +850,7 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -873,7 +873,7 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
                     NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -899,7 +899,7 @@ namespace Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -921,7 +921,7 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -939,7 +939,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ReturnOrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -968,7 +968,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -980,7 +980,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -1034,7 +1034,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedDatetime")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -1043,7 +1043,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductSkuId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("UpdatedDatetime")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
@@ -1185,6 +1185,42 @@ namespace Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("RefreshToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 10L, null, null, null, null, null);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("CollectionProduct", b =>
@@ -1547,6 +1583,17 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RefreshToken", b =>
+                {
+                    b.HasOne("Core.Entities.Identity.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Entities.Category", b =>

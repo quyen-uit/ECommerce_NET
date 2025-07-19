@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace API.Commons
+namespace API.Commons.Response
 {
     public class ApiSuccessResponse<T> : ApiResponse
     {

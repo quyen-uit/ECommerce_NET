@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace API.Commons
+namespace API.Commons.Response
 {
     public abstract class ApiResponse
     {
@@ -26,7 +26,7 @@ namespace API.Commons
                 (int)HttpStatusCode.Forbidden => "Forbidden",
                 (int)HttpStatusCode.NotFound => "Not Found",
                 (int)HttpStatusCode.InternalServerError => "Internal Server Error",
-                _ => string.Empty
+                _ => string.Empty,
             };
         }
     }

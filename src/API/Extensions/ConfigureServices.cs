@@ -1,10 +1,12 @@
-﻿using API.Commons;
+﻿using API.Commons.Response;
+using API.Helpers;
 using API.Services;
 using Core.Interfaces.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Net;
@@ -18,6 +20,10 @@ namespace API.Extensions
         public static IServiceCollection AddAPIService(this IServiceCollection services, IConfiguration configuration)
         {
             // add service for web api
+            services.AddControllers(options =>
+            {
+                options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseTransformer()));
+            });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {

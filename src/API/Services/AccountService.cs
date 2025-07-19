@@ -90,7 +90,7 @@ namespace API.Services
                 throw new BadRequestException(result.Errors.First().Description);
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, UserRole.User.ToString());
 
             var accessToken = await _tokenService.CreateToken(user);
             var refreshToken = await _tokenService.CreateRefreshToken(user.Id);

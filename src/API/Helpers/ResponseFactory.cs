@@ -1,6 +1,7 @@
 using System.Net;
+using API.Commons.Response;
 
-namespace API.Commons
+namespace API.Helpers
 {
     public static class ResponseFactory
     {
@@ -14,9 +15,9 @@ namespace API.Commons
             return new ApiSuccessResponse<object>(null, statusCode, message);
         }
 
-        public static ApiErrorResponse Fail(int statusCode, string? message = null, object? error = null)
+        public static ApiErrorResponse Fail(int statusCode, string? message = null, IEnumerable<string>? error = null, string? detail = null)
         {
-            return new ApiErrorResponse(statusCode, message, error);
+            return new ApiErrorResponse(statusCode, message, error, detail);
         }
     }
 }

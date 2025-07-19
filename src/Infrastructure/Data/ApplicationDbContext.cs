@@ -84,10 +84,10 @@ namespace Infrastructure.Data
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedDatetime = now;
+                    entry.Entity.CreatedAt = now;
                 }
 
-                entry.Entity.UpdatedDatetime = now;
+                entry.Entity.UpdatedAt = now;
             }
 
             return base.SaveChanges();
@@ -103,10 +103,10 @@ namespace Infrastructure.Data
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedDatetime = now;
+                    entry.Entity.CreatedAt = now;
                 }
 
-                entry.Entity.UpdatedDatetime = now;
+                entry.Entity.UpdatedAt = now;
             }
 
             return await base.SaveChangesAsync(cancellationToken);

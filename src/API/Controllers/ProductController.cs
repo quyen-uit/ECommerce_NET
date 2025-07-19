@@ -1,4 +1,5 @@
-﻿using API.Commons;
+﻿using API.Commons.Response;
+using API.Helpers;
 using Core.Common;
 using Core.Dtos.Products;
 using Core.Interfaces.Services;
@@ -7,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class ProductsController : ApiControllerBase
+    public class ProductController : ApiControllerBase
     {
         private readonly IProductService _productService;
 
-        public ProductsController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }

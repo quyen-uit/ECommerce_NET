@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace API.Commons
+namespace API.Commons.Response
 {
     public class ApiError
     {

@@ -43,7 +43,7 @@ namespace Core.Specifications.PriceAdjustments
                     AddOrderByDescending(x => x.EndDate);
                     break;
                 default:
-                    AddOrderBy(x => x.UpdatedDatetime!);
+                    AddOrderBy(x => x.UpdatedAt!);
                     break;
             }
         }

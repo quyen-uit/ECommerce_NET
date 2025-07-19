@@ -1,8 +1,10 @@
-﻿using API.Commons;
+﻿using API.Commons.Response;
+using API.Helpers;
 using Core.Common;
 using Core.Dtos.Sizes;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -61,7 +63,7 @@ namespace API.Controllers
             await _sizeService.DeleteSizeAsync(id);
             return Ok(ResponseFactory.Ok());
         }
-
+        [HttpDelete("delete-many")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSizes([FromBody] List<long> ids)
         {
             await _sizeService.DeleteSizesAsync(ids);

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initDb : Migration
+    public partial class InitApp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,7 +62,8 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ParentId = table.Column<long>(type: "bigint", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,8 +90,9 @@ namespace Infrastructure.Migrations
                     ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,7 +107,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    HexCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    HexCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,7 +125,8 @@ namespace Infrastructure.Migrations
                     ShortName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     DeliveryTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Price = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false)
+                    Price = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,8 +144,9 @@ namespace Infrastructure.Migrations
                     ReferenceId = table.Column<long>(type: "bigint", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -158,8 +163,9 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,7 +181,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    LogoUrl = table.Column<string>(type: "text", nullable: true)
+                    LogoUrl = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -191,7 +198,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     SortOrder = table.Column<int>(type: "integer", nullable: false),
-                    SizeType = table.Column<string>(type: "text", nullable: false)
+                    SizeType = table.Column<string>(type: "text", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -209,7 +217,8 @@ namespace Infrastructure.Migrations
                     Address = table.Column<string>(type: "text", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Longitude = table.Column<double>(type: "double precision", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,7 +235,8 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Phone = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -269,8 +279,9 @@ namespace Infrastructure.Migrations
                     District = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     AppUserId = table.Column<string>(type: "text", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -369,6 +380,31 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    Expires = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -385,8 +421,9 @@ namespace Infrastructure.Migrations
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
                     ProductBrandId = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Properties = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
@@ -421,8 +458,9 @@ namespace Infrastructure.Migrations
                     PaymentIntentId = table.Column<string>(type: "text", nullable: true),
                     PaymentType = table.Column<int>(type: "integer", nullable: false),
                     DeliveryMethodId = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -450,7 +488,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SalePrice = table.Column<decimal>(type: "numeric", nullable: false),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    PriceAdjustmentId = table.Column<long>(type: "bigint", nullable: false)
+                    PriceAdjustmentId = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -505,8 +544,9 @@ namespace Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     ColorId = table.Column<long>(type: "bigint", nullable: false),
                     SizeId = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -542,8 +582,9 @@ namespace Infrastructure.Migrations
                     AppUserId = table.Column<string>(type: "text", nullable: false),
                     Rating = table.Column<int>(type: "integer", nullable: false),
                     Comment = table.Column<string>(type: "text", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -575,8 +616,9 @@ namespace Infrastructure.Migrations
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     OrderId = table.Column<long>(type: "bigint", nullable: true),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -602,8 +644,9 @@ namespace Infrastructure.Migrations
                     Status = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
                     TotalAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -628,8 +671,9 @@ namespace Infrastructure.Migrations
                     AdjustmentDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Reason = table.Column<string>(type: "text", nullable: true),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -655,8 +699,9 @@ namespace Infrastructure.Migrations
                     Notes = table.Column<string>(type: "text", nullable: true),
                     VendorId = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -689,8 +734,9 @@ namespace Infrastructure.Migrations
                     Notes = table.Column<string>(type: "text", nullable: true),
                     ReferenceId = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -713,8 +759,9 @@ namespace Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:IdentitySequenceOptions", "'10', '1', '', '', 'False', '1'")
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -742,8 +789,9 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProductSkuId = table.Column<long>(type: "bigint", nullable: false),
                     AppUserId = table.Column<string>(type: "text", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -774,8 +822,9 @@ namespace Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    UpdatedDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -917,6 +966,11 @@ namespace Infrastructure.Migrations
                 column: "SizeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ReturnOrderItems_ProductSkuId",
                 table: "ReturnOrderItems",
                 column: "ProductSkuId");
@@ -995,6 +1049,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductCollections");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "ReturnOrderItems");

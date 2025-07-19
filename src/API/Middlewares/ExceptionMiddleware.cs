@@ -1,5 +1,6 @@
-﻿using API.Commons;
+﻿using API.Commons.Response;
 using API.Exceptions;
+using API.Helpers;
 using System.Net;
 using System.Text.Json;
 
@@ -38,36 +39,37 @@ namespace API.Middlewares
         private static Task<ApiResponse> HandleExceptionAsync(HttpContext context, Exception exception, IHostEnvironment env)
         {
             var statusCode = (int)HttpStatusCode.InternalServerError;
+            var stackTrace = env.IsDevelopment() ? exception.StackTrace : null;
             ApiResponse response;
 
             switch (exception)
             {
                 case ValidationException validationException:
                     statusCode = (int)HttpStatusCode.UnprocessableEntity;
-                    response = ResponseFactory.Fail(statusCode, validationException.Message, validationException.Errors);
+                    response = ResponseFactory.Fail(statusCode, validationException.Message, validationException.Errors, stackTrace);
                     break;
                 case NotFoundException notFoundException:
                     statusCode = (int)HttpStatusCode.NotFound;
-                    response = ResponseFactory.Fail(statusCode, notFoundException.Message);
+                    response = ResponseFactory.Fail(statusCode, notFoundException.Message, detail: stackTrace);
                     break;
                 case BadRequestException badRequestException:
                     statusCode = (int)HttpStatusCode.BadRequest;
-                    response = ResponseFactory.Fail(statusCode, badRequestException.Message);
+                    response = ResponseFactory.Fail(statusCode, badRequestException.Message, detail: stackTrace);
                     break;
                 case UnauthorizedException unauthorizedException:
                     statusCode = (int)HttpStatusCode.Unauthorized;
-                    response = ResponseFactory.Fail(statusCode, unauthorizedException.Message);
+                    response = ResponseFactory.Fail(statusCode, unauthorizedException.Message, detail: stackTrace);
                     break;
                 case ForbiddenException forbiddenException:
                     statusCode = (int)HttpStatusCode.Forbidden;
-                    response = ResponseFactory.Fail(statusCode, forbiddenException.Message);
+                    response = ResponseFactory.Fail(statusCode, forbiddenException.Message, detail: stackTrace);
                     break;
                 case ConflictException conflictException:
                     statusCode = (int)HttpStatusCode.Conflict;
-                    response = ResponseFactory.Fail(statusCode, conflictException.Message);
+                    response = ResponseFactory.Fail(statusCode, conflictException.Message, detail: stackTrace);
                     break;
                 default:
-                    response = ResponseFactory.Fail(statusCode, exception.Message, env.IsDevelopment() ? exception.StackTrace : null);
+                    response = ResponseFactory.Fail(statusCode, exception.Message, detail: stackTrace);
                     break;
             }
 

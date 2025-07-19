@@ -31,7 +31,7 @@ namespace Core.Specifications.ProductSkus
                     AddOrderByDescending(x => x.SkuCode);
                     break;
                 default:
-                    AddOrderByDescending(x => x.UpdatedDatetime!);
+                    AddOrderByDescending(x => x.UpdatedAt!);
                     break;
             }
         }

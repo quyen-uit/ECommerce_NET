@@ -75,7 +75,7 @@ namespace Core.Specifications.Products
                     AddOrderByDescending(x => x.Category.Name);
                     break;
                 default:
-                    AddOrderByDescending(x => x.UpdatedDatetime!);
+                    AddOrderByDescending(x => x.UpdatedAt!);
                     break;
             }
         }
