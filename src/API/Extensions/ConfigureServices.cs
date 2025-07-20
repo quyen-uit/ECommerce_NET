@@ -20,6 +20,8 @@ namespace API.Extensions
         public static IServiceCollection AddAPIService(this IServiceCollection services, IConfiguration configuration)
         {
             // add service for web api
+            services.AddMemoryCache();
+
             services.AddControllers(options =>
             {
                 options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseTransformer()));

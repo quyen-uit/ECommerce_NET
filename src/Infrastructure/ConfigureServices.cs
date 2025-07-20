@@ -28,7 +28,7 @@ namespace Infrastructure
             });
 
             // add identity service
-            services.AddIdentity<AppUser, IdentityRole>(options => { })
+            services.AddIdentity<AppUser, AppRole>(options => { })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 

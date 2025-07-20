@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -40,6 +40,8 @@ namespace Infrastructure.Data
         public DbSet<Store> Stores => Set<Store>();
         public DbSet<StoreProductSku> StoreProductSkus => Set<StoreProductSku>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<Permission> Permissions => Set<Permission>();
+        public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
