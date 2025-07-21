@@ -1,11 +1,9 @@
-﻿using Infrastructure.Data;
+﻿using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace API.Helpers
+namespace API.Helpers.Authorizations
 {
-    // Custom requirement
     public class PermissionRequirement : IAuthorizationRequirement
     {
         public string Permission { get; }
@@ -15,8 +13,6 @@ namespace API.Helpers
             Permission = permission;
         }
     }
-
-    // Authorization handler
     public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {
         private readonly IServiceProvider _serviceProvider;
@@ -31,22 +27,12 @@ namespace API.Helpers
             PermissionRequirement requirement)
         {
             using var scope = _serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var permissionService = scope.ServiceProvider.GetRequiredService<IPermissionService>();
 
             var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) return;
 
-            var user = await userManager.FindByIdAsync(userId);
-            if (user == null) return;
-
-            var userRoles = await userManager.GetRolesAsync(user);
-
-            var hasPermission = await dbContext.RolePermissions
-                .Include(rp => rp.Role)
-                .Include(rp => rp.Permission)
-                .Where(rp => userRoles.Contains(rp.Role.Name))
-                .AnyAsync(rp => rp.Permission.Name == requirement.Permission);
+            var hasPermission = await permissionService.UserHasPermissionAsync(userId, requirement.Permission);
 
             if (hasPermission)
             {

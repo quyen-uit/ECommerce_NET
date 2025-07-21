@@ -1,10 +1,12 @@
 ﻿using API.Commons.Response;
 using API.Helpers;
+using API.Helpers.Authorizations;
 using API.Services;
 using Core.Interfaces.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.IdentityModel.Tokens;
@@ -96,6 +98,8 @@ namespace API.Extensions
                 });
 
             services.AddAuthorization();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>();
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IOrderService, OrderService>();
