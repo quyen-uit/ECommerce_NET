@@ -1,9 +1,10 @@
-﻿using Core.Dtos.Accounts;
+﻿using Core.Common;
+using Core.Constants;
+using Core.Dtos.Accounts;
 using Core.Entities.Identity;
-using Core.Interfaces.Reposiories;
+using Core.Interfaces;
 using Core.Interfaces.Services;
-using Infrastructure.Data;
-using Infrastructure.Data.Repositories;
+using Core.Specifications.Accounts;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,19 +15,17 @@ namespace API.Services
     {
         private readonly RoleManager<AppRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IGenericRepository<Permission> _permissionRepository;
-        private readonly IGenericRepository<RolePermission> _rolePermissionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RoleManagementService(
+
+        public RoleService(
             RoleManager<AppRole> roleManager,
             UserManager<AppUser> userManager,
-            IGenericRepository<Permission> permissionRepository,
-            IGenericRepository<RolePermission> rolePermissionRepository)
+            IUnitOfWork unitOfWork)
         {
             _roleManager = roleManager;
             _userManager = userManager;
-            _permissionRepository = permissionRepository;
-            _rolePermissionRepository = rolePermissionRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<RoleResponse> CreateRoleAsync(CreateRoleRequest request)
@@ -38,6 +37,8 @@ namespace API.Services
             {
                 throw new InvalidOperationException($"Failed to create role: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
+            await _unitOfWork.RolePermissionRepository.AddPermissionsToRoleAsync(role.Id, request.PermissionIds);
+            await _unitOfWork.Complete();
 
             return await GetRoleByIdAsync(role.Id);
         }
@@ -46,7 +47,7 @@ namespace API.Services
         {
             var role = await _roleManager.FindByIdAsync(request.Id);
             if (role == null)
-                throw new NotFoundException("Role not found");
+                throw new NotFoundException(CommonMessage.NotFoundRole);
 
             role = request.Adapt<AppRole>();
 
@@ -58,6 +59,7 @@ namespace API.Services
 
             // Update role permissions
             await UpdateRolePermissionsAsync(role.Id, request.PermissionIds);
+            await _unitOfWork.Complete();
 
             return await GetRoleByIdAsync(role.Id);
         }
@@ -66,19 +68,18 @@ namespace API.Services
         {
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null)
-                return false;
+                throw new NotFoundException(CommonMessage.NotFoundRole);
 
             // Check if any users are assigned to this role
-            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name!);
             if (usersInRole.Any())
             {
                 throw new InvalidOperationException("Cannot delete role that has assigned users");
             }
 
             // Remove role permissions
-            var rolePermissions = _context.RolePermissions.Where(rp => rp.RoleId == roleId);
-            _context.RolePermissions.RemoveRange(rolePermissions);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.RolePermissionRepository.RemoveAllPermissionsFromRoleAsync(roleId);
+            await _unitOfWork.Complete();
 
             var result = await _roleManager.DeleteAsync(role);
             return result.Succeeded;
@@ -86,172 +87,56 @@ namespace API.Services
 
         public async Task<RoleResponse> GetRoleByIdAsync(string roleId)
         {
-            var role = await _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Id == roleId);
-
+            var role = await _roleManager.FindByIdAsync(roleId);
             if (role == null)
-                return null;
+                throw new NotFoundException(CommonMessage.NotFoundRole);
+            var permissions = await _unitOfWork.RolePermissionRepository.GetPermissionsByRoleIdAsync(roleId);
+            var users = await _userManager.GetUsersInRoleAsync(role.Name!);
 
-            var userCount = await _userManager.GetUsersInRoleAsync(role.Name);
+            var roleResponse = role.Adapt<RoleResponse>();
+            roleResponse.UserCount = users.Count;
+            foreach (var permission in permissions)
+                roleResponse.Permissions.Add(permission.Adapt<PermissionResponse>());
 
-            return new RoleResponse
-            {
-                Id = role.Id,
-                Name = role.Name,
-                Description = role.Description,
-                UserCount = userCount.Count,
-                Permissions = role.RolePermissions.Select(rp => new PermissionResponse
-                {
-                    Id = rp.Permission.Id,
-                    Name = rp.Permission.Name,
-                    Description = rp.Permission.Description,
-                    Category = rp.Permission.Category,
-                    Action = rp.Permission.Action
-                }).ToList()
-            };
+            return roleResponse;
         }
 
-        public async Task<RoleResponse> GetRoleByNameAsync(string roleName)
+        public async Task<Pagination<RoleResponse>> GetAllRolesAsync(RoleParams roleParams)
         {
-            var role = await _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Name == roleName);
+            var roles = await _unitOfWork.RolePermissionRepository.GetRolesAsync(roleParams);
+            var countAllRoles = await _unitOfWork.RolePermissionRepository.CountRoles(roleParams);
 
-            if (role == null)
-                return null;
-
-            var userCount = await _userManager.GetUsersInRoleAsync(role.Name);
-
-            return new RoleResponse
+            var roleResponses = roles.Adapt<List<RoleResponse>>();
+            foreach (var role in roleResponses)
             {
-                Id = role.Id,
-                Name = role.Name,
-                Description = role.Description,
-                UserCount = userCount.Count,
-                Permissions = role.RolePermissions.Select(rp => new PermissionResponse
-                {
-                    Id = rp.Permission.Id,
-                    Name = rp.Permission.Name,
-                    Description = rp.Permission.Description,
-                    Category = rp.Permission.Category,
-                    Action = rp.Permission.Action
-                }).ToList()
-            };
-        }
+                var users = await _userManager.GetUsersInRoleAsync(role.Name);
+                role.UserCount = users.Count;
 
-        public async Task<List<RoleResponse>> GetAllRolesAsync()
-        {
-            var roles = await _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .ToListAsync();
-
-            var roleResponses = new List<RoleResponse>();
-
-            foreach (var role in roles)
-            {
-                var userCount = await _userManager.GetUsersInRoleAsync(role.Name);
-
-                roleResponses.Add(new RoleResponse
-                {
-                    Id = role.Id,
-                    Name = role.Name,
-                    Description = role.Description,
-                    UserCount = userCount.Count,
-                    Permissions = role.RolePermissions.Select(rp => new PermissionResponse
-                    {
-                        Id = rp.Permission.Id,
-                        Name = rp.Permission.Name,
-                        Description = rp.Permission.Description,
-                        Category = rp.Permission.Category,
-                        Action = rp.Permission.Action
-                    }).ToList()
-                });
             }
 
-            return roleResponses;
+            return new Pagination<RoleResponse>(
+                    pageNumber: roleParams.PageNumber,
+                    pageSize: roleParams.PageSize,
+                    pageCount: countAllRoles,
+                    data: roleResponses
+                );
         }
 
-        public async Task<bool> AssignPermissionToRoleAsync(string roleId, int permissionId)
+        private async Task UpdateRolePermissionsAsync(string roleId, List<long> permissionIds)
         {
-            var rolePermission = await _context.RolePermissions
-                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
+            // get all rolepermission
+            var permissions = await _unitOfWork.RolePermissionRepository.GetPermissionsByRoleIdAsync(roleId);
+            var existIds = permissions.Select(p => p.Id).ToList();
+            var deletePermissionIds = existIds.Where(p => !permissionIds.Contains(p)).ToList();
 
-            if (rolePermission != null)
-                return true; // Already assigned
+            // remove permission not exist in permissionIds
+            if (deletePermissionIds != null && deletePermissionIds.Count > 0)
+                await _unitOfWork.RolePermissionRepository.RemovePermissionsFromRoleAsync(roleId, deletePermissionIds);
 
-            _context.RolePermissions.Add(new RolePermission
-            {
-                RoleId = roleId,
-                PermissionId = permissionId
-            });
+            // add new permssionIds
+            var addPermissionIds = permissionIds.Where(p => !existIds.Contains(p)).ToList();
+            await _unitOfWork.RolePermissionRepository.AddPermissionsToRoleAsync(roleId, addPermissionIds);
 
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> RemovePermissionFromRoleAsync(string roleId, int permissionId)
-        {
-            var rolePermission = await _context.RolePermissions
-                .FirstOrDefaultAsync(rp => rp.RoleId == roleId && rp.PermissionId == permissionId);
-
-            if (rolePermission == null)
-                return false;
-
-            _context.RolePermissions.Remove(rolePermission);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<List<PermissionResponse>> GetRolePermissionsAsync(string roleId)
-        {
-            var permissions = await _context.RolePermissions
-                .Where(rp => rp.RoleId == roleId)
-                .Include(rp => rp.Permission)
-                .Select(rp => new PermissionResponse
-                {
-                    Id = rp.Permission.Id,
-                    Name = rp.Permission.Name,
-                    Description = rp.Permission.Description,
-                    Category = rp.Permission.Category,
-                    Action = rp.Permission.Action
-                })
-                .ToListAsync();
-
-            return permissions;
-        }
-
-        public async Task<bool> RoleExistsAsync(string roleName)
-        {
-            return await _roleManager.RoleExistsAsync(roleName);
-        }
-
-        private async Task AssignPermissionsToRoleAsync(string roleId, List<int> permissionIds)
-        {
-            var rolePermissions = permissionIds.Select(permissionId => new RolePermission
-            {
-                RoleId = roleId,
-                PermissionId = permissionId
-            }).ToList();
-
-            _rolePermissionRepository.AddRange(rolePermissions);
-            await _rolePermissionRepository.Complete();
-        }
-
-        private async Task UpdateRolePermissionsAsync(string roleId, List<int> permissionIds)
-        {
-            // Remove existing permissions
-            var existingPermissions = _context.RolePermissions.Where(rp => rp.RoleId == roleId);
-            _context.RolePermissions.RemoveRange(existingPermissions);
-
-            // Add new permissions
-            if (permissionIds?.Any() == true)
-            {
-                await AssignPermissionsToRoleAsync(roleId, permissionIds);
-            }
         }
     }
 }

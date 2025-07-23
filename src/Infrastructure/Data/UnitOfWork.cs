@@ -10,6 +10,7 @@ namespace Infrastructure.Data
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
+        private IRolePermissionRepository _rolePermissionRepository = null!;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -27,6 +28,9 @@ namespace Infrastructure.Data
             _context.Dispose();
         }
 
+        public IRolePermissionRepository RolePermissionRepository =>
+          _rolePermissionRepository ??= new RolePermissionRepository(_context);
+
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
         {
             if (_repositories == null)
@@ -43,7 +47,7 @@ namespace Infrastructure.Data
                 _repositories.Add(entityType, repositoryInstance);
             }
 
-            return (IGenericRepository<TEntity>) _repositories[entityType]!;
+            return (IGenericRepository<TEntity>)_repositories[entityType]!;
         }
     }
 }

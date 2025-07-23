@@ -11,13 +11,13 @@ namespace Infrastructure.Data
         public static async Task SeedAsync(
             ApplicationDbContext context,
             UserManager<AppUser> userManager,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<AppRole> roleManager
         )
         {
             if (!roleManager.Roles.Any())
             {
-                await roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
-                await roleManager.CreateAsync(new IdentityRole { Name = "User" });
+                await roleManager.CreateAsync(new AppRole { Name = "Admin" });
+                await roleManager.CreateAsync(new AppRole { Name = "User" });
             }
 
             if (!userManager.Users.Any())

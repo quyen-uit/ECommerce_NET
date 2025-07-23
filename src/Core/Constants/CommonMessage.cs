@@ -13,6 +13,8 @@
         public const string NotFoundPriceAdjustment = "Price adjustment not found";
         public const string NotFoundDeliveryMethod = "Delivery method not found";
         public const string NotFoundProductSku = "Product sku not found";
+        public const string NotFoundPermission = "Permission not found";
+        public const string NotFoundRole = "Role not found";
 
         public const string NotFoundOrder = "Order not found";
         public const string NotFoundBasket = "Basket not found";

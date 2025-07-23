@@ -46,7 +46,7 @@ using var scope = app.Services.CreateScope();
 var service = scope.ServiceProvider;
 var context = service.GetRequiredService<ApplicationDbContext>();
 var userManager = service.GetRequiredService<UserManager<AppUser>>();
-var roleManager = service.GetRequiredService<RoleManager<IdentityRole>>();
+var roleManager = service.GetRequiredService<RoleManager<AppRole>>();
 var logger = service.GetRequiredService<ILogger<Program>>();
 try
 {

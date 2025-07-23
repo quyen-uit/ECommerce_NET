@@ -1,57 +1,78 @@
 ﻿using Core.Entities.Identity;
 using Core.Interfaces.Reposiories;
-using Infrastructure.Data;
+using Core.Specifications.Accounts;
 using Microsoft.EntityFrameworkCore;
 
-public class RolePermissionRepository : IRolePermissionRepository
+namespace Infrastructure.Data.Repositories
 {
-    private readonly ApplicationDbContext _context;
-
-    public RolePermissionRepository(ApplicationDbContext context)
+    public class RolePermissionRepository : IRolePermissionRepository
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public async Task<List<Permission>> GetPermissionsByRoleIdAsync(string roleId)
-    {
-        return await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId)
-            .Include<Permission>(rp => rp.Permission)
-            .Select(rp => rp.Permission)
+        public RolePermissionRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Permission>> GetPermissionsByRoleIdAsync(string roleId)
+        {
+            return await _context.RolePermissions
+                .Where(rp => rp.RoleId == roleId)
+                .Select(rp => rp.Permission)
+                .ToListAsync();
+        }
+
+        public async Task AddPermissionsToRoleAsync(string roleId, List<long> permissionIds)
+        {
+            var newRolePermissions = permissionIds.Select(pid => new RolePermission { RoleId = roleId, PermissionId = pid });
+            await _context.RolePermissions.AddRangeAsync(newRolePermissions);
+        }
+
+        public async Task RemovePermissionsFromRoleAsync(string roleId, List<long> permissionIds)
+        {
+            var toRemove = await _context.RolePermissions
+                .Where(rp => rp.RoleId == roleId && permissionIds.Contains(rp.PermissionId))
+                .ToListAsync();
+            _context.RolePermissions.RemoveRange(toRemove);
+        }
+
+        public async Task RemoveAllPermissionsFromRoleAsync(string roleId)
+        {
+            var toRemove = await _context.RolePermissions
+                .Where(rp => rp.RoleId == roleId)
+                .ToListAsync();
+            _context.RolePermissions.RemoveRange(toRemove);
+        }
+
+        public async Task<List<RolePermission>> GetPermissionsByRoleNamesAsync(List<string> roleNames)
+        {
+            var rolePermissions = await _context.RolePermissions
+            .Where(rp => roleNames.Contains(rp.Role.Name!))
+            .Include(rp => rp.Role)
+            .Include(rp => rp.Permission)
             .ToListAsync();
-    }
+            return rolePermissions ?? new List<RolePermission>();
+        }
 
-    public async Task AddPermissionsToRoleAsync(string roleId, List<long> permissionIds)
-    {
-        var existing = await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId && permissionIds.Contains(rp.PermissionId))
-            .ToListAsync();
+        public async Task<List<AppRole>> GetRolesAsync(RoleParams roleParams)
+        {
+            var roles = await _context.Roles.Where(rp =>
+                (string.IsNullOrEmpty(roleParams.Filter.Name) || rp.Name!.ToLower().Contains(roleParams.Filter.Name.ToLower()))
+                && (string.IsNullOrEmpty(roleParams.Filter.Description) || rp.Description.ToLower().Contains(roleParams.Filter.Description.ToLower())))
+                .Skip(roleParams.PageSize * (roleParams.PageNumber - 1))
+                .Take(roleParams.PageSize)
+                .ToListAsync();
+            return roles;
+        }
 
-        var newPermissions = permissionIds
-            .Where(pid => !existing.Any(e => e.PermissionId == pid))
-            .Select(pid => new RolePermission { RoleId = roleId, PermissionId = pid });
+        public async Task<int> CountRoles(RoleParams roleParams)
+        {
+            var count = await _context.Roles.Where(rp =>
+                (string.IsNullOrEmpty(roleParams.Filter.Name) || rp.Name!.ToLower().Contains(roleParams.Filter.Name.ToLower()))
+                && (string.IsNullOrEmpty(roleParams.Filter.Description) || rp.Description.ToLower().Contains(roleParams.Filter.Description.ToLower())))
+                .CountAsync();
+            return count;
+        }
 
-        await _context.RolePermissions.AddRangeAsync(newPermissions);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemovePermissionsFromRoleAsync(string roleId, List<long> permissionIds)
-    {
-        var toRemove = await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId && permissionIds.Contains(rp.PermissionId))
-            .ToListAsync();
-
-        _context.RolePermissions.RemoveRange(toRemove);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveAllPermissionsFromRoleAsync(string roleId)
-    {
-        var toRemove = await _context.RolePermissions
-            .Where(rp => rp.RoleId == roleId)
-            .ToListAsync();
-
-        _context.RolePermissions.RemoveRange(toRemove);
-        await _context.SaveChangesAsync();
     }
 }

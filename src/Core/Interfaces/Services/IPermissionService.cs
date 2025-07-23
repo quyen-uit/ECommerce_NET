@@ -1,9 +1,6 @@
-﻿using Core.Dtos.Accounts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Core.Common;
+using Core.Dtos.Accounts;
+using Core.Specifications.Accounts;
 
 namespace Core.Interfaces.Services
 {
@@ -12,13 +9,12 @@ namespace Core.Interfaces.Services
         Task<bool> UserHasPermissionAsync(string userId, string permission);
         Task<List<string>> GetUserPermissionsAsync(string userId);
         //Task<bool> RoleHasPermissionAsync(string roleName, string permission);
-        Task<PermissionResponse> CreateOrUpdatePermissionAsync(CreatePermissionRequest request);
-        Task<bool> DeletePermissionAsync(int permissionId);
-        Task<PermissionResponse> GetPermissionByIdAsync(int permissionId);
-        Task<PermissionResponse> GetPermissionByNameAsync(string permissionName);
-        Task<List<PermissionResponse>> GetAllPermissionsAsync();
+        Task<PermissionResponse> CreatePermissionAsync(CreatePermissionRequest request);
+        Task<PermissionResponse> UpdatePermissionAsync(UpdatePermissionRequest request);
+        Task<bool> DeletePermissionAsync(long permissionId);
+        Task<PermissionResponse> GetPermissionByIdAsync(long permissionId);
+        Task<Pagination<PermissionResponse>> GetAllPermissionsAsync(PermissionSpecParams specParams);
         //Task<List<PermissionResponse>> GetPermissionsByModuleAsync(string module);
         //Task<List<string>> GetAllCategoriesAsync();
-        Task<bool> PermissionExistsAsync(string permissionName);
     }
 }

@@ -110,6 +110,8 @@ namespace API.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
