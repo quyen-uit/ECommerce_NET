@@ -79,21 +79,27 @@ namespace API.Extensions
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .WithOrigins("https://localhost:4200")
+                          .AllowCredentials();
                 });
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.MapInboundClaims = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
                         ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromSeconds(30),
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]!)),
                         ValidIssuer = configuration["Token:Issuer"],
-                        ValidAudience = configuration["Token:Audience"],
+                        ValidAudience = configuration["Token:Audience"]
                     };
                 });
 

@@ -31,7 +31,10 @@ namespace API.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.GivenName, user.DisplayName)
+                new Claim(ClaimTypes.GivenName, user.DisplayName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
             foreach (var role in roles)
             {
@@ -43,7 +46,7 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(int.Parse(_config["Token:AccessTokenExpiration"] ?? "15")),
+                Expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Token:AccessTokenExpiration"] ?? "15")),
                 SigningCredentials = credentials,
                 Issuer = _config["Token:Issuer"],
                 Audience = _config["Token:Audience"]
@@ -63,7 +66,7 @@ namespace API.Services
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7")),
+                Expires = DateTime.UtcNow.AddDays(int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7")),
                 CreatedAt = DateTime.UtcNow,
                 UserId = userId
             };

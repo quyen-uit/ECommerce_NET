@@ -1,12 +1,15 @@
 ﻿using API.Commons.Response;
 using API.Helpers;
 using AutoMapper;
+using API.Exceptions;
+using API.Extensions;
 using Core.Dtos;
 using Core.Entities.Identity;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
@@ -15,17 +18,24 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
-        public AccountController(UserManager<AppUser> userManager, IAccountService accountService, IMapper mapper)
+        private readonly IConfiguration _config;
+        public AccountController(UserManager<AppUser> userManager, IAccountService accountService, IMapper mapper, IConfiguration config)
         {
             _userManager = userManager;
             _accountService = accountService;
             _mapper = mapper;
+            _config = config;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Login(LoginDto login)
         {
             var user = await _accountService.LoginAsync(login);
+            if (!string.IsNullOrEmpty(user.RefreshToken))
+            {
+                SetRefreshTokenCookie(user.RefreshToken);
+                user.RefreshToken = null;
+            }
             return Ok(ResponseFactory.Ok(user));
         }
 
@@ -33,6 +43,11 @@ namespace API.Controllers
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Register(RegisterDto register)
         {
             var user = await _accountService.RegisterAsync(register);
+            if (!string.IsNullOrEmpty(user.RefreshToken))
+            {
+                SetRefreshTokenCookie(user.RefreshToken);
+                user.RefreshToken = null;
+            }
             return Ok(ResponseFactory.Ok(user));
         }
 
@@ -49,6 +64,64 @@ namespace API.Controllers
         {
             var result = await _userManager.FindByEmailAsync(email) != null;
             return Ok(ResponseFactory.Ok(result));
+        }
+
+        [HttpPost("refresh")]
+        public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Refresh()
+        {
+            var token = Request.Cookies["rt"];
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedException("Refresh token is missing");
+            }
+
+            var user = await _accountService.RefreshTokenAsync(token);
+            if (!string.IsNullOrEmpty(user.RefreshToken))
+            {
+                SetRefreshTokenCookie(user.RefreshToken);
+                user.RefreshToken = null;
+            }
+            return Ok(ResponseFactory.Ok(user));
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult<ApiSuccessResponse<string>>> Logout()
+        {
+            var token = Request.Cookies["rt"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                await _accountService.LogoutAsync(token);
+            }
+            Response.Cookies.Delete("rt");
+            return Ok(ResponseFactory.Ok("Logged out"));
+        }
+
+        [Authorize]
+        [HttpPost("logout-all")]
+        public async Task<ActionResult<ApiSuccessResponse<string>>> LogoutAll()
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            await _accountService.LogoutAllAsync(user.Id);
+            Response.Cookies.Delete("rt");
+            return Ok(ResponseFactory.Ok("Logged out from all sessions"));
+        }
+
+        private void SetRefreshTokenCookie(string refreshToken)
+        {
+            var days = int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7");
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(days)
+            };
+            Response.Cookies.Append("rt", refreshToken, cookieOptions);
         }
 
         //[Authorize]

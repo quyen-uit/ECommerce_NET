@@ -5,7 +5,7 @@ namespace Core.Specifications.Accounts
     {
         public RefreshTokenSpecification(string userId, DateTime? revokedAt = null)
             : base(x =>
-                (string.IsNullOrEmpty(userId) || x.UserId.ToLower().Contains(userId.ToLower()))
+                (!string.IsNullOrEmpty(userId) && x.UserId == userId)
                 && x.RevokedAt == revokedAt)
         {
         }

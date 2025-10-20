@@ -6,7 +6,7 @@ namespace Core.Specifications.Accounts
     {
         public RefreshTokenWithUserSpecification(string? token)
             : base(x =>
-                (string.IsNullOrEmpty(token) || x.Token.ToLower().Contains(token.ToLower()))
+                (!string.IsNullOrEmpty(token) && x.Token == token)
                 && x.IsActive == true)
         {
             AddInclude(x => x.User);
