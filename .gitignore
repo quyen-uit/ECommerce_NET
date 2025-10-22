@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .config/dotnet-tools.json
-src/API/appsettings.json
-/src/API/appsettings.json
+# src/API/appsettings.json
+# /src/API/appsettings.json
