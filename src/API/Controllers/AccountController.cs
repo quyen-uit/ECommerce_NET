@@ -66,6 +66,7 @@ namespace API.Controllers
         }
 
         [HttpPost("refresh")]
+        [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Refresh()
         {
             var token = Request.Cookies["rt"];
@@ -84,6 +85,7 @@ namespace API.Controllers
         }
 
         [HttpPost("logout")]
+        [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<string>>> Logout()
         {
             var token = Request.Cookies["rt"];
@@ -97,6 +99,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("logout-all")]
+        [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<string>>> LogoutAll()
         {
             var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
@@ -122,6 +125,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("sessions/{sessionId:guid}/revoke")]
+        [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<string>>> RevokeSession(Guid sessionId)
         {
             var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
@@ -132,6 +136,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("sessions/revoke-others")]
+        [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<string>>> RevokeOtherSessions()
         {
             var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
@@ -152,7 +157,8 @@ namespace API.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(days)
+                Expires = DateTimeOffset.UtcNow.AddDays(days),
+                Path = "/api/account/refresh"
             };
             Response.Cookies.Append("rt", refreshToken, cookieOptions);
         }

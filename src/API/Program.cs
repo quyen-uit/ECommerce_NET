@@ -36,6 +36,10 @@ app.UseStaticFiles();
 
 app.UseCors("CorsPolicy");
 
+// Basic CSRF protections for cookie-backed endpoints
+app.UseMiddleware<API.Middlewares.SpaOriginValidationMiddleware>();
+app.UseMiddleware<API.Middlewares.RefreshRateLimitMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
