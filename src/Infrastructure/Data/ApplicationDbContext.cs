@@ -75,6 +75,11 @@ namespace Infrastructure.Data
                 }
             }
 
+            // Align query filters for relationships where the required end is soft-deletable
+            // Avoids EF warning: required end filtered out by global filter
+            modelBuilder.Entity<RolePermission>()
+                .HasQueryFilter(rp => !rp.Permission.IsDeleted);
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
