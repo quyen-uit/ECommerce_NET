@@ -33,7 +33,7 @@ namespace API.Services
             }
             else
             {
-                entity = dto.Adapt<Category>();
+                dto.Adapt(entity);
                 _categoryRepository.Update(entity);
             }
             await _categoryRepository.Complete();

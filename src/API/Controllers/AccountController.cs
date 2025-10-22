@@ -2,7 +2,7 @@
 using API.Exceptions;
 using API.Extensions;
 using API.Helpers;
-using AutoMapper;
+using MapsterMapper;
 using Core.Dtos;
 using Core.Entities.Identity;
 using Core.Interfaces.Services;

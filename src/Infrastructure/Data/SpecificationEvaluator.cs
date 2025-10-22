@@ -38,7 +38,7 @@ namespace Infrastructure.Data
 
             if (specification.IsIgnoreQueryFilters)
             {
-                query = query.IgnoreQueryFilters();
+                resultQuery = resultQuery.IgnoreQueryFilters();
             }
             return resultQuery;
         }

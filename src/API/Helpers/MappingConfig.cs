@@ -6,14 +6,20 @@ using Core.Dtos.ProductBrands;
 using Core.Dtos.Products;
 using Core.Dtos.ProductSkus;
 using Core.Dtos.Sizes;
+using Core.Dtos;
 using Core.Entities;
 using Core.Enums;
+using Core.Entities.OrderAggregate;
 using Mapster;
+using Microsoft.Extensions.Configuration;
 
 public static class MapsterConfig
 {
     public static void RegisterMappings()
     {
+        // Identity / Address
+        TypeAdapterConfig<Core.Entities.Identity.Address, AddressDto>.NewConfig().TwoWays();
+
         TypeAdapterConfig<CreateColorDto, Color>.NewConfig();
         TypeAdapterConfig<Color, ColorDto>.NewConfig().TwoWays();
 
@@ -40,6 +46,22 @@ public static class MapsterConfig
         TypeAdapterConfig<PriceAdjustment, PriceAdjustmentDto>.NewConfig().TwoWays();
         TypeAdapterConfig<CreatePriceAdjustmentItemDto, PriceAdjustmentItem>.NewConfig();
         TypeAdapterConfig<PriceAdjustmentItem, PriceAdjustmentItemDto>.NewConfig().TwoWays();
+
+        // Orders
+        TypeAdapterConfig<OrderItem, OrderItemDto>
+            .NewConfig()
+            .Map(dest => dest.ProductSkuId, src => (int)src.Item.ProductSkuId)
+            .Map(dest => dest.ProductName, src => src.Item.ProductName ?? string.Empty)
+            .Map(dest => dest.PhotoUrl, src => src.Item.PhotoUrl)
+            .Map(dest => dest.Price, src => src.Price)
+            .Map(dest => dest.Quantity, src => src.Quantity);
+
+        TypeAdapterConfig<Order, OrderToReturnDto>
+            .NewConfig()
+            .Map(dest => dest.DeliveryMethod, src => src.DeliveryMethod.ShortName)
+            .Map(dest => dest.ShippingPrice, src => src.DeliveryMethod.Price)
+            .Map(dest => dest.Total, src => src.GetTotal())
+            .Map(dest => dest.Status, src => src.Status.ToString());
     }
 
     private static SizeType ParseSizeType(string sizeType)

@@ -1,6 +1,6 @@
 ﻿using API.Commons.Response;
 using API.Helpers;
-using AutoMapper;
+using MapsterMapper;
 using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;

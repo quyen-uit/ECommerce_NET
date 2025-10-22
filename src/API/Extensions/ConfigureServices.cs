@@ -56,9 +56,9 @@ namespace API.Extensions
                 c.AddSecurityRequirement(securityRequirement);
             });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
             services.AddHttpContextAccessor();
+            // Register Mapster mappings centrally
+            MapsterConfig.RegisterMappings();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -70,7 +70,7 @@ namespace API.Extensions
                     .Select(x => x.ErrorMessage)
                     .ToArray();
 
-                    var errorResponse = ResponseFactory.Fail((int)HttpStatusCode.BadRequest, "An internal server error occurred", errors);
+                    var errorResponse = ResponseFactory.Fail((int)HttpStatusCode.BadRequest, "Validation failed", errors);
 
                     return new BadRequestObjectResult(errorResponse);
                 };
@@ -80,9 +80,10 @@ namespace API.Extensions
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
+                    var origin = configuration["Spa:Origin"] ?? "http://localhost:3000";
                     policy.AllowAnyHeader()
                           .AllowAnyMethod()
-                          .WithOrigins("https://localhost:4200")
+                          .WithOrigins(origin)
                           .AllowCredentials();
                 });
             });
@@ -95,7 +96,7 @@ namespace API.Extensions
                     {
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateAudience = !string.IsNullOrWhiteSpace(configuration["Token:Audience"]),
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromSeconds(30),
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]!)),

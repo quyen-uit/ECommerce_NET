@@ -28,7 +28,7 @@ namespace API.Services
             }
             else
             {
-                entity = dto.Adapt<ProductBrand>();
+                dto.Adapt(entity);
                 _brandRepository.Update(entity);
             }
             await _brandRepository.Complete();

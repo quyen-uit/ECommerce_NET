@@ -28,7 +28,7 @@ namespace API.Services
             }
             else
             {
-                entity = dto.Adapt<Color>();
+                dto.Adapt(entity);
                 _colorRepository.Update(entity);
             }
             await _colorRepository.Complete();

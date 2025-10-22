@@ -33,7 +33,7 @@ namespace API.Services
             }
             else
             {
-                entity = dto.Adapt<Size>();
+                dto.Adapt(entity);
                 _sizeRepository.Update(entity);
             }
             await _sizeRepository.Complete();

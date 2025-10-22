@@ -1,6 +1,6 @@
 # ECommerce API using 
-- NET 7
-- Entity Framework Core and AutoMapper
+- NET 9
+- Entity Framework Core and Mapster
 - Redis
 - Specification Pattern
 - Repository and Unit of Work Pattern

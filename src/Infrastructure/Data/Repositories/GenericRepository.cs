@@ -15,14 +15,14 @@ namespace Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async void Add(T entity)
+        public void Add(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            _context.Set<T>().Add(entity);
         }
 
-        public async void AddRange(IReadOnlyList<T> entities)
+        public void AddRange(IReadOnlyList<T> entities)
         {
-            await _context.Set<T>().AddRangeAsync(entities);
+            _context.Set<T>().AddRange(entities);
         }
 
         public async Task<int> Complete()
@@ -107,14 +107,14 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public async void SoftDeleteById(long id)
+        public void SoftDeleteById(long id)
         {
-            var entity = await _context.Set<T>().FindAsync(id);
-            if (entity != null && !entity.IsDeleted)
-            {
-                entity.IsDeleted = true;
-                _context.Set<T>().Update(entity);
-            }
+            // Avoid async void; mark a stub entity as soft-deleted without fetching
+            var entity = Activator.CreateInstance<T>();
+            entity.Id = id;
+            entity.IsDeleted = true;
+            _context.Attach(entity);
+            _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
         }
 
         public async Task SoftDeleteRangeById(List<long> ids)
