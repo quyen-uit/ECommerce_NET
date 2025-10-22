@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.Dtos.Categories
+﻿namespace Core.Dtos.Categories
 {
     public class CategoryNodeDto
     {

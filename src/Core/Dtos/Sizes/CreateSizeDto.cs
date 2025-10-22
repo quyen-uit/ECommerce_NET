@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Core.Enums;
 
 namespace Core.Dtos.Sizes
 {
@@ -13,6 +12,6 @@ namespace Core.Dtos.Sizes
 
         public int SortOrder { get; set; }
         [Required]
-        public required string SizeType { get; set; }  
+        public required string SizeType { get; set; }
     }
 }

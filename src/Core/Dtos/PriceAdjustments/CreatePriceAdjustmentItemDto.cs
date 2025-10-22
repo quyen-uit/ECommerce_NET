@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.Dtos.Products;
 
 namespace Core.Dtos.PriceAdjustments
-{    public class CreatePriceAdjustmentItemDto
+{
+    public class CreatePriceAdjustmentItemDto
     {
         [Required]
         public long? Id { get; set; }

@@ -1,5 +1,4 @@
-﻿using Core.Entities;
-using Core.Entities.Inventory;
+﻿using Core.Entities.Inventory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

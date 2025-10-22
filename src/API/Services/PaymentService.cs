@@ -6,7 +6,6 @@ using Core.Interfaces;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Orders;
-using Microsoft.Extensions.Configuration;
 using Stripe;
 using Product = Core.Entities.Product;
 

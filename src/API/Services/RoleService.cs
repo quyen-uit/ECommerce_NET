@@ -7,7 +7,6 @@ using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {

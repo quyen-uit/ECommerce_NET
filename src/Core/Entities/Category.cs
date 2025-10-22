@@ -1,5 +1,4 @@
 ﻿using Core.Common.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Entities
 {
@@ -11,6 +10,6 @@ namespace Core.Entities
         public bool IsActive { get; set; } = true;
 
         public Category? Parent { get; set; }
-        public ICollection<Category> SubCategories { get; set; } = new List<Category>();    
+        public ICollection<Category> SubCategories { get; set; } = new List<Category>();
     }
 }

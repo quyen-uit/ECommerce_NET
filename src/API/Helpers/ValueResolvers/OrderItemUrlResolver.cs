@@ -1,6 +1,5 @@
-﻿using Core.Dtos;
-using AutoMapper;
-using AutoMapper.Execution;
+﻿using AutoMapper;
+using Core.Dtos;
 using Core.Entities.OrderAggregate;
 
 namespace API.Helpers.ValueResolvers
@@ -19,7 +18,7 @@ namespace API.Helpers.ValueResolvers
         {
             if (!string.IsNullOrEmpty(source.Item.PhotoUrl))
             {
-                return _config["ApiUrl"] + source.Item.PhotoUrl; 
+                return _config["ApiUrl"] + source.Item.PhotoUrl;
             }
             return string.Empty;
         }

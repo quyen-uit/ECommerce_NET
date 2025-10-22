@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Core.Dtos.Products;
 
 namespace Core.Dtos.PriceAdjustments
 {

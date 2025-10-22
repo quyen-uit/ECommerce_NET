@@ -1,14 +1,10 @@
-﻿using AutoMapper;
-using Core.Common;
+﻿using Core.Common;
 using Core.Constants;
-using Core.Dtos;
 using Core.Dtos.PriceAdjustments;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
-using Core.Specifications.Products;
-using Core.Specifications.Sizes;
 using Mapster;
 
 namespace API.Services

@@ -1,5 +1,4 @@
-﻿using Core.Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Core.Dtos.CreateDto
 {
@@ -13,4 +12,4 @@ namespace Core.Dtos.CreateDto
         public bool IsActive { get; set; }
 
     }
-} 
+}

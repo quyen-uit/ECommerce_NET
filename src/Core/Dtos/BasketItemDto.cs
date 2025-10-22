@@ -1,5 +1,4 @@
-﻿using Core.Common;
-using Core.Constants;
+﻿using Core.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.Dtos

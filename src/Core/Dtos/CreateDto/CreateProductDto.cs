@@ -1,5 +1,4 @@
-﻿using Core.Entities;
-using Core.Enums;
+﻿using Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.Dtos.CreateDto

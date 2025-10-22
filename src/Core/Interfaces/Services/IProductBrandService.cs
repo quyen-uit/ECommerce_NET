@@ -1,7 +1,5 @@
 ﻿using Core.Common;
-using Core.Dtos;
 using Core.Dtos.ProductBrands;
-using Core.Entities;
 using Core.Specifications.ProductBrands;
 
 namespace Core.Interfaces.Services

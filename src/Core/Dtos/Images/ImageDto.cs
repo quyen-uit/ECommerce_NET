@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Core.Enums;
-
 namespace Core.Dtos.Images
 {
     public class ImageDto

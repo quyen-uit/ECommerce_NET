@@ -1,5 +1,4 @@
 ﻿using Core.Common;
-using Core.Dtos;
 using Core.Dtos.Categories;
 using Core.Specifications.Categories;
 

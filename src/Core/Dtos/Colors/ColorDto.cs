@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.Dtos.Colors
+﻿namespace Core.Dtos.Colors
 {
     public class ColorDto
     {

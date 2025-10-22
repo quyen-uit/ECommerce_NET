@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace API.Exceptions
 {
     public class ValidationException : Exception

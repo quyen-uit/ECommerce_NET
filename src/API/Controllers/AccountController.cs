@@ -1,15 +1,14 @@
 ﻿using API.Commons.Response;
-using API.Helpers;
-using AutoMapper;
 using API.Exceptions;
 using API.Extensions;
+using API.Helpers;
+using AutoMapper;
 using Core.Dtos;
 using Core.Entities.Identity;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {

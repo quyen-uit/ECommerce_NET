@@ -1,5 +1,4 @@
 ﻿using Core.Common.Specifications;
-using Core.Enums;
 namespace Core.Specifications.Accounts
 {
     public class RefreshTokenWithUserSpecification : BaseSpecification<RefreshToken>

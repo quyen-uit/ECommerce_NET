@@ -1,6 +1,4 @@
-﻿using Core.Entities.OrderAggregate;
-
-namespace Core.Dtos
+﻿namespace Core.Dtos
 {
     public class OrderToReturnDto
     {

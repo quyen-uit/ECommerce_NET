@@ -50,7 +50,7 @@ var roleManager = service.GetRequiredService<RoleManager<AppRole>>();
 var logger = service.GetRequiredService<ILogger<Program>>();
 try
 {
-    await context.Database.MigrateAsync(); 
+    await context.Database.MigrateAsync();
     await ApplicationDbContextSeed.SeedAsync(context, userManager, roleManager);
 }
 catch (Exception ex)

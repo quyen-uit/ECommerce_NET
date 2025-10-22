@@ -1,7 +1,4 @@
-﻿
-using Core.Entities.Identity;
-
-namespace Core.Entities
+﻿namespace Core.Entities
 {
     public class CustomerBasket
     {

@@ -1,6 +1,6 @@
 ﻿namespace Core.Common
 {
-    public class Pagination<T> where T : class 
+    public class Pagination<T> where T : class
     {
         public Pagination(int pageNumber, int pageSize, int pageCount, IReadOnlyList<T> data)
         {

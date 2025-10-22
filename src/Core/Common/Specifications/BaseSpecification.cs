@@ -1,7 +1,6 @@
-﻿using System.Linq.Expressions;
-using Core.Interfaces;
-using Core.Specifications.Products;
+﻿using Core.Interfaces;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Core.Common.Specifications
 {

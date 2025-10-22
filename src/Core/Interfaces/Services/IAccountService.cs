@@ -1,5 +1,4 @@
 ﻿using Core.Dtos;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace Core.Interfaces.Services

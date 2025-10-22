@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Core.Dtos.Categories;
 using Core.Dtos.ProductBrands;
 using Core.Enums;
@@ -19,7 +18,7 @@ namespace Core.Dtos.Products
         public ProductBrandDto? ProductBrand { get; set; }
         // public ICollection<Review> Reviews { get; set; } = new List<Review>();
         // public ICollection<ProductSku> ProductSkus { get; set; } = new List<ProductSku>();
-        public ICollection<ProductPropertyDto> Properties { get; set; } = new List<ProductPropertyDto>();   
+        public ICollection<ProductPropertyDto> Properties { get; set; } = new List<ProductPropertyDto>();
         // public ICollection<Collection> Collections { get; set; } = new List<Collection>();
 
     }

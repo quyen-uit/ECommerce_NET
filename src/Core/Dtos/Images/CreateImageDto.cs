@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Dtos.Images
 {
@@ -8,7 +8,7 @@ namespace Core.Dtos.Images
         [Required]
         public long ReferenceId { get; set; }
         public ICollection<CreateImageDto> CreateImageDtos { get; set; } = new List<CreateImageDto>();
-         
+
 
     }
     public class CreateImageDto

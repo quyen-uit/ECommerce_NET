@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.Dtos.ProductBrands
+﻿namespace Core.Dtos.ProductBrands
 {
     public class ProductBrandDto
     {

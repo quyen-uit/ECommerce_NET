@@ -1,7 +1,6 @@
 ﻿using API.Commons.Response;
 using API.Helpers;
 using Core.Common;
-using Core.Constants;
 using Core.Dtos.ProductSkus;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
@@ -35,14 +34,14 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PostProductSku([FromBody]CreateProductSkuDto productSkuDto)
+        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PostProductSku([FromBody] CreateProductSkuDto productSkuDto)
         {
             var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
             return Ok(ResponseFactory.Ok(result));
         }
 
         [HttpPost("update")]
-        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PutProductSku([FromBody]CreateProductSkuDto productSkuDto)
+        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PutProductSku([FromBody] CreateProductSkuDto productSkuDto)
         {
             var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
             return Ok(ResponseFactory.Ok(result));

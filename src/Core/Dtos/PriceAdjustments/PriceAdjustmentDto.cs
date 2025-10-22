@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Core.Dtos.Products;
-
-namespace Core.Dtos.PriceAdjustments
+﻿namespace Core.Dtos.PriceAdjustments
 {
     public class PriceAdjustmentDto
     {

@@ -1,11 +1,5 @@
-﻿
-
-using Core.Common;
-using Core.Dtos;
-using Core.Dtos.Images;
-using Core.Entities;
+﻿using Core.Dtos.Images;
 using Core.Enums;
-using Core.Specifications.Products;
 
 namespace Core.Interfaces.Services
 {

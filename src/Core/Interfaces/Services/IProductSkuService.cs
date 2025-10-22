@@ -1,5 +1,4 @@
-﻿using Core.Dtos;
-using Core.Dtos.ProductSkus;
+﻿using Core.Dtos.ProductSkus;
 using Core.Specifications.ProductSkus;
 
 namespace Core.Interfaces.Services

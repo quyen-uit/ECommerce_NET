@@ -7,7 +7,7 @@ namespace API.Services
     public class ResponseCacheService : IResponseCacheService
     {
         private readonly IDatabase _database;
-        
+
         public ResponseCacheService(IConnectionMultiplexer redis)
         {
             _database = redis.GetDatabase();

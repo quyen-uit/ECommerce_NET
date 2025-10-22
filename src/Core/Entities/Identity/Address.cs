@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Core.Common.Entities;
+﻿using Core.Common.Entities;
 
 namespace Core.Entities.Identity
 {

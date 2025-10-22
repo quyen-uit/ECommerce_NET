@@ -1,6 +1,4 @@
-﻿using Core.Common;
-using Core.Constants;
-using Core.Dtos;
+﻿using Core.Constants;
 using Core.Dtos.ProductSkus;
 using Core.Entities;
 using Core.Enums;

@@ -1,8 +1,5 @@
 ﻿using Core.Common;
-using Core.Dtos;
 using Core.Dtos.Sizes;
-using Core.Entities;
-using Core.Specifications.Colors;
 using Core.Specifications.Sizes;
 
 namespace Core.Interfaces.Services
