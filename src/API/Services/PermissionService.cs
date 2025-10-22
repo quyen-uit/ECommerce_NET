@@ -94,7 +94,23 @@ namespace API.Services
                 _cache.Set(cacheKey, userPermissions, TimeSpan.FromMinutes(30));
             }
 
-            return userPermissions!.Contains(permission);
+            if (userPermissions is null || userPermissions.Count == 0)
+                return false;
+
+            if (userPermissions.Contains(permission))
+                return true;
+
+            // Manage implies all: if user has Module.Manage, they can perform any action in that module
+            var parts = permission.Split('.', 2);
+            if (parts.Length == 2)
+            {
+                var module = parts[0];
+                var managePermission = $"{module}.Manage";
+                if (userPermissions.Contains(managePermission))
+                    return true;
+            }
+
+            return false;
         }
 
         public async Task<List<string>> GetUserPermissionsAsync(string userId)

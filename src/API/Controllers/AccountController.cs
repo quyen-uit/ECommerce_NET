@@ -26,6 +26,7 @@ namespace API.Controllers
             _config = config;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Login(LoginDto login)
         {
@@ -38,6 +39,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(user));
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Register(RegisterDto register)
         {
@@ -58,6 +60,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(user));
         }
 
+        [AllowAnonymous]
         [HttpGet("email-exist")]
         public async Task<ActionResult<ApiSuccessResponse<bool>>> CheckEmailExist([FromQuery] string email)
         {
@@ -65,6 +68,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(result));
         }
 
+        [AllowAnonymous]
         [HttpPost("refresh")]
         [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<UserDto>>> Refresh()
@@ -84,6 +88,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(user));
         }
 
+        [AllowAnonymous]
         [HttpPost("logout")]
         [Consumes("application/json")]
         public async Task<ActionResult<ApiSuccessResponse<string>>> Logout()

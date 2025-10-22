@@ -5,6 +5,7 @@ using Core.Dtos.Sizes;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Size.Read")]
         public async Task<ActionResult<ApiSuccessResponse<SizeDto>>> GetSize(long id)
         {
             var dto = await _sizeService.GetSizeByIdAsync(id);
@@ -25,6 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Size.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<SizeDto>>>> GetSizes(
             [FromBody] SizeSpecParams specParams
         )
@@ -34,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Size.Create")]
         public async Task<ActionResult<ApiSuccessResponse<SizeDto>>> CreateSize([FromBody] CreateSizeDto dto)
         {
             var result = await _sizeService.AddOrUpdateSizeAsync(dto);
@@ -41,6 +45,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create-many")]
+        [Authorize(Policy = "Permission:Size.Create")]
         public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<SizeDto>>>> CreateSizes(
             [FromBody] IReadOnlyList<CreateSizeDto> dtos
         )
@@ -50,6 +55,7 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Size.Update")]
         public async Task<ActionResult<ApiSuccessResponse<SizeDto>>> UpdateSize([FromBody] CreateSizeDto dto)
         {
             var result = await _sizeService.AddOrUpdateSizeAsync(dto);
@@ -57,12 +63,14 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Size.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSize(long id)
         {
             await _sizeService.DeleteSizeAsync(id);
             return Ok(ResponseFactory.Ok());
         }
         [HttpDelete("delete-many")]
+        [Authorize(Policy = "Permission:Size.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSizes([FromBody] List<long> ids)
         {
             await _sizeService.DeleteSizesAsync(ids);

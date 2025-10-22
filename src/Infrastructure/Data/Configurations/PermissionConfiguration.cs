@@ -9,7 +9,6 @@ namespace Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Permission> builder)
         {
-
             builder.Property(s => s.Name).HasMaxLength(100);
             builder.Property(s => s.Action).HasMaxLength(100);
             builder.Property(s => s.Module).HasConversion(
@@ -17,6 +16,8 @@ namespace Infrastructure.Data.Configurations
                             o => (AppModule)Enum.Parse(typeof(AppModule), o)
                             );
 
+            // Enforce unique permission names like "Category.Read"
+            builder.HasIndex(p => p.Name).IsUnique();
         }
     }
 }

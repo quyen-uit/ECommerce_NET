@@ -5,6 +5,7 @@ using Core.Dtos.Accounts;
 using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Permission.Read")]
         public async Task<ActionResult<ApiSuccessResponse<PermissionResponse>>> GetPermission(long id)
         {
             var dto = await _permissionService.GetPermissionByIdAsync(id);
@@ -25,6 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Permission.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<PermissionResponse>>>> GetPermissions(
             [FromBody] PermissionSpecParams specParams
         )
@@ -34,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Permission.Create")]
         public async Task<ActionResult<ApiSuccessResponse<PermissionResponse>>> CreatePermission([FromBody] CreatePermissionRequest dto)
         {
             var result = await _permissionService.CreatePermissionAsync(dto);
@@ -50,6 +54,7 @@ namespace API.Controllers
         // }
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Permission.Update")]
         public async Task<ActionResult<ApiSuccessResponse<PermissionResponse>>> UpdatePermission([FromBody] UpdatePermissionRequest dto)
         {
             var result = await _permissionService.UpdatePermissionAsync(dto);
@@ -57,6 +62,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Permission.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeletePermission(long id)
         {
             await _permissionService.DeletePermissionAsync(id);

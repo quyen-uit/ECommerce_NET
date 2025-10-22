@@ -2,6 +2,7 @@
 using Core.Dtos.Images;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,6 +16,7 @@ namespace API.Controllers
         }
 
         [HttpPost("process")]
+        [Authorize(Policy = "Permission:Image.Create")]
         public async Task<ActionResult> CreateImage(
             [FromBody] CreateListImageDto dtos
         )

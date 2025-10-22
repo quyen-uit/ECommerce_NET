@@ -5,6 +5,7 @@ using Core.Dtos.Products;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -19,6 +20,7 @@ namespace API.Controllers
         #region Admin APIs
         //[Cached(600)]
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Product.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductDto>>>> GetProductsFilterByName([FromBody] ProductFilterByNameSpecParams productSpecParams)
         {
             var result = await _productService.GetAllProductFilterByNameAsync(productSpecParams);
@@ -28,6 +30,7 @@ namespace API.Controllers
 
         //[Cached(600)]
         [HttpPost("get-all-by-id")]
+        [Authorize(Policy = "Permission:Product.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductDto>>>> GetProducts([FromBody] ProductSpecParams productSpecParams)
         {
             var result = await _productService.GetAllProductsAsync(productSpecParams);
@@ -36,6 +39,7 @@ namespace API.Controllers
 
         //[Cached(600)]
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Product.Read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ApiSuccessResponse<ProductDto>>> GetProduct(int id)
         {
@@ -44,6 +48,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Product.Create")]
         public async Task<ActionResult<ApiSuccessResponse<ProductDto>>> PostProduct([FromBody] CreateProductDto productDto)
         {
             var result = await _productService.AddOrUpdateProductAsync(productDto);
@@ -51,6 +56,7 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Product.Update")]
         public async Task<ActionResult<ApiSuccessResponse<ProductDto>>> PutProduct([FromBody] CreateProductDto productDto)
         {
             var result = await _productService.AddOrUpdateProductAsync(productDto);
@@ -58,6 +64,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Product.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProduct(int id)
         {
             await _productService.DeleteProductAsync(id);

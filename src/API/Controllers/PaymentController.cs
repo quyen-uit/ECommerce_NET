@@ -29,6 +29,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(basket));
         }
 
+        [AllowAnonymous]
         [HttpPost("webhook")]
         public async Task<ActionResult> StripeWebhook()
         {

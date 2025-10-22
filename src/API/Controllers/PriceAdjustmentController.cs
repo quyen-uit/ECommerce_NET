@@ -5,6 +5,7 @@ using Core.Dtos.PriceAdjustments;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:PriceAdjustment.Read")]
         public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> GetPriceAdjustment(long id)
         {
             var priceAdjustmentDto = await _priceAdjustmentService.GetPriceAdjustmentByIdAsync(id);
@@ -25,6 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:PriceAdjustment.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<PriceAdjustmentDto>>>> GetPriceAdjustments(
             [FromBody] PriceAdjustmentSpecParams specParams
         )
@@ -35,6 +38,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:PriceAdjustment.Create")]
         public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> CreatePriceAdjustment(
             [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
@@ -45,6 +49,7 @@ namespace API.Controllers
 
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:PriceAdjustment.Update")]
         public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> UpdatePriceAdjustment(
             [FromBody] CreatePriceAdjustmentDto priceAdjustmentDto
         )
@@ -54,6 +59,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:PriceAdjustment.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeletePriceAdjustment(long id)
         {
             await _priceAdjustmentService.DeletePriceAdjustmentAsync(id);

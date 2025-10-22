@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
 
@@ -43,6 +44,56 @@ namespace Infrastructure.Data
 
                 await userManager.CreateAsync(user, "Admin@123");
                 await userManager.AddToRoleAsync(user, "Admin");
+            }
+
+            // Seed permissions for all modules/actions and assign to Admin
+            var actions = new[] { "Read", "Create", "Update", "Delete", "Manage" };
+            var modules = Enum.GetValues<AppModule>();
+
+            var existingPermissions = context.Permissions.ToList();
+            var newPermissions = new List<Permission>();
+            foreach (var module in modules)
+            {
+                foreach (var action in actions)
+                {
+                    var name = $"{module}.{action}";
+                    if (!existingPermissions.Any(p => p.Name == name))
+                    {
+                        newPermissions.Add(new Permission
+                        {
+                            Name = name,
+                            Description = name,
+                            Module = module,
+                            Action = action
+                        });
+                    }
+                }
+            }
+            if (newPermissions.Count > 0)
+            {
+                context.Permissions.AddRange(newPermissions);
+                await context.SaveChangesAsync();
+                existingPermissions.AddRange(newPermissions);
+            }
+
+            var adminRole = await roleManager.FindByNameAsync("Admin");
+            if (adminRole != null)
+            {
+                var currentAdminPermissionIds = context.RolePermissions
+                    .Where(rp => rp.RoleId == adminRole.Id)
+                    .Select(rp => rp.PermissionId)
+                    .ToHashSet();
+
+                var toAssign = existingPermissions
+                    .Where(p => !currentAdminPermissionIds.Contains(p.Id))
+                    .Select(p => new RolePermission { RoleId = adminRole.Id, PermissionId = p.Id })
+                    .ToList();
+
+                if (toAssign.Count > 0)
+                {
+                    context.RolePermissions.AddRange(toAssign);
+                    await context.SaveChangesAsync();
+                }
             }
 
             var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

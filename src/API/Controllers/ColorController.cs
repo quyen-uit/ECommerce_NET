@@ -5,6 +5,7 @@ using Core.Dtos.Colors;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -19,6 +20,7 @@ namespace API.Controllers
 
         // ✅ GET: api/color/{id}
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Color.Read")]
         public async Task<ActionResult<ApiSuccessResponse<ColorDto>>> GetColor(long id)
         {
             var colorDto = await _colorService.GetColorByIdAsync(id);
@@ -27,6 +29,7 @@ namespace API.Controllers
 
         // 🔄 POST: api/color/get-all
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Color.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ColorDto>>>> GetColors(
             [FromBody] ColorSpecParams specParams
         )
@@ -37,6 +40,7 @@ namespace API.Controllers
 
         // ✅ POST: api/color/create
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Color.Create")]
         public async Task<ActionResult<ApiSuccessResponse<ColorDto>>> CreateColor([FromBody] CreateColorDto colorDto)
         {
             var result = await _colorService.AddOrUpdateColorAsync(colorDto);
@@ -45,6 +49,7 @@ namespace API.Controllers
 
         // ✅ POST: api/color/create-many
         [HttpPost("create-many")]
+        [Authorize(Policy = "Permission:Color.Create")]
         public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<ColorDto>>>> CreateColors(
             [FromBody] IReadOnlyList<CreateColorDto> colorDtos
         )
@@ -55,6 +60,7 @@ namespace API.Controllers
 
         // ✅ POST: api/color/update
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Color.Update")]
         public async Task<ActionResult<ApiSuccessResponse<ColorDto>>> UpdateColor([FromBody] CreateColorDto colorDto)
         {
             var result = await _colorService.AddOrUpdateColorAsync(colorDto);
@@ -63,6 +69,7 @@ namespace API.Controllers
 
         // ✅ DELETE: api/color/{id}
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Color.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteColor(long id)
         {
             await _colorService.DeleteColorAsync(id);

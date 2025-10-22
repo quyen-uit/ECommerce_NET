@@ -5,6 +5,7 @@ using Core.Dtos.Categories;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Category.Read")]
         public async Task<ActionResult<ApiSuccessResponse<CategoryDto>>> GetCategory(long id)
         {
             var dto = await _categoryService.GetCategoryByIdAsync(id);
@@ -25,6 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Category.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<CategoryDto>>>> GetCategories(
             [FromBody] CategorySpecParams specParams
         )
@@ -34,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpGet("hierarchy")]
+        [Authorize(Policy = "Permission:Category.Read")]
         public async Task<ActionResult<ApiSuccessResponse<List<CategoryNodeDto>>>> GetHierarchyCategories()
         {
             var result = await _categoryService.GetCategoriesHierarchyAsync();
@@ -41,6 +45,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Category.Create")]
         public async Task<ActionResult<ApiSuccessResponse<CategoryDto>>> CreateCategory(
             [FromBody] CreateCategoryDto dto
         )
@@ -50,6 +55,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create-many")]
+        [Authorize(Policy = "Permission:Category.Create")]
         public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<CategoryDto>>>> CreateCategories(
             [FromBody] IReadOnlyList<CreateCategoryDto> dtos
         )
@@ -59,6 +65,7 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Category.Update")]
         public async Task<ActionResult<ApiSuccessResponse<CategoryDto>>> UpdateCategory(
             [FromBody] CreateCategoryDto dto
         )
@@ -68,6 +75,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Category.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteCategory(long id)
         {
             await _categoryService.DeleteCategoryAsync(id);

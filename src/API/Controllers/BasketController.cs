@@ -5,6 +5,7 @@ using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -19,6 +20,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ApiSuccessResponse<CustomerBasketDto>>> GetBasketById(string id)
         {
@@ -27,6 +29,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(result));
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<ApiSuccessResponse<CustomerBasketDto>>> UpdateBasket(CustomerBasketDto basket)
         {
@@ -36,6 +39,7 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok(result));
         }
 
+        [AllowAnonymous]
         [HttpDelete]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBasket(string id)
         {

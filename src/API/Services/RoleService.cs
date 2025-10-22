@@ -7,6 +7,7 @@ using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Services
 {
@@ -15,16 +16,19 @@ namespace API.Services
         private readonly RoleManager<AppRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMemoryCache _cache;
 
 
         public RoleService(
             RoleManager<AppRole> roleManager,
             UserManager<AppUser> userManager,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IMemoryCache cache)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<RoleResponse> CreateRoleAsync(CreateRoleRequest request)
@@ -59,6 +63,9 @@ namespace API.Services
             // Update role permissions
             await UpdateRolePermissionsAsync(role.Id, request.PermissionIds);
             await _unitOfWork.Complete();
+
+            // Invalidate permission cache for users in this role
+            await InvalidateUsersPermissionCacheAsync(role.Name!);
 
             return await GetRoleByIdAsync(role.Id);
         }
@@ -136,6 +143,16 @@ namespace API.Services
             var addPermissionIds = permissionIds.Where(p => !existIds.Contains(p)).ToList();
             await _unitOfWork.RolePermissionRepository.AddPermissionsToRoleAsync(roleId, addPermissionIds);
 
+        }
+
+        private async Task InvalidateUsersPermissionCacheAsync(string roleName)
+        {
+            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+            foreach (var user in usersInRole)
+            {
+                var cacheKey = $"user_permissions_{user.Id}";
+                _cache.Remove(cacheKey);
+            }
         }
     }
 }

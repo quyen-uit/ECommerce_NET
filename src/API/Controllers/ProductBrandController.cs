@@ -5,6 +5,7 @@ using Core.Dtos.ProductBrands;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -20,6 +21,7 @@ namespace API.Controllers
 
         // ✅ GET: api/productbrand/{id}
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:Brand.Read")]
         public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> GetProductBrand(long id)
         {
             var brandDto = await _brandService.GetProductBrandByIdAsync(id);
@@ -28,6 +30,7 @@ namespace API.Controllers
 
         // 🔄 POST: api/productbrand/get-all
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:Brand.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductBrandDto>>>> GetProductBrands(
             [FromBody] ProductBrandSpecParams specParams
         )
@@ -39,6 +42,7 @@ namespace API.Controllers
 
         // ✅ POST: api/productbrand/create
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:Brand.Create")]
         public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> CreateProductBrand(
             [FromBody] CreateProductBrandDto brandDto
         )
@@ -49,6 +53,7 @@ namespace API.Controllers
 
         // ✅ POST: api/productbrand/create-many
         [HttpPost("create-many")]
+        [Authorize(Policy = "Permission:Brand.Create")]
         public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<ProductBrandDto>>>> CreateProductBrands(
             [FromBody] IReadOnlyList<CreateProductBrandDto> brandDtos
         )
@@ -59,6 +64,7 @@ namespace API.Controllers
 
         // ✅ POST: api/productbrand/update
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:Brand.Update")]
         public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> UpdateProductBrand(
             [FromBody] CreateProductBrandDto brandDto
         )
@@ -69,6 +75,7 @@ namespace API.Controllers
 
         // ✅ DELETE: api/productbrand/{id}
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:Brand.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductBrand(long id)
         {
             await _brandService.DeleteProductBrandAsync(id);
@@ -76,6 +83,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("delete-many")]
+        [Authorize(Policy = "Permission:Brand.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBrands([FromBody] List<long> ids)
         {
             await _brandService.DeleteBrandsAsync(ids);

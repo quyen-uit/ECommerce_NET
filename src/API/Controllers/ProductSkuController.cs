@@ -5,6 +5,7 @@ using Core.Dtos.ProductSkus;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost("get-all")]
+        [Authorize(Policy = "Permission:ProductSku.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductSkuDto>>>> GetProductSkusFilterByName([FromBody] ProductSkuSpecParams productSkuSpecParams)
         {
             var result = await _productSkuService.GetAllProductSkusAsync(productSkuSpecParams);
@@ -26,6 +28,7 @@ namespace API.Controllers
 
         //[Cached(600)]
         [HttpGet("{id}")]
+        [Authorize(Policy = "Permission:ProductSku.Read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> GetProductSku(int id)
         {
@@ -34,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Permission:ProductSku.Create")]
         public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PostProductSku([FromBody] CreateProductSkuDto productSkuDto)
         {
             var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
@@ -41,6 +45,7 @@ namespace API.Controllers
         }
 
         [HttpPost("update")]
+        [Authorize(Policy = "Permission:ProductSku.Update")]
         public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> PutProductSku([FromBody] CreateProductSkuDto productSkuDto)
         {
             var result = await _productSkuService.AddOrUpdateProductSkuAsync(productSkuDto);
@@ -48,6 +53,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Permission:ProductSku.Delete")]
         public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductSku(int id)
         {
             await _productSkuService.DeleteProductSkuAsync(id);
