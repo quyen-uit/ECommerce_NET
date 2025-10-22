@@ -13,5 +13,9 @@ namespace Core.Interfaces.Services
         Task LogoutAsync(string refreshToken);
         Task LogoutAllAsync(string userId);
         Task<UserDto> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
+        Task<IReadOnlyList<UserSessionDto>> GetSessionsAsync(string userId);
+        Task RevokeSessionAsync(string userId, Guid sessionId, string? reason = null);
+        Task RevokeOtherSessionsAsync(string userId, Guid keepSessionId);
+        Task<Guid?> GetSessionIdByRefreshTokenAsync(string refreshToken);
     }
 }

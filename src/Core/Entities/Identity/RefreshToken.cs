@@ -7,6 +7,14 @@ public class RefreshToken : BaseEntity
     public DateTime Expires { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? RevokedAt { get; set; }
+    public string? RevokedByIp { get; set; }
+    public string? ReasonRevoked { get; set; }
+    public string? ReplacedByToken { get; set; }
+    public Guid SessionId { get; set; } = Guid.Empty;
+    public string? CreatedByIp { get; set; }
+    public string? UserAgent { get; set; }
+    public string? DeviceName { get; set; }
+    public DateTime? LastUsedAt { get; set; }
     public string UserId { get; set; } = string.Empty;
     public AppUser User { get; set; } = default!;
 

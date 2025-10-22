@@ -60,7 +60,7 @@ namespace API.Services
         }
 
 
-        public async Task<string> CreateRefreshToken(string userId)
+        public async Task<string> CreateRefreshToken(string userId, Guid? sessionId = null, string? createdByIp = null, string? userAgent = null, string? deviceName = null)
 
         {
             var refreshToken = new RefreshToken
@@ -68,7 +68,12 @@ namespace API.Services
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Expires = DateTime.UtcNow.AddDays(int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7")),
                 CreatedAt = DateTime.UtcNow,
-                UserId = userId
+                LastUsedAt = DateTime.UtcNow,
+                UserId = userId,
+                SessionId = sessionId ?? Guid.NewGuid(),
+                CreatedByIp = createdByIp,
+                UserAgent = userAgent,
+                DeviceName = deviceName
             };
 
             _refreshTokenRepository.Add(refreshToken);

@@ -111,6 +111,40 @@ namespace API.Controllers
             return Ok(ResponseFactory.Ok("Logged out from all sessions"));
         }
 
+        [Authorize]
+        [HttpGet("sessions")]
+        public async Task<ActionResult<ApiSuccessResponse<IReadOnlyList<UserSessionDto>>>> GetSessions()
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+            if (user == null) throw new NotFoundException("User not found");
+            var sessions = await _accountService.GetSessionsAsync(user.Id);
+            return Ok(ResponseFactory.Ok(sessions));
+        }
+
+        [Authorize]
+        [HttpPost("sessions/{sessionId:guid}/revoke")]
+        public async Task<ActionResult<ApiSuccessResponse<string>>> RevokeSession(Guid sessionId)
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+            if (user == null) throw new NotFoundException("User not found");
+            await _accountService.RevokeSessionAsync(user.Id, sessionId, "User revoked");
+            return Ok(ResponseFactory.Ok("Session revoked"));
+        }
+
+        [Authorize]
+        [HttpPost("sessions/revoke-others")]
+        public async Task<ActionResult<ApiSuccessResponse<string>>> RevokeOtherSessions()
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+            if (user == null) throw new NotFoundException("User not found");
+            var currentRt = Request.Cookies["rt"];
+            if (string.IsNullOrEmpty(currentRt)) throw new UnauthorizedException("Refresh token is missing");
+            var keepSessionId = await _accountService.GetSessionIdByRefreshTokenAsync(currentRt);
+            if (keepSessionId == null) throw new UnauthorizedException("Invalid refresh token");
+            await _accountService.RevokeOtherSessionsAsync(user.Id, keepSessionId.Value);
+            return Ok(ResponseFactory.Ok("Other sessions revoked"));
+        }
+
         private void SetRefreshTokenCookie(string refreshToken)
         {
             var days = int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7");

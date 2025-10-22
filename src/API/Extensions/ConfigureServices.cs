@@ -59,6 +59,8 @@ namespace API.Extensions
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+            services.AddHttpContextAccessor();
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>

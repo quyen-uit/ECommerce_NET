@@ -1,4 +1,4 @@
-﻿using API.Exceptions;
+using API.Exceptions;
 using API.Extensions;
 using Core.Dtos;
 using Core.Entities.Identity;
@@ -15,12 +15,21 @@ namespace API.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _config;
 
-        public AccountService(UserManager<AppUser> userManager, ITokenService tokenService, IGenericRepository<RefreshToken> refreshTokenRepository)
+        public AccountService(
+            UserManager<AppUser> userManager,
+            ITokenService tokenService,
+            IGenericRepository<RefreshToken> refreshTokenRepository,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration config)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _refreshTokenRepository = refreshTokenRepository;
+            _httpContextAccessor = httpContextAccessor;
+            _config = config;
         }
 
         public async Task<UserDto> LoginAsync(LoginDto request)
@@ -32,7 +41,11 @@ namespace API.Services
             }
 
             var accessToken = await _tokenService.CreateToken(user);
-            var refreshToken = await _tokenService.CreateRefreshToken(user.Id);
+            var (ip, ua, device) = GetClientInfo();
+            var newSessionId = Guid.NewGuid();
+            var refreshToken = await _tokenService.CreateRefreshToken(user.Id, newSessionId, ip, ua, device);
+
+            await EnforceMaxSessionsAsync(user.Id, ip);
 
             return new UserDto
             {
@@ -53,8 +66,12 @@ namespace API.Services
 
             var user = storedToken.User;
             storedToken.RevokedAt = DateTime.UtcNow;
+            var (ip, ua, device) = GetClientInfo();
+            storedToken.RevokedByIp = ip;
+            storedToken.ReasonRevoked = "Rotated";
 
-            var newRefreshToken = await _tokenService.CreateRefreshToken(user.Id);
+            var newRefreshToken = await _tokenService.CreateRefreshToken(user.Id, storedToken.SessionId, ip, ua, device);
+            storedToken.ReplacedByToken = newRefreshToken;
             var newAccessToken = await _tokenService.CreateToken(user);
 
             _refreshTokenRepository.Update(storedToken);
@@ -93,7 +110,11 @@ namespace API.Services
             await _userManager.AddToRoleAsync(user, UserRole.User.ToString());
 
             var accessToken = await _tokenService.CreateToken(user);
-            var refreshToken = await _tokenService.CreateRefreshToken(user.Id);
+            var (ip, ua, device) = GetClientInfo();
+            var newSessionId = Guid.NewGuid();
+            var refreshToken = await _tokenService.CreateRefreshToken(user.Id, newSessionId, ip, ua, device);
+
+            await EnforceMaxSessionsAsync(user.Id, ip);
 
             return new UserDto
             {
@@ -109,7 +130,9 @@ namespace API.Services
             var storedToken = await _refreshTokenRepository.GetEntityWithSpecAsync(new RefreshTokenWithUserSpecification(refreshToken));
             if (storedToken != null)
             {
+                var (ip, _, __) = GetClientInfo();
                 storedToken.RevokedAt = DateTime.UtcNow;
+                storedToken.RevokedByIp = ip;
                 _refreshTokenRepository.Update(storedToken);
                 await _refreshTokenRepository.Complete();
             }
@@ -123,7 +146,9 @@ namespace API.Services
             {
                 foreach (var token in tokens)
                 {
+                    var (ip, _, __) = GetClientInfo();
                     token.RevokedAt = DateTime.UtcNow;
+                    token.RevokedByIp = ip;
                     _refreshTokenRepository.Update(token);
                 }
                 await _refreshTokenRepository.Complete();
@@ -142,6 +167,88 @@ namespace API.Services
                 DisplayName = user!.DisplayName,
                 Email = user.Email!,
             };
+        }
+
+        public async Task<IReadOnlyList<UserSessionDto>> GetSessionsAsync(string userId)
+        {
+            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var result = tokens
+                .Select(t => new UserSessionDto
+                {
+                    SessionId = t.SessionId,
+                    CreatedAt = t.CreatedAt,
+                    LastUsedAt = t.LastUsedAt,
+                    Expires = t.Expires,
+                    CreatedByIp = t.CreatedByIp,
+                    UserAgent = t.UserAgent,
+                    DeviceName = t.DeviceName,
+                    Active = t.IsActive
+                })
+                .ToList();
+            return result;
+        }
+
+        public async Task RevokeSessionAsync(string userId, Guid sessionId, string? reason = null)
+        {
+            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var (ip, _, __) = GetClientInfo();
+            foreach (var t in tokens.Where(t => t.SessionId == sessionId))
+            {
+                t.RevokedAt = DateTime.UtcNow;
+                t.RevokedByIp = ip;
+                t.ReasonRevoked = reason ?? "User revoked";
+                _refreshTokenRepository.Update(t);
+            }
+            await _refreshTokenRepository.Complete();
+        }
+
+        public async Task RevokeOtherSessionsAsync(string userId, Guid keepSessionId)
+        {
+            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var (ip, _, __) = GetClientInfo();
+            foreach (var t in tokens.Where(t => t.SessionId != keepSessionId))
+            {
+                t.RevokedAt = DateTime.UtcNow;
+                t.RevokedByIp = ip;
+                t.ReasonRevoked = "User revoked others";
+                _refreshTokenRepository.Update(t);
+            }
+            await _refreshTokenRepository.Complete();
+        }
+
+        public async Task<Guid?> GetSessionIdByRefreshTokenAsync(string refreshToken)
+        {
+            var token = await _refreshTokenRepository.GetEntityWithSpecAsync(new RefreshTokenWithUserSpecification(refreshToken));
+            return token?.SessionId;
+        }
+
+        private async Task EnforceMaxSessionsAsync(string userId, string? ip)
+        {
+            var max = int.Parse(_config["Token:MaxSessionsPerUser"] ?? "3");
+            if (max <= 0) return;
+            var active = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            if (active.Count <= max) return;
+            var toRevoke = active
+                .OrderBy(t => t.LastUsedAt ?? t.CreatedAt)
+                .Take(active.Count - max)
+                .ToList();
+            foreach (var t in toRevoke)
+            {
+                t.RevokedAt = DateTime.UtcNow;
+                t.RevokedByIp = ip;
+                t.ReasonRevoked = "Max sessions exceeded";
+                _refreshTokenRepository.Update(t);
+            }
+            await _refreshTokenRepository.Complete();
+        }
+
+        private (string? ip, string? userAgent, string? device) GetClientInfo()
+        {
+            var http = _httpContextAccessor.HttpContext;
+            var ip = http?.Connection?.RemoteIpAddress?.ToString();
+            var userAgent = http?.Request?.Headers["User-Agent"].ToString();
+            var device = http?.Request?.Headers["X-Device-Name"].ToString();
+            return (ip, userAgent, string.IsNullOrWhiteSpace(device) ? null : device);
         }
     }
 }
