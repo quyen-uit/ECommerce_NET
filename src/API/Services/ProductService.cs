@@ -20,7 +20,11 @@ namespace API.Services
 
         public async Task<ProductDto> AddOrUpdateProductAsync(CreateProductDto dto)
         {
-            var entity = await _productRepository.GetByIdAsync(dto.Id);
+            Product? entity = null;
+            if (dto.Id.HasValue && dto.Id != Guid.Empty)
+            {
+                entity = await _productRepository.GetByIdAsync(dto.Id.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<Product>();
@@ -35,7 +39,7 @@ namespace API.Services
             return entity.Adapt<ProductDto>();
         }
 
-        public async Task DeleteProductAsync(long id)
+        public async Task DeleteProductAsync(Guid id)
         {
             var existing = await _productRepository.GetByIdAsync(id);
             if (existing == null)
@@ -70,7 +74,7 @@ namespace API.Services
                 );
         }
 
-        public async Task<ProductDto> GetProductByIdAsync(long id)
+        public async Task<ProductDto> GetProductByIdAsync(Guid id)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
             var product = await _productRepository.GetEntityWithSpecAsync(spec);

@@ -10,7 +10,7 @@ namespace Core.Specifications.ProductSkus
             AddInclude(x => x.Color);
             AddInclude(x => x.Size);
         }
-        public ProductSkuWithColorAndSizeSpecification(long id) : base(x => x.Id == id)
+        public ProductSkuWithColorAndSizeSpecification(Guid id) : base(x => x.Id == id)
         {
             AddInclude(x => x.Color);
             AddInclude(x => x.Size);

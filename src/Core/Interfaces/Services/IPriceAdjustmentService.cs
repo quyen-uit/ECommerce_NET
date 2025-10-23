@@ -7,8 +7,8 @@ namespace Core.Interfaces.Services
     public interface IPriceAdjustmentService
     {
         Task<Pagination<PriceAdjustmentDto>> GetAllPriceAdjustmentAsync(PriceAdjustmentSpecParams specParams);
-        Task<PriceAdjustmentDto> GetPriceAdjustmentByIdAsync(long id);
+        Task<PriceAdjustmentDto> GetPriceAdjustmentByIdAsync(Guid id);
         Task<PriceAdjustmentDto> AddOrUpdatePriceAdjustmentAsync(CreatePriceAdjustmentDto dto);
-        Task DeletePriceAdjustmentAsync(long id);
+        Task DeletePriceAdjustmentAsync(Guid id);
     }
 }

@@ -22,7 +22,7 @@ namespace Core.Entities.OrderAggregate
 
         public string? BuyerEmail { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
-        public long ShipToAddressId { get; set; }
+        public Guid ShipToAddressId { get; set; }
         public Address ShipToAddress { get; set; } = default!;
         public decimal Subtotal { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Pending;

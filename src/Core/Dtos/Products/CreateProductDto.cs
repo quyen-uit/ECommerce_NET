@@ -5,8 +5,7 @@ namespace Core.Dtos.Products
 {
     public class CreateProductDto
     {
-        [Required]
-        public long Id { get; set; }
+        public Guid? Id { get; set; }
         [Required]
         [MaxLength(100)]
         public required string Name { get; set; }
@@ -20,9 +19,9 @@ namespace Core.Dtos.Products
         public bool IsActive { get; set; } = true;
         public GenderType GenderType { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         [Required]
-        public int ProductBrandId { get; set; }
+        public Guid ProductBrandId { get; set; }
         public ICollection<ProductPropertyDto> Properties { get; set; } = new List<ProductPropertyDto>();
     }
 }

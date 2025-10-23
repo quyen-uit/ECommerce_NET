@@ -7,8 +7,8 @@ namespace Core.Interfaces.Reposiories
     {
         Task<List<Permission>> GetPermissionsByRoleIdAsync(string roleId);
         Task<List<RolePermission>> GetPermissionsByRoleNamesAsync(List<string> roleNames);
-        Task AddPermissionsToRoleAsync(string roleId, List<long> permissionIds);
-        Task RemovePermissionsFromRoleAsync(string roleId, List<long> permissionIds);
+        Task AddPermissionsToRoleAsync(string roleId, List<Guid> permissionIds);
+        Task RemovePermissionsFromRoleAsync(string roleId, List<Guid> permissionIds);
         Task RemoveAllPermissionsFromRoleAsync(string roleId);
 
         Task<List<AppRole>> GetRolesAsync(RoleParams roleParams);

@@ -10,7 +10,7 @@ namespace Core.Dtos.Accounts
         [Required]
         [MaxLength(100)]
         public required string Description { get; set; }
-        public List<long> PermissionIds { get; set; } = new();
+        public List<Guid> PermissionIds { get; set; } = new();
     }
 
     public class UpdateRoleRequest : CreateRoleRequest

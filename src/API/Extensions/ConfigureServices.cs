@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using System.Reflection;
 using System.Text;
 
 namespace API.Extensions

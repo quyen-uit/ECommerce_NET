@@ -8,9 +8,9 @@ namespace Core.Interfaces.Services
     {
         Task<Pagination<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams);
         Task<int> CountAllAsync(ColorSpecParams specParams);
-        Task<ColorDto> GetColorByIdAsync(long id);
+        Task<ColorDto> GetColorByIdAsync(Guid id);
         Task<ColorDto> AddOrUpdateColorAsync(CreateColorDto colorDto);
         Task<IReadOnlyList<ColorDto>> AddRangeColorAsync(IReadOnlyList<CreateColorDto> colorDtos);
-        Task DeleteColorAsync(long id);
+        Task DeleteColorAsync(Guid id);
     }
 }

@@ -6,7 +6,7 @@ namespace Core.Specifications.Images
 {
     public class ImageByRefIdSpecification : BaseSpecification<Image>
     {
-        public ImageByRefIdSpecification(long refId, ImageType type)
+        public ImageByRefIdSpecification(Guid refId, ImageType type)
             : base(x => x.ReferenceId == refId && x.Type == type)
         {
             AddOrderBy(x => x.Order);

@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.Sizes;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -20,17 +20,17 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:Size.Read")]
-        public async Task<ActionResult<ApiSuccessResponse<SizeDto>>> GetSize(long id)
+        public async Task<ActionResult<ApiSuccessResponse<SizeDto>>> GetSize(Guid id)
         {
             var dto = await _sizeService.GetSizeByIdAsync(id);
             return Ok(ResponseFactory.Ok(dto));
         }
 
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:Size.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<SizeDto>>>> GetSizes(
-            [FromBody] SizeSpecParams specParams
-        )
+                    [FromBody] SizeSpecParams specParams
+                )
         {
             var result = await _sizeService.GetAllSizesAsync(specParams);
             return Ok(ResponseFactory.Ok(result));
@@ -64,14 +64,14 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:Size.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSize(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSize(Guid id)
         {
             await _sizeService.DeleteSizeAsync(id);
             return Ok(ResponseFactory.Ok());
         }
         [HttpDelete("delete-many")]
         [Authorize(Policy = "Permission:Size.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSizes([FromBody] List<long> ids)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteSizes([FromBody] List<Guid> ids)
         {
             await _sizeService.DeleteSizesAsync(ids);
             return Ok(ResponseFactory.Ok());

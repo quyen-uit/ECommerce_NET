@@ -35,7 +35,7 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).AsNoTracking().CountAsync();
         }
 
-        public async Task DeleteById(long id)
+        public async Task DeleteById(Guid id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if (entity != null)
@@ -72,7 +72,7 @@ namespace Infrastructure.Data.Repositories
             return await ApplySpecification(specification).AsNoTracking().ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(long id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {
             return await _context
                 .Set<T>()
@@ -98,7 +98,7 @@ namespace Infrastructure.Data.Repositories
                 specification
             );
         }
-        public async Task DeleteRangeById(List<long> ids)
+        public async Task DeleteRangeById(List<Guid> ids)
         {
             var entities = await _context.Set<T>().Where(x => ids.Contains(x.Id)).ToListAsync();
             if (entities != null && entities.Count > 0)
@@ -107,7 +107,7 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public void SoftDeleteById(long id)
+        public void SoftDeleteById(Guid id)
         {
             // Avoid async void; mark a stub entity as soft-deleted without fetching
             var entity = Activator.CreateInstance<T>();
@@ -117,7 +117,7 @@ namespace Infrastructure.Data.Repositories
             _context.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
         }
 
-        public async Task SoftDeleteRangeById(List<long> ids)
+        public async Task SoftDeleteRangeById(List<Guid> ids)
         {
             var entities = await _context.Set<T>().Where(x => ids.Contains(x.Id)).ToListAsync();
             if (entities != null && entities.Count > 0)

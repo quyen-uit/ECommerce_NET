@@ -20,7 +20,11 @@ namespace API.Services
 
         public async Task<PriceAdjustmentDto> AddOrUpdatePriceAdjustmentAsync(CreatePriceAdjustmentDto priceAdjustmentDto)
         {
-            var existingAdjustment = await _priceAdjustmentRepository.GetByIdAsync(priceAdjustmentDto.Id);
+            PriceAdjustment? existingAdjustment = null;
+            if (priceAdjustmentDto.Id.HasValue && priceAdjustmentDto.Id != Guid.Empty)
+            {
+                existingAdjustment = await _priceAdjustmentRepository.GetByIdAsync(priceAdjustmentDto.Id.Value);
+            }
             var adjustment = priceAdjustmentDto.Adapt<PriceAdjustment>();
 
             if (existingAdjustment == null)
@@ -33,8 +37,13 @@ namespace API.Services
                 var existingItems = adjustment.PriceAdjustmentItems = existingAdjustment.PriceAdjustmentItems.ToList();
 
                 // Remove items not in the new DTO
-                var dtoItemIds = priceAdjustmentDto.PriceAdjustmentItems.Select(i => i.Id).ToHashSet();
-                var itemsToRemove = existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
+                var dtoItemIds = priceAdjustmentDto.PriceAdjustmentItems
+                    .Where(i => i.Id.HasValue && i.Id != Guid.Empty)
+                    .Select(i => i.Id!.Value)
+                    .ToHashSet();
+                var itemsToRemove = dtoItemIds.Count == 0
+                    ? new List<PriceAdjustmentItem>()
+                    : existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
                 foreach (var item in itemsToRemove)
                 {
                     adjustment.PriceAdjustmentItems.Remove(item);
@@ -43,7 +52,7 @@ namespace API.Services
                 // Update or add items
                 foreach (var dtoItem in priceAdjustmentDto.PriceAdjustmentItems)
                 {
-                    var existingItem = existingItems.FirstOrDefault(i => i.Id == dtoItem.Id);
+                    var existingItem = dtoItem.Id.HasValue ? existingItems.FirstOrDefault(i => i.Id == dtoItem.Id.Value) : null;
                     if (existingItem != null)
                     {
                         existingItem = dtoItem.Adapt<PriceAdjustmentItem>();
@@ -61,7 +70,7 @@ namespace API.Services
             return adjustment.Adapt<PriceAdjustmentDto>();
         }
 
-        public async Task DeletePriceAdjustmentAsync(long id)
+        public async Task DeletePriceAdjustmentAsync(Guid id)
         {
             var existing = await _priceAdjustmentRepository.GetByIdAsync(id);
             if (existing == null)
@@ -83,7 +92,7 @@ namespace API.Services
                 );
         }
 
-        public async Task<PriceAdjustmentDto> GetPriceAdjustmentByIdAsync(long id)
+        public async Task<PriceAdjustmentDto> GetPriceAdjustmentByIdAsync(Guid id)
         {
             var priceAdjustment = await _priceAdjustmentRepository.GetByIdAsync(id);
             if (priceAdjustment == null)

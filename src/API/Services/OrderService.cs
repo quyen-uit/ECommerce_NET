@@ -21,7 +21,7 @@ namespace API.Services
             _basketRepository = basketRepository;
         }
 
-        public async Task<Order> CreateOrderAsync(string buyerEmail, long deliveryId, string basketId, Address shipAddress)
+        public async Task<Order> CreateOrderAsync(string buyerEmail, Guid deliveryId, string basketId, Address shipAddress)
         {
             // get basket   
             var basket = await _basketRepository.GetBasketAsync(basketId);
@@ -84,7 +84,7 @@ namespace API.Services
             return await _unitOfWork.Repository<DeliveryMethod>().GetAllAsync();
         }
 
-        public async Task<Order> GetOrderByIdAsync(long id, string email)
+        public async Task<Order> GetOrderByIdAsync(Guid id, string email)
         {
             var spec = new OrdersWithItemsAndOrderingSpecification(id, email);
             var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);

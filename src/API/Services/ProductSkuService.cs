@@ -22,7 +22,11 @@ namespace API.Services
 
         public async Task<ProductSkuDto> AddOrUpdateProductSkuAsync(CreateProductSkuDto dto)
         {
-            var entity = await _productSkuRepository.GetByIdAsync(dto.Id);
+            ProductSku? entity = null;
+            if (dto.Id.HasValue && dto.Id != Guid.Empty)
+            {
+                entity = await _productSkuRepository.GetByIdAsync(dto.Id.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<ProductSku>();
@@ -37,7 +41,7 @@ namespace API.Services
             return entity.Adapt<ProductSkuDto>();
         }
 
-        public async Task DeleteProductSkuAsync(long id)
+        public async Task DeleteProductSkuAsync(Guid id)
         {
             var existing = await _productSkuRepository.GetByIdAsync(id);
             if (existing == null)
@@ -54,7 +58,7 @@ namespace API.Services
             return productSkus.Adapt<IReadOnlyList<ProductSkuDto>>();
         }
 
-        public async Task<ProductSkuDto> GetProductSkuByIdAsync(long id)
+        public async Task<ProductSkuDto> GetProductSkuByIdAsync(Guid id)
         {
             var spec = new ProductSkuWithColorAndSizeSpecification(id);
             var productSku = await _productSkuRepository.GetEntityWithSpecAsync(spec);

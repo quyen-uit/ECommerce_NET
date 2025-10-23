@@ -25,7 +25,12 @@ namespace API.Services
             {
                 throw new BadRequestException(CommonMessage.CreateFail);
             }
-            var entity = await _categoryRepository.GetByIdAsync(dto.Id);
+            var isCreate = !dto.Id.HasValue || dto.Id == Guid.Empty;
+            Category? entity = null;
+            if (!isCreate)
+            {
+                entity = await _categoryRepository.GetByIdAsync(dto.Id!.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<Category>();
@@ -54,7 +59,7 @@ namespace API.Services
             return entities.Adapt<IReadOnlyList<CategoryDto>>();
         }
 
-        public async Task DeleteCategoryAsync(long id)
+        public async Task DeleteCategoryAsync(Guid id)
         {
             var existing = await _categoryRepository.GetByIdAsync(id);
             if (existing == null)
@@ -85,7 +90,7 @@ namespace API.Services
             var categories = await _categoryRepository.GetAllWithSpecAsync(spec);
             var lookup = categories.ToLookup(p => p.ParentId);
 
-            List<CategoryNodeDto> BuildTree(long? parentId)
+            List<CategoryNodeDto> BuildTree(Guid? parentId)
             {
                 return lookup[parentId].Select(p => new CategoryNodeDto
                 {
@@ -100,7 +105,7 @@ namespace API.Services
         }
 
 
-        public async Task<CategoryDto> GetCategoryByIdAsync(long id)
+        public async Task<CategoryDto> GetCategoryByIdAsync(Guid id)
         {
             var entity = await _categoryRepository.GetByIdAsync(id);
             if (entity == null)

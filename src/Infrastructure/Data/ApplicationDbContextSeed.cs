@@ -97,54 +97,34 @@ namespace Infrastructure.Data
             }
 
             var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            if (!context.Categories.Any())
-            {
-                var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/categories.json");
-                var types = JsonSerializer.Deserialize<List<Category>>(typesData, jsonOptions);
-                context.Categories.AddRange(types!);
-            }
 
+            // Only seed independent master data; let EF generate GUID Ids
             if (!context.ProductBrands.Any())
             {
                 var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
-                var brands = JsonSerializer.Deserialize<List<ProductBrand>>(
-                    brandsData,
-                    jsonOptions
-                );
-                context.ProductBrands.AddRange(brands!);
+                var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData, jsonOptions) ?? new();
+                if (brands.Count > 0) context.ProductBrands.AddRange(brands);
             }
 
             if (!context.Sizes.Any())
             {
                 var sizeData = File.ReadAllText("../Infrastructure/Data/SeedData/sizes.json");
-                var sizes = JsonSerializer.Deserialize<List<Size>>(sizeData, jsonOptions);
-                context.Sizes.AddRange(sizes!);
+                var sizes = JsonSerializer.Deserialize<List<Size>>(sizeData, jsonOptions) ?? new();
+                if (sizes.Count > 0) context.Sizes.AddRange(sizes);
             }
 
             if (!context.Colors.Any())
             {
                 var colorData = File.ReadAllText("../Infrastructure/Data/SeedData/colors.json");
-                var colors = JsonSerializer.Deserialize<List<Color>>(colorData, jsonOptions);
-                context.Colors.AddRange(colors!);
-            }
-
-            if (!context.Products.Any())
-            {
-                var productData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
-                var products = JsonSerializer.Deserialize<List<Product>>(productData, jsonOptions);
-                context.Products.AddRange(products!);
+                var colors = JsonSerializer.Deserialize<List<Color>>(colorData, jsonOptions) ?? new();
+                if (colors.Count > 0) context.Colors.AddRange(colors);
             }
 
             if (!context.DeliveryMethods.Any())
             {
-                var deliveryData = File.ReadAllText(
-                    "../Infrastructure/Data/SeedData/deliveries.json"
-                );
-                var deliveryMethod = JsonSerializer.Deserialize<List<DeliveryMethod>>(
-                    deliveryData,
-                    jsonOptions
-                );
-                context.DeliveryMethods.AddRange(deliveryMethod!);
+                var deliveryData = File.ReadAllText("../Infrastructure/Data/SeedData/deliveries.json");
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryData, jsonOptions) ?? new();
+                if (deliveryMethods.Count > 0) context.DeliveryMethods.AddRange(deliveryMethods);
             }
 
             if (context.ChangeTracker.HasChanges())
@@ -152,5 +132,7 @@ namespace Infrastructure.Data
                 await context.SaveChangesAsync();
             }
         }
+
+        // No seed DTOs needed when JSON omits ids and schema uses GUIDs
     }
 }

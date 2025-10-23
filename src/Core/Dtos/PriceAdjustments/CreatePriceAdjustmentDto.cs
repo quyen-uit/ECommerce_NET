@@ -4,10 +4,9 @@ namespace Core.Dtos.PriceAdjustments
 {
     public class CreatePriceAdjustmentDto
     {
+        public Guid? Id { get; set; }
         [Required]
-        public long Id { get; set; }
-        [Required]
-        public long ProductSkuId { get; set; }
+        public Guid ProductSkuId { get; set; }
         [Required]
         public decimal SalePrice { get; set; }
         [Required]

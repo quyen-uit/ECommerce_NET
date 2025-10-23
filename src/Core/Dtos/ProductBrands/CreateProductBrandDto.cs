@@ -4,8 +4,7 @@ namespace Core.Dtos.ProductBrands
 {
     public class CreateProductBrandDto
     {
-        [Required]
-        public long Id { get; set; }
+        public Guid? Id { get; set; }
         [Required]
         [MaxLength(100)]
         public required string Name { get; set; }

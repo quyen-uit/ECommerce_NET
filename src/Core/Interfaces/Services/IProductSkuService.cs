@@ -6,8 +6,8 @@ namespace Core.Interfaces.Services
     public interface IProductSkuService
     {
         Task<IReadOnlyList<ProductSkuDto>> GetAllProductSkusAsync(ProductSkuSpecParams specParams);
-        Task<ProductSkuDto> GetProductSkuByIdAsync(long id);
+        Task<ProductSkuDto> GetProductSkuByIdAsync(Guid id);
         Task<ProductSkuDto> AddOrUpdateProductSkuAsync(CreateProductSkuDto skuDto);
-        Task DeleteProductSkuAsync(long id);
+        Task DeleteProductSkuAsync(Guid id);
     }
 }

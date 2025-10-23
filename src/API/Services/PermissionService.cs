@@ -49,7 +49,7 @@ namespace API.Services
             return entity.Adapt<PermissionResponse>();
         }
 
-        public async Task<bool> DeletePermissionAsync(long permissionId)
+        public async Task<bool> DeletePermissionAsync(Guid permissionId)
         {
             var existing = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             if (existing == null)
@@ -60,7 +60,7 @@ namespace API.Services
             return true;
         }
 
-        public async Task<PermissionResponse> GetPermissionByIdAsync(long permissionId)
+        public async Task<PermissionResponse> GetPermissionByIdAsync(Guid permissionId)
         {
             var entity = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
             if (entity == null)

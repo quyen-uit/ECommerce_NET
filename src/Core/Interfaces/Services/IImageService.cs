@@ -6,7 +6,7 @@ namespace Core.Interfaces.Services
     public interface IImageService
     {
         Task ProcessImagesAsync(CreateListImageDto imageDtos);
-        Task<List<ImageDto>> GetAllImageByRefIdAsync(long refId, ImageType type);
+        Task<List<ImageDto>> GetAllImageByRefIdAsync(Guid refId, ImageType type);
 
     }
 }

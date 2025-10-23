@@ -1,38 +1,8 @@
-﻿[
-    {
-      "id": 1,
-      "name": "S",
-      "sortOrder": 1,
-      "SizeType": 0
-    },
-    {
-      "id": 2,
-      "name": "M",
-      "sortOrder": 2,
-      "SizeType": 0
-    },
-    {
-      "id": 3,
-      "name": "L",
-      "sortOrder": 3,
-      "SizeType": 0
-    },
-    {
-      "id": 4,
-      "name": "28",
-      "sortOrder": 1,
-      "SizeType": 1
-    },
-    {
-      "id": 5,
-      "name": "29",
-      "sortOrder": 2,
-      "SizeType": 1
-    },
-    {
-      "id": 6,
-      "name": "30",
-      "sortOrder": 3,
-      "SizeType": 1
-    }
-  ]
+[
+  { "name": "S", "sortOrder": 1, "sizeType": 0 },
+  { "name": "M", "sortOrder": 2, "sizeType": 0 },
+  { "name": "L", "sortOrder": 3, "sizeType": 0 },
+  { "name": "28", "sortOrder": 1, "sizeType": 1 },
+  { "name": "29", "sortOrder": 2, "sizeType": 1 },
+  { "name": "30", "sortOrder": 3, "sizeType": 1 }
+]

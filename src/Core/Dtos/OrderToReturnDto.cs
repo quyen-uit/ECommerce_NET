@@ -2,7 +2,7 @@
 {
     public class OrderToReturnDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? BuyerEmail { get; set; }
         public DateTime OrderDate { get; set; }
         // public required Address ShipToAddress { get; set; }

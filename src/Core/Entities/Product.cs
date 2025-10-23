@@ -14,9 +14,9 @@ namespace Core.Entities
         public GenderType GenderType { get; set; }
 
         public Category Category { get; set; } = default!;
-        public long CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public ProductBrand ProductBrand { get; set; } = default!;
-        public long ProductBrandId { get; set; }
+        public Guid ProductBrandId { get; set; }
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<ProductSku> ProductSkus { get; set; } = new List<ProductSku>();
         public ICollection<ProductProperty> Properties { get; set; } = new List<ProductProperty>();
@@ -30,4 +30,3 @@ namespace Core.Entities
         public string Value { get; set; } = string.Empty;
     }
 }
-

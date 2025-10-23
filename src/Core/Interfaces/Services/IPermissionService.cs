@@ -11,8 +11,8 @@ namespace Core.Interfaces.Services
         //Task<bool> RoleHasPermissionAsync(string roleName, string permission);
         Task<PermissionResponse> CreatePermissionAsync(CreatePermissionRequest request);
         Task<PermissionResponse> UpdatePermissionAsync(UpdatePermissionRequest request);
-        Task<bool> DeletePermissionAsync(long permissionId);
-        Task<PermissionResponse> GetPermissionByIdAsync(long permissionId);
+        Task<bool> DeletePermissionAsync(Guid permissionId);
+        Task<PermissionResponse> GetPermissionByIdAsync(Guid permissionId);
         Task<Pagination<PermissionResponse>> GetAllPermissionsAsync(PermissionSpecParams specParams);
         //Task<List<PermissionResponse>> GetPermissionsByModuleAsync(string module);
         //Task<List<string>> GetAllCategoriesAsync();

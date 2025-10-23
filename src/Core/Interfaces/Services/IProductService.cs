@@ -13,9 +13,9 @@ namespace Core.Interfaces.Services
         #endregion
         Task<Pagination<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpecParams);
         // Task<int> CountAllProductsAsync(ProductSpecParams productSpecParams);
-        Task<ProductDto> GetProductByIdAsync(long id);
+        Task<ProductDto> GetProductByIdAsync(Guid id);
         Task<ProductDto> AddOrUpdateProductAsync(CreateProductDto productDto);
-        Task DeleteProductAsync(long id);
+        Task DeleteProductAsync(Guid id);
 
     }
 }

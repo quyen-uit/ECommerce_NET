@@ -8,8 +8,8 @@ namespace Core.Specifications.Products
     }
     public class ProductFilter
     {
-        public int? CategoryId { get; set; }
-        public int? ProductBrandId { get; set; }
+        public Guid? CategoryId { get; set; }
+        public Guid? ProductBrandId { get; set; }
         public string? Name { get; set; }
         public bool? IsNew { get; set; }
         public bool? IsTrending { get; set; }

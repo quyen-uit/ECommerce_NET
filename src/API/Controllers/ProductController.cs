@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.Products;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -19,7 +19,7 @@ namespace API.Controllers
         }
         #region Admin APIs
         //[Cached(600)]
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:Product.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductDto>>>> GetProductsFilterByName([FromBody] ProductFilterByNameSpecParams productSpecParams)
         {
@@ -41,7 +41,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:Product.Read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiSuccessResponse<ProductDto>>> GetProduct(int id)
+        public async Task<ActionResult<ApiSuccessResponse<ProductDto>>> GetProduct(Guid id)
         {
             var product = await _productService.GetProductByIdAsync(id);
             return Ok(ResponseFactory.Ok(product));
@@ -65,7 +65,7 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:Product.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProduct(int id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProduct(Guid id)
         {
             await _productService.DeleteProductAsync(id);
             return Ok(ResponseFactory.Ok());

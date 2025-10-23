@@ -20,7 +20,11 @@ namespace API.Services
 
         public async Task<ColorDto> AddOrUpdateColorAsync(CreateColorDto dto)
         {
-            var entity = await _colorRepository.GetByIdAsync(dto.Id);
+            Color? entity = null;
+            if (dto.Id.HasValue && dto.Id != Guid.Empty)
+            {
+                entity = await _colorRepository.GetByIdAsync(dto.Id.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<Color>();
@@ -51,7 +55,7 @@ namespace API.Services
             return await _colorRepository.CountAsync(countSpec);
         }
 
-        public async Task DeleteColorAsync(long id)
+        public async Task DeleteColorAsync(Guid id)
         {
             var existing = await _colorRepository.GetByIdAsync(id);
             if (existing == null)
@@ -73,7 +77,7 @@ namespace API.Services
                 );
         }
 
-        public async Task<ColorDto> GetColorByIdAsync(long id)
+        public async Task<ColorDto> GetColorByIdAsync(Guid id)
         {
             var color = await _colorRepository.GetByIdAsync(id);
             if (color == null)

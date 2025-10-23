@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.ProductSkus;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -18,7 +18,7 @@ namespace API.Controllers
             _productSkuService = productSkuService;
         }
 
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:ProductSku.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductSkuDto>>>> GetProductSkusFilterByName([FromBody] ProductSkuSpecParams productSkuSpecParams)
         {
@@ -30,7 +30,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:ProductSku.Read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> GetProductSku(int id)
+        public async Task<ActionResult<ApiSuccessResponse<ProductSkuDto>>> GetProductSku(Guid id)
         {
             var productSku = await _productSkuService.GetProductSkuByIdAsync(id);
             return Ok(ResponseFactory.Ok(productSku));
@@ -54,7 +54,7 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:ProductSku.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductSku(int id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductSku(Guid id)
         {
             await _productSkuService.DeleteProductSkuAsync(id);
             return Ok(ResponseFactory.Ok());

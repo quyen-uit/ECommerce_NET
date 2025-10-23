@@ -5,7 +5,7 @@ namespace Core.Entities
 {
     public class Review : AuditableEntity
     {
-        public long ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public Product Product { get; set; } = default!;
 
         public string AppUserId { get; set; } = string.Empty;

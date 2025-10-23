@@ -2,10 +2,10 @@
 using API.Exceptions;
 using API.Extensions;
 using API.Helpers;
-using MapsterMapper;
 using Core.Dtos;
 using Core.Entities.Identity;
 using Core.Interfaces.Services;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

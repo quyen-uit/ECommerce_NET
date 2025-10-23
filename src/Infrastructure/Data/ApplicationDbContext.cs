@@ -54,14 +54,7 @@ namespace Infrastructure.Data
             base.OnModelCreating(modelBuilder);
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
-                {
-                    modelBuilder
-                        .Entity(entityType.ClrType)
-                        .Property("Id")
-                        .UseIdentityByDefaultColumn()
-                        .HasIdentityOptions(startValue: 10);
-                }
+                // Guid keys: rely on default ValueGeneratedOnAdd; no identity needed
 
                 if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
                 {

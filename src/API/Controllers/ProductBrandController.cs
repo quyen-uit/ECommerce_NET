@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.ProductBrands;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -22,18 +22,18 @@ namespace API.Controllers
         // ✅ GET: api/productbrand/{id}
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:Brand.Read")]
-        public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> GetProductBrand(long id)
+        public async Task<ActionResult<ApiSuccessResponse<ProductBrandDto>>> GetProductBrand(Guid id)
         {
             var brandDto = await _brandService.GetProductBrandByIdAsync(id);
             return Ok(ResponseFactory.Ok(brandDto));
         }
 
         // 🔄 POST: api/productbrand/get-all
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:Brand.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<ProductBrandDto>>>> GetProductBrands(
-            [FromBody] ProductBrandSpecParams specParams
-        )
+                    [FromBody] ProductBrandSpecParams specParams
+                )
         {
             var result = await _brandService.GetAllProductBrandsAsync(specParams);
 
@@ -76,7 +76,7 @@ namespace API.Controllers
         // ✅ DELETE: api/productbrand/{id}
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:Brand.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductBrand(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteProductBrand(Guid id)
         {
             await _brandService.DeleteProductBrandAsync(id);
             return Ok(ResponseFactory.Ok());
@@ -84,7 +84,7 @@ namespace API.Controllers
 
         [HttpDelete("delete-many")]
         [Authorize(Policy = "Permission:Brand.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBrands([FromBody] List<long> ids)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteBrands([FromBody] List<Guid> ids)
         {
             await _brandService.DeleteBrandsAsync(ids);
             return Ok(ResponseFactory.Ok());

@@ -4,8 +4,8 @@ namespace Core.Entities.ReturnOrder
 {
     public class ReturnOrderItem : AuditableEntity
     {
-        public long ReturnOrderId { get; set; }
-        public long ProductSkuId { get; set; }
+        public Guid ReturnOrderId { get; set; }
+        public Guid ProductSkuId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal Amount { get; set; }

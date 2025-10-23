@@ -15,9 +15,9 @@ namespace Core.Dtos.CreateDto
         public bool IsTrending { get; set; }
         public bool IsNew { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         [Required]
-        public int ProductBrandId { get; set; }
+        public Guid ProductBrandId { get; set; }
         //public ICollection<CreateProductColorDto> ProductColors { get; set; }
     }
 }

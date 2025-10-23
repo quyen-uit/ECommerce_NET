@@ -9,6 +9,6 @@ namespace Core.Specifications.ProductSkus
 
     public class ProductSkusFilter
     {
-        public long? ProductId { get; set; }
+        public Guid? ProductId { get; set; }
     }
 }

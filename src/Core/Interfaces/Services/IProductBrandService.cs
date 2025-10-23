@@ -10,12 +10,12 @@ namespace Core.Interfaces.Services
             ProductBrandSpecParams specParams
         );
         Task<int> CountAllAsync(ProductBrandSpecParams specParams);
-        Task<ProductBrandDto> GetProductBrandByIdAsync(long id);
+        Task<ProductBrandDto> GetProductBrandByIdAsync(Guid id);
         Task<ProductBrandDto> AddOrUpdateProductBrandAsync(CreateProductBrandDto brandDto);
         Task<IReadOnlyList<ProductBrandDto>> AddRangeProductBrandAsync(
             IReadOnlyList<CreateProductBrandDto> brandDtos
         );
-        Task DeleteProductBrandAsync(long id);
-        Task DeleteBrandsAsync(List<long> ids);
+        Task DeleteProductBrandAsync(Guid id);
+        Task DeleteBrandsAsync(List<Guid> ids);
     }
 }

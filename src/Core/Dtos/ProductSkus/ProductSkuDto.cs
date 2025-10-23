@@ -6,7 +6,7 @@ namespace Core.Dtos.ProductSkus
 {
     public class ProductSkuDto
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public required string SkuCode { get; set; }
         public bool IsActive { get; set; } = true;
         public int Quantity { get; set; }

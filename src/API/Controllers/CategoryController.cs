@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.Categories;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -20,17 +20,17 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:Category.Read")]
-        public async Task<ActionResult<ApiSuccessResponse<CategoryDto>>> GetCategory(long id)
+        public async Task<ActionResult<ApiSuccessResponse<CategoryDto>>> GetCategory(Guid id)
         {
             var dto = await _categoryService.GetCategoryByIdAsync(id);
             return Ok(ResponseFactory.Ok(dto));
         }
 
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:Category.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<CategoryDto>>>> GetCategories(
-            [FromBody] CategorySpecParams specParams
-        )
+                    [FromBody] CategorySpecParams specParams
+                )
         {
             var result = await _categoryService.GetAllCategoriesAsync(specParams);
             return Ok(ResponseFactory.Ok(result));
@@ -76,7 +76,7 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:Category.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteCategory(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeleteCategory(Guid id)
         {
             await _categoryService.DeleteCategoryAsync(id);
             return Ok(ResponseFactory.Ok());

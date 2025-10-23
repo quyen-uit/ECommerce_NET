@@ -5,8 +5,7 @@ namespace Core.Dtos.Colors
 
     public class CreateColorDto
     {
-        [Required]
-        public long Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         [MaxLength(20)]

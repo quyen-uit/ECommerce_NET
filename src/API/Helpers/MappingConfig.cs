@@ -1,3 +1,4 @@
+using Core.Dtos;
 using Core.Dtos.Categories;
 using Core.Dtos.Colors;
 using Core.Dtos.Images;
@@ -6,12 +7,10 @@ using Core.Dtos.ProductBrands;
 using Core.Dtos.Products;
 using Core.Dtos.ProductSkus;
 using Core.Dtos.Sizes;
-using Core.Dtos;
 using Core.Entities;
-using Core.Enums;
 using Core.Entities.OrderAggregate;
+using Core.Enums;
 using Mapster;
-using Microsoft.Extensions.Configuration;
 
 public static class MapsterConfig
 {
@@ -50,7 +49,7 @@ public static class MapsterConfig
         // Orders
         TypeAdapterConfig<OrderItem, OrderItemDto>
             .NewConfig()
-            .Map(dest => dest.ProductSkuId, src => (int)src.Item.ProductSkuId)
+            .Map(dest => dest.ProductSkuId, src => src.Item.ProductSkuId)
             .Map(dest => dest.ProductName, src => src.Item.ProductName ?? string.Empty)
             .Map(dest => dest.PhotoUrl, src => src.Item.PhotoUrl)
             .Map(dest => dest.Price, src => src.Price)

@@ -128,7 +128,7 @@ namespace API.Services
                 );
         }
 
-        private async Task UpdateRolePermissionsAsync(string roleId, List<long> permissionIds)
+        private async Task UpdateRolePermissionsAsync(string roleId, List<Guid> permissionIds)
         {
             // get all rolepermission
             var permissions = await _unitOfWork.RolePermissionRepository.GetPermissionsByRoleIdAsync(roleId);

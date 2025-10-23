@@ -6,7 +6,7 @@ namespace Core.Entities.ReturnOrder
 {
     public class ReturnOrder : AuditableEntity
     {
-        public long OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public DateTime ReturnDate { get; set; } = DateTime.UtcNow;
         public string? Reason { get; set; }
         public ReturnOrderStatus Status { get; set; }

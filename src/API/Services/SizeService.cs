@@ -25,7 +25,11 @@ namespace API.Services
             {
                 throw new BadRequestException(CommonMessage.CreateFail);
             }
-            var entity = await _sizeRepository.GetByIdAsync(dto.Id);
+            Size? entity = null;
+            if (dto.Id.HasValue && dto.Id != Guid.Empty)
+            {
+                entity = await _sizeRepository.GetByIdAsync(dto.Id.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<Size>();
@@ -54,7 +58,7 @@ namespace API.Services
             return entities.Adapt<IReadOnlyList<SizeDto>>();
         }
 
-        public async Task DeleteSizeAsync(long id)
+        public async Task DeleteSizeAsync(Guid id)
         {
             var existing = await _sizeRepository.GetByIdAsync(id);
             if (existing == null)
@@ -78,7 +82,7 @@ namespace API.Services
                 );
         }
 
-        public async Task<SizeDto> GetSizeByIdAsync(long id)
+        public async Task<SizeDto> GetSizeByIdAsync(Guid id)
         {
             var entity = await _sizeRepository.GetByIdAsync(id);
             if (entity == null)
@@ -86,7 +90,7 @@ namespace API.Services
             return entity.Adapt<SizeDto>();
         }
 
-        public async Task DeleteSizesAsync(List<long> ids)
+        public async Task DeleteSizesAsync(List<Guid> ids)
         {
             await _sizeRepository.DeleteRangeById(ids);
             await _sizeRepository.Complete();

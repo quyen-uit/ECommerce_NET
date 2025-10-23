@@ -2,7 +2,7 @@
 {
     public class CategoryDto
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public long? ParentId { get; set; }
         public int Order { get; set; }

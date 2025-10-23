@@ -22,13 +22,13 @@ namespace Infrastructure.Data.Repositories
                 .ToListAsync();
         }
 
-        public async Task AddPermissionsToRoleAsync(string roleId, List<long> permissionIds)
+        public async Task AddPermissionsToRoleAsync(string roleId, List<Guid> permissionIds)
         {
             var newRolePermissions = permissionIds.Select(pid => new RolePermission { RoleId = roleId, PermissionId = pid });
             await _context.RolePermissions.AddRangeAsync(newRolePermissions);
         }
 
-        public async Task RemovePermissionsFromRoleAsync(string roleId, List<long> permissionIds)
+        public async Task RemovePermissionsFromRoleAsync(string roleId, List<Guid> permissionIds)
         {
             var toRemove = await _context.RolePermissions
                 .Where(rp => rp.RoleId == roleId && permissionIds.Contains(rp.PermissionId))

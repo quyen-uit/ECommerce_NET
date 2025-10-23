@@ -4,8 +4,7 @@ namespace Core.Dtos.Sizes
 {
     public class CreateSizeDto
     {
-        [Required]
-        public long Id { get; set; }
+        public Guid? Id { get; set; }
         [Required]
         [MaxLength(50)]
         public required string Name { get; set; }

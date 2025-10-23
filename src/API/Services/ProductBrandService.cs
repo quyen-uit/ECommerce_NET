@@ -20,7 +20,11 @@ namespace API.Services
 
         public async Task<ProductBrandDto> AddOrUpdateProductBrandAsync(CreateProductBrandDto dto)
         {
-            var entity = await _brandRepository.GetByIdAsync(dto.Id);
+            ProductBrand? entity = null;
+            if (dto.Id.HasValue && dto.Id != Guid.Empty)
+            {
+                entity = await _brandRepository.GetByIdAsync(dto.Id.Value);
+            }
             if (entity == null)
             {
                 entity = dto.Adapt<ProductBrand>();
@@ -51,7 +55,7 @@ namespace API.Services
             return await _brandRepository.CountAsync(spec);
         }
 
-        public async Task DeleteProductBrandAsync(long id)
+        public async Task DeleteProductBrandAsync(Guid id)
         {
             var existing = await _brandRepository.GetByIdAsync(id);
             if (existing == null)
@@ -76,7 +80,7 @@ namespace API.Services
                 );
         }
 
-        public async Task<ProductBrandDto> GetProductBrandByIdAsync(long id)
+        public async Task<ProductBrandDto> GetProductBrandByIdAsync(Guid id)
         {
             var brand = await _brandRepository.GetByIdAsync(id);
             if (brand == null)
@@ -84,7 +88,7 @@ namespace API.Services
             return brand.Adapt<ProductBrandDto>();
         }
 
-        public async Task DeleteBrandsAsync(List<long> ids)
+        public async Task DeleteBrandsAsync(List<Guid> ids)
         {
             await _brandRepository.DeleteRangeById(ids);
             await _brandRepository.Complete();

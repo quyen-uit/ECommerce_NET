@@ -4,8 +4,8 @@ using Core.Common;
 using Core.Dtos.PriceAdjustments;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -20,17 +20,17 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = "Permission:PriceAdjustment.Read")]
-        public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> GetPriceAdjustment(long id)
+        public async Task<ActionResult<ApiSuccessResponse<PriceAdjustmentDto>>> GetPriceAdjustment(Guid id)
         {
             var priceAdjustmentDto = await _priceAdjustmentService.GetPriceAdjustmentByIdAsync(id);
             return Ok(ResponseFactory.Ok(priceAdjustmentDto));
         }
 
-        [HttpPost("get-all")]
+        [HttpPost("search")]
         [Authorize(Policy = "Permission:PriceAdjustment.Read")]
         public async Task<ActionResult<ApiSuccessResponse<Pagination<PriceAdjustmentDto>>>> GetPriceAdjustments(
-            [FromBody] PriceAdjustmentSpecParams specParams
-        )
+                    [FromBody] PriceAdjustmentSpecParams specParams
+                )
         {
             var result = await _priceAdjustmentService.GetAllPriceAdjustmentAsync(specParams);
 
@@ -60,7 +60,7 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Permission:PriceAdjustment.Delete")]
-        public async Task<ActionResult<ApiSuccessResponse<object>>> DeletePriceAdjustment(long id)
+        public async Task<ActionResult<ApiSuccessResponse<object>>> DeletePriceAdjustment(Guid id)
         {
             await _priceAdjustmentService.DeletePriceAdjustmentAsync(id);
             return Ok(ResponseFactory.Ok());

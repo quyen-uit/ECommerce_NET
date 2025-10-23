@@ -6,7 +6,7 @@ namespace Core.Dtos
     public class BasketItemDto
     {
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public required string ProductName { get; set; }
         [Required]
