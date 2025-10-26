@@ -52,7 +52,8 @@ namespace API.Services
         {
             var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
             var products = await _productRepository.GetAllWithSpecAsync(spec);
-            var count = await _productRepository.CountAsync(spec);
+            var specCount = new ProductWithTypesAndBrandsSpecification(productSpecParams, isSearch: false);
+            var count = await _productRepository.CountAsync(specCount);
             return new Pagination<ProductDto>(
                     pageNumber: productSpecParams.PageNumber,
                     pageSize: productSpecParams.PageSize,
@@ -65,7 +66,8 @@ namespace API.Services
         {
             var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
             var products = await _productRepository.GetAllWithSpecAsync(spec);
-            var count = await _productRepository.CountAsync(spec);
+            var specCount = new ProductWithTypesAndBrandsSpecification(productSpecParams, isSearch: false);
+            var count = await _productRepository.CountAsync(specCount);
             return new Pagination<ProductDto>(
                     pageNumber: productSpecParams.PageNumber,
                     pageSize: productSpecParams.PageSize,

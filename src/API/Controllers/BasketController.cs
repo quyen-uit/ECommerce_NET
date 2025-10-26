@@ -25,7 +25,7 @@ namespace API.Controllers
         public async Task<ActionResult<ApiSuccessResponse<CustomerBasketDto>>> GetBasketById(string id)
         {
             var basket = await _basketRepository.GetBasketAsync(id);
-            var result = _mapper.Map<CustomerBasketDto>(basket) ?? new CustomerBasketDto { Id = id };
+            var result = basket is null ? new CustomerBasketDto { Id = id } : _mapper.Map<CustomerBasketDto>(basket);
             return Ok(ResponseFactory.Ok(result));
         }
 
@@ -35,7 +35,7 @@ namespace API.Controllers
         {
             var customerBasket = _mapper.Map<CustomerBasket>(basket);
             var updatedBasket = await _basketRepository.UpdateBasketAsync(customerBasket);
-            var result = _mapper.Map<CustomerBasketDto>(updatedBasket);
+            var result = updatedBasket is null ? null : _mapper.Map<CustomerBasketDto>(updatedBasket);
             return Ok(ResponseFactory.Ok(result));
         }
 

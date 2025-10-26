@@ -11,14 +11,15 @@ namespace API.Controllers
 {
     public class PaymentController : ApiControllerBase
     {
-        private const string WhSecret = "whsec_c84250e2c7b1ba9fbf71516ca3b7f31bf55588f3b6cd0906468999a707ffa58e";
         private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentController> _logger;
+        private readonly IConfiguration _config;
 
-        public PaymentController(IPaymentService paymentService, ILogger<PaymentController> logger)
+        public PaymentController(IPaymentService paymentService, ILogger<PaymentController> logger, IConfiguration config)
         {
             _paymentService = paymentService;
             _logger = logger;
+            _config = config;
         }
 
         [Authorize]
@@ -34,7 +35,14 @@ namespace API.Controllers
         public async Task<ActionResult> StripeWebhook()
         {
             var json = await new StreamReader(Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WhSecret);
+            var signature = Request.Headers["Stripe-Signature"].ToString();
+            var whSecret = _config["StripeSettings:WebhookSecret"];
+            if (string.IsNullOrWhiteSpace(whSecret))
+            {
+                _logger.LogError("Stripe webhook secret missing from configuration.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            var stripeEvent = EventUtility.ConstructEvent(json, signature, whSecret);
 
             PaymentIntent intent;
             Order order;

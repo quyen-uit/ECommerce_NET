@@ -79,7 +79,7 @@ namespace API.Extensions
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    var origin = configuration["Spa:Origin"] ?? "http://localhost:3000";
+                    var origin = configuration["Spa:Origin"] ?? "https://localhost:4200";
                     policy.AllowAnyHeader()
                           .AllowAnyMethod()
                           .WithOrigins(origin)

@@ -69,7 +69,8 @@ namespace API.Middlewares
                     response = ResponseFactory.Fail(statusCode, conflictException.Message, detail: stackTrace);
                     break;
                 default:
-                    response = ResponseFactory.Fail(statusCode, exception.Message, detail: stackTrace);
+                    var safeMessage = env.IsDevelopment() ? exception.Message : "An unexpected error occurred";
+                    response = ResponseFactory.Fail(statusCode, safeMessage, detail: stackTrace);
                     break;
             }
 

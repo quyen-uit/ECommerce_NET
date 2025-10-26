@@ -75,7 +75,8 @@ namespace API.Services
         {
             var spec = new CategorySpecification(specParams);
             var entities = await _categoryRepository.GetAllWithSpecAsync(spec);
-            var count = await _categoryRepository.CountAsync(spec);
+            var specCount = new CategorySpecification(specParams, isSearch: false);
+            var count = await _categoryRepository.CountAsync(specCount);
             return new Pagination<CategoryDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,

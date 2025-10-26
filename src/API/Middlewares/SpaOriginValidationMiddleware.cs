@@ -1,4 +1,5 @@
 using System.Text.Json;
+using API.Helpers;
 
 namespace API.Middlewares
 {
@@ -36,7 +37,7 @@ namespace API.Middlewares
                     _logger.LogWarning("Blocked request due to invalid origin/referer. Origin={Origin} Referer={Referer}", origin, referer);
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     context.Response.ContentType = "application/json";
-                    var payload = JsonSerializer.Serialize(new { message = "Forbidden: invalid origin" });
+                    var payload = JsonSerializer.Serialize(ResponseFactory.Fail(StatusCodes.Status403Forbidden, "Forbidden: invalid origin"));
                     await context.Response.WriteAsync(payload);
                     return;
                 }

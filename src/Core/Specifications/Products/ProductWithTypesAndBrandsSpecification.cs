@@ -17,39 +17,43 @@ namespace Core.Specifications.Products
             AddInclude(x => x.ProductBrand);
         }
 
-        public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams)
-            : base(x =>
-            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || productSpecParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
-            && (!productSpecParams.Filter.ProductBrandId.HasValue || productSpecParams.Filter.ProductBrandId == x.ProductBrandId)
-            && (!productSpecParams.Filter.CategoryId.HasValue || productSpecParams.Filter.CategoryId == x.CategoryId)
-            && (!productSpecParams.Filter.IsNew.HasValue || productSpecParams.Filter.IsNew == true)
-            && (!productSpecParams.Filter.IsTrending.HasValue || productSpecParams.Filter.IsTrending == true)
-            )
-        {
-            AddInclude(x => x.Category);
-            AddInclude(x => x.ProductBrand);
-
-            AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
-
-            AddSorting(productSpecParams.Sort);
-        }
-
-        public ProductWithTypesAndBrandsSpecification(ProductFilterByNameSpecParams productSpecParams)
+        public ProductWithTypesAndBrandsSpecification(ProductSpecParams productSpecParams, bool isSearch = true)
             : base(x =>
             (string.IsNullOrEmpty(productSpecParams.Filter.Name) || x.Name.ToLower().Contains(productSpecParams.Filter.Name.ToLower()))
-            && (string.IsNullOrEmpty(productSpecParams.Filter.ProductBrandName) || x.Name.ToLower().Contains(productSpecParams.Filter.ProductBrandName.ToLower()))
-            && (string.IsNullOrEmpty(productSpecParams.Filter.CategoryName) || x.Name.ToLower().Contains(productSpecParams.Filter.CategoryName.ToLower()))
-            && (!productSpecParams.Filter.IsNew.HasValue || productSpecParams.Filter.IsNew == true)
-            && (!productSpecParams.Filter.IsTrending.HasValue || productSpecParams.Filter.IsTrending == true)
-            && (!productSpecParams.Filter.IsActive.HasValue || productSpecParams.Filter.IsActive == true)
+            && (!productSpecParams.Filter.ProductBrandId.HasValue || x.ProductBrandId == productSpecParams.Filter.ProductBrandId)
+            && (!productSpecParams.Filter.CategoryId.HasValue || x.CategoryId == productSpecParams.Filter.CategoryId)
+            && (!productSpecParams.Filter.IsNew.HasValue || x.IsNew == productSpecParams.Filter.IsNew.Value)
+            && (!productSpecParams.Filter.IsTrending.HasValue || x.IsTrending == productSpecParams.Filter.IsTrending.Value)
             )
         {
             AddInclude(x => x.Category);
             AddInclude(x => x.ProductBrand);
 
-            AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
+            if (isSearch)
+            {
+                AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
+                AddSorting(productSpecParams.Sort);
+            }
+        }
 
-            AddSorting(productSpecParams.Sort);
+        public ProductWithTypesAndBrandsSpecification(ProductFilterByNameSpecParams productSpecParams, bool isSearch = true)
+            : base(x =>
+            (string.IsNullOrEmpty(productSpecParams.Filter.Name) || x.Name.ToLower().Contains(productSpecParams.Filter.Name.ToLower()))
+            && (string.IsNullOrEmpty(productSpecParams.Filter.ProductBrandName) || x.ProductBrand.Name.ToLower().Contains(productSpecParams.Filter.ProductBrandName.ToLower()))
+            && (string.IsNullOrEmpty(productSpecParams.Filter.CategoryName) || x.Category.Name.ToLower().Contains(productSpecParams.Filter.CategoryName.ToLower()))
+            && (!productSpecParams.Filter.IsNew.HasValue || x.IsNew == productSpecParams.Filter.IsNew.Value)
+            && (!productSpecParams.Filter.IsTrending.HasValue || x.IsTrending == productSpecParams.Filter.IsTrending.Value)
+            && (!productSpecParams.Filter.IsActive.HasValue || x.IsActive == productSpecParams.Filter.IsActive.Value)
+            )
+        {
+            AddInclude(x => x.Category);
+            AddInclude(x => x.ProductBrand);
+
+            if (isSearch)
+            {
+                AddPagination(productSpecParams.PageSize, productSpecParams.PageNumber);
+                AddSorting(productSpecParams.Sort);
+            }
         }
 
         private void AddSorting(string? sort)

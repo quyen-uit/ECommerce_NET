@@ -7,7 +7,7 @@ namespace Core.Specifications.Colors
     {
         public ColorSpecification() { }
 
-        public ColorSpecification(ColorSpecParams specParams)
+        public ColorSpecification(ColorSpecParams specParams, bool isSearch = true)
             : base(x =>
                 (
                     (string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
@@ -15,18 +15,21 @@ namespace Core.Specifications.Colors
                 )
             )
         {
-            AddPagination(specParams.PageSize, specParams.PageNumber);
-            switch (specParams.Sort)
+            if (isSearch)
             {
-                case "name_asc":
-                    AddOrderBy(x => x.Name);
-                    break;
-                case "name_desc":
-                    AddOrderByDescending(x => x.Name);
-                    break;
-                default:
-                    AddOrderBy(x => x.Name);
-                    break;
+                AddPagination(specParams.PageSize, specParams.PageNumber);
+                switch (specParams.Sort)
+                {
+                    case "name_asc":
+                        AddOrderBy(x => x.Name);
+                        break;
+                    case "name_desc":
+                        AddOrderByDescending(x => x.Name);
+                        break;
+                    default:
+                        AddOrderBy(x => x.Name);
+                        break;
+                }
             }
         }
     }

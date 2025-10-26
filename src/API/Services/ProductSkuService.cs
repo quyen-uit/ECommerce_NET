@@ -1,4 +1,5 @@
-﻿using Core.Constants;
+using Core.Constants;
+using Core.Common;
 using Core.Dtos.ProductSkus;
 using Core.Entities;
 using Core.Enums;
@@ -50,12 +51,18 @@ namespace API.Services
             await _productSkuRepository.Complete();
         }
 
-        public async Task<IReadOnlyList<ProductSkuDto>> GetAllProductSkusAsync(ProductSkuSpecParams productSkuSpecParams)
+        public async Task<Pagination<ProductSkuDto>> GetAllProductSkusAsync(ProductSkuSpecParams productSkuSpecParams)
         {
             var spec = new ProductSkuWithColorAndSizeSpecification(productSkuSpecParams);
             var productSkus = await _productSkuRepository.GetAllWithSpecAsync(spec);
-            var count = await _productSkuRepository.CountAsync(spec);
-            return productSkus.Adapt<IReadOnlyList<ProductSkuDto>>();
+            var specCount = new ProductSkuWithColorAndSizeSpecification(productSkuSpecParams, isSearch: false);
+            var count = await _productSkuRepository.CountAsync(specCount);
+            return new Pagination<ProductSkuDto>(
+                pageNumber: productSkuSpecParams.PageNumber,
+                pageSize: productSkuSpecParams.PageSize,
+                pageCount: count,
+                data: productSkus.Adapt<IReadOnlyList<ProductSkuDto>>()
+            );
         }
 
         public async Task<ProductSkuDto> GetProductSkuByIdAsync(Guid id)

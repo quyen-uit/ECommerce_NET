@@ -17,22 +17,26 @@ namespace Core.Specifications.ProductSkus
         }
 
 
-        public ProductSkuWithColorAndSizeSpecification(ProductSkuSpecParams specParams)
+        public ProductSkuWithColorAndSizeSpecification(ProductSkuSpecParams specParams, bool isSearch = true)
             : base(x => (x.ProductId == specParams.Filter.ProductId))
         {
             AddInclude(x => x.Color);
             AddInclude(x => x.Size);
-            switch (specParams.Sort)
+            if (isSearch)
             {
-                case "sku_code_asc":
-                    AddOrderBy(x => x.SkuCode);
-                    break;
-                case "sku_code_desc":
-                    AddOrderByDescending(x => x.SkuCode);
-                    break;
-                default:
-                    AddOrderByDescending(x => x.UpdatedAt!);
-                    break;
+                AddPagination(specParams.PageSize, specParams.PageNumber);
+                switch (specParams.Sort)
+                {
+                    case "sku_code_asc":
+                        AddOrderBy(x => x.SkuCode);
+                        break;
+                    case "sku_code_desc":
+                        AddOrderByDescending(x => x.SkuCode);
+                        break;
+                    default:
+                        AddOrderByDescending(x => x.UpdatedAt!);
+                        break;
+                }
             }
         }
     }

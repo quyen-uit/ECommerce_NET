@@ -7,31 +7,34 @@ namespace Core.Specifications.Categories
     {
         public CategorySpecification() { }
 
-        public CategorySpecification(CategorySpecParams specParams)
+        public CategorySpecification(CategorySpecParams specParams, bool isSearch = true)
             : base(x => (
                 string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
                  && (string.IsNullOrEmpty(specParams.Filter.ParentName) || specParams.Filter.ParentName.ToLower().Contains(x.Parent!.Name.ToLower()))
                  && (!specParams.Filter.IsActive.HasValue || x.IsActive == specParams.Filter.IsActive)
             )
         {
-            AddPagination(specParams.PageSize, specParams.PageNumber);
-            switch (specParams.Sort)
+            if (isSearch)
             {
-                case "name_asc":
-                    AddOrderBy(x => x.Name);
-                    break;
-                case "name_desc":
-                    AddOrderByDescending(x => x.Name);
-                    break;
-                case "order_asc":
-                    AddOrderBy(x => x.Order);
-                    break;
-                case "order_desc":
-                    AddOrderByDescending(x => x.Order);
-                    break;
-                default:
-                    AddOrderBy(x => x.Order);
-                    break;
+                AddPagination(specParams.PageSize, specParams.PageNumber);
+                switch (specParams.Sort)
+                {
+                    case "name_asc":
+                        AddOrderBy(x => x.Name);
+                        break;
+                    case "name_desc":
+                        AddOrderByDescending(x => x.Name);
+                        break;
+                    case "order_asc":
+                        AddOrderBy(x => x.Order);
+                        break;
+                    case "order_desc":
+                        AddOrderByDescending(x => x.Order);
+                        break;
+                    default:
+                        AddOrderBy(x => x.Order);
+                        break;
+                }
             }
         }
     }

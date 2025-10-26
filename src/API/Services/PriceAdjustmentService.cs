@@ -25,28 +25,33 @@ namespace API.Services
             {
                 existingAdjustment = await _priceAdjustmentRepository.GetByIdAsync(priceAdjustmentDto.Id.Value);
             }
-            var adjustment = priceAdjustmentDto.Adapt<PriceAdjustment>();
 
+            PriceAdjustment resultEntity;
             if (existingAdjustment == null)
             {
+                var adjustment = priceAdjustmentDto.Adapt<PriceAdjustment>();
                 _priceAdjustmentRepository.Add(adjustment);
+                resultEntity = adjustment;
             }
             else
             {
-                // update Items
-                var existingItems = adjustment.PriceAdjustmentItems = existingAdjustment.PriceAdjustmentItems.ToList();
+                // Map scalar fields
+                priceAdjustmentDto.Adapt(existingAdjustment);
 
-                // Remove items not in the new DTO
+                // Synchronize child items
+                var existingItems = existingAdjustment.PriceAdjustmentItems.ToList();
+
+                // Remove items not present in DTO
                 var dtoItemIds = priceAdjustmentDto.PriceAdjustmentItems
                     .Where(i => i.Id.HasValue && i.Id != Guid.Empty)
                     .Select(i => i.Id!.Value)
                     .ToHashSet();
                 var itemsToRemove = dtoItemIds.Count == 0
-                    ? new List<PriceAdjustmentItem>()
+                    ? existingItems
                     : existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
                 foreach (var item in itemsToRemove)
                 {
-                    adjustment.PriceAdjustmentItems.Remove(item);
+                    existingAdjustment.PriceAdjustmentItems.Remove(item);
                 }
 
                 // Update or add items
@@ -55,19 +60,21 @@ namespace API.Services
                     var existingItem = dtoItem.Id.HasValue ? existingItems.FirstOrDefault(i => i.Id == dtoItem.Id.Value) : null;
                     if (existingItem != null)
                     {
-                        existingItem = dtoItem.Adapt<PriceAdjustmentItem>();
+                        // Map into tracked entity
+                        dtoItem.Adapt(existingItem);
                     }
                     else
                     {
-                        adjustment.PriceAdjustmentItems.Add(dtoItem.Adapt<PriceAdjustmentItem>());
+                        existingAdjustment.PriceAdjustmentItems.Add(dtoItem.Adapt<PriceAdjustmentItem>());
                     }
                 }
-                _priceAdjustmentRepository.Update(adjustment);
+                _priceAdjustmentRepository.Update(existingAdjustment);
+                resultEntity = existingAdjustment;
             }
 
             await _priceAdjustmentRepository.Complete();
 
-            return adjustment.Adapt<PriceAdjustmentDto>();
+            return resultEntity.Adapt<PriceAdjustmentDto>();
         }
 
         public async Task DeletePriceAdjustmentAsync(Guid id)
@@ -83,7 +90,8 @@ namespace API.Services
         {
             var spec = new PriceAdjustmentSpecification(specParams);
             var priceAdjustments = await _priceAdjustmentRepository.GetAllWithSpecAsync(spec);
-            var count = await _priceAdjustmentRepository.CountAsync(spec);
+            var specCount = new PriceAdjustmentSpecification(specParams, isSearch: false);
+            var count = await _priceAdjustmentRepository.CountAsync(specCount);
             return new Pagination<PriceAdjustmentDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,

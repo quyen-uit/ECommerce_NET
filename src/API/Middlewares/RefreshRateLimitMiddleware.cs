@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
+using API.Helpers;
 
 namespace API.Middlewares
 {
@@ -37,7 +38,7 @@ namespace API.Middlewares
                     _logger.LogWarning("Rate limited refresh for IP {IP}", ip);
                     context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                     context.Response.ContentType = "application/json";
-                    var payload = JsonSerializer.Serialize(new { message = "Too many refresh requests. Try again later." });
+                    var payload = JsonSerializer.Serialize(ResponseFactory.Fail(StatusCodes.Status429TooManyRequests, "Too many refresh requests. Try again later."));
                     await context.Response.WriteAsync(payload);
                     return;
                 }

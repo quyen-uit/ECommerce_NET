@@ -68,7 +68,8 @@ namespace API.Services
         {
             var spec = new ColorSpecification(specParams);
             var colors = await _colorRepository.GetAllWithSpecAsync(spec);
-            var count = await _colorRepository.CountAsync(spec);
+            var specCount = new ColorSpecification(specParams, isSearch: false);
+            var count = await _colorRepository.CountAsync(specCount);
             return new Pagination<ColorDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,
