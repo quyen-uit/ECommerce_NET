@@ -107,7 +107,8 @@ namespace API.Extensions
             services.AddAuthorization(options =>
             {
                 // Require authenticated users by default unless [AllowAnonymous] is specified
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                // and explicitly use JWT bearer scheme to avoid cookie redirects
+                options.FallbackPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUser()
                     .Build();
             });
