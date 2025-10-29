@@ -1,31 +1,28 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 
 namespace Core.Specifications.ProductBrands
 {
-    public class ProductBrandSpecification : BaseSpecification<ProductBrand>
+    public class ProductBrandSpecification : Specification<ProductBrand>
     {
         public ProductBrandSpecification() { }
 
         public ProductBrandSpecification(ProductBrandSpecParams specParams)
-            : base(x =>
-                (
-                    string.IsNullOrEmpty(specParams.Filter.Name)
-                    || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower())
-                )
-            )
         {
-            AddPagination(specParams.PageSize, specParams.PageNumber);
+            Query.Where(x => string.IsNullOrEmpty(specParams.Filter.Name)
+                              || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()));
+            Query.Skip(specParams.PageSize * (specParams.PageNumber - 1))
+                 .Take(specParams.PageSize);
             switch (specParams.Sort)
             {
                 case "name_asc":
-                    AddOrderBy(x => x.Name);
+                    Query.OrderBy(x => x.Name);
                     break;
                 case "name_desc":
-                    AddOrderByDescending(x => x.Name);
+                    Query.OrderByDescending(x => x.Name);
                     break;
                 default:
-                    AddOrderBy(x => x.Name);
+                    Query.OrderBy(x => x.Name);
                     break;
             }
         }

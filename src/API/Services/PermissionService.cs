@@ -2,7 +2,8 @@
 using Core.Constants;
 using Core.Dtos.Accounts;
 using Core.Entities.Identity;
-using Core.Interfaces;
+using Ardalis.Specification;
+using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Mapster;
@@ -13,16 +14,19 @@ namespace API.Services
 {
     public class PermissionService : IPermissionService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRolePermissionRepository _rolePermissionRepository;
+        private readonly IRepositoryBase<Permission> _permissionRepository;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMemoryCache _cache;
 
         public PermissionService(
-            IUnitOfWork unitOfWork,
+            IRolePermissionRepository rolePermissionRepository,
+            IRepositoryBase<Permission> permissionRepository,
             UserManager<AppUser> userManager,
             IMemoryCache cache)
         {
-            _unitOfWork = unitOfWork;
+            _rolePermissionRepository = rolePermissionRepository;
+            _permissionRepository = permissionRepository;
             _userManager = userManager;
             _cache = cache;
         }
@@ -30,39 +34,35 @@ namespace API.Services
         public async Task<PermissionResponse> CreatePermissionAsync(CreatePermissionRequest request)
         {
             var entity = request.Adapt<Permission>();
-            _unitOfWork.Repository<Permission>().Add(entity);
-
-            await _unitOfWork.Complete();
+            await _permissionRepository.AddAsync(entity);
             return entity.Adapt<PermissionResponse>();
         }
 
         public async Task<PermissionResponse> UpdatePermissionAsync(UpdatePermissionRequest request)
         {
-            var entity = await _unitOfWork.Repository<Permission>().GetByIdAsync(request.Id);
+            var entity = await _permissionRepository.GetByIdAsync(request.Id);
             if (entity == null)
                 throw new NotFoundException(CommonMessage.NotFoundPermission);
 
             request.Adapt(entity);
-            _unitOfWork.Repository<Permission>().Update(entity);
-            await _unitOfWork.Complete();
+            await _permissionRepository.UpdateAsync(entity);
 
             return entity.Adapt<PermissionResponse>();
         }
 
         public async Task<bool> DeletePermissionAsync(Guid permissionId)
         {
-            var existing = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
+            var existing = await _permissionRepository.GetByIdAsync(permissionId);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundPermission);
 
-            _unitOfWork.Repository<Permission>().Delete(existing);
-            await _unitOfWork.Complete();
+            await _permissionRepository.DeleteAsync(existing);
             return true;
         }
 
         public async Task<PermissionResponse> GetPermissionByIdAsync(Guid permissionId)
         {
-            var entity = await _unitOfWork.Repository<Permission>().GetByIdAsync(permissionId);
+            var entity = await _permissionRepository.GetByIdAsync(permissionId);
             if (entity == null)
                 throw new NotFoundException(CommonMessage.NotFoundPermission);
             return entity.Adapt<PermissionResponse>();
@@ -71,10 +71,10 @@ namespace API.Services
         public async Task<Pagination<PermissionResponse>> GetAllPermissionsAsync(PermissionSpecParams specParams)
         {
             var spec = new PermissionSpecification(specParams);
-            var entities = await _unitOfWork.Repository<Permission>().GetAllWithSpecAsync(spec);
+            var entities = await _permissionRepository.ListAsync(spec);
 
             var specCount = new PermissionSpecification(specParams, false);
-            var count = await _unitOfWork.Repository<Permission>().CountAsync(specCount);
+            var count = await _permissionRepository.CountAsync(specCount);
 
             return new Pagination<PermissionResponse>(
                      pageNumber: specParams.PageNumber,
@@ -119,7 +119,7 @@ namespace API.Services
             if (user == null) return new List<string>();
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            var rolePermissions = await _unitOfWork.RolePermissionRepository.GetPermissionsByRoleNamesAsync(userRoles.ToList());
+            var rolePermissions = await _rolePermissionRepository.GetPermissionsByRoleNamesAsync(userRoles.ToList());
 
             return rolePermissions
                 .Select(rp => rp.Permission.Name)

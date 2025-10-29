@@ -1,42 +1,43 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 using Core.Enums;
 namespace Core.Specifications.Sizes
 {
-    public class SizeSpecification : BaseSpecification<Size>
+    public class SizeSpecification : Specification<Size>
     {
         public SizeSpecification(SizeSpecParams specParams, bool isSearch = true)
-            : base(x =>
+        {
+            Query.Where(x =>
                 (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
                 && (!specParams.Filter.SortOrder.From.HasValue || (x.SortOrder >= specParams.Filter.SortOrder.From.Value))
                 && (!specParams.Filter.SortOrder.To.HasValue || (x.SortOrder <= specParams.Filter.SortOrder.To.Value))
-                && (string.IsNullOrEmpty(specParams.Filter.SizeType) || x.SizeType == Enum.Parse<SizeType>(specParams.Filter.SizeType)))
-        {
+                && (string.IsNullOrEmpty(specParams.Filter.SizeType) || x.SizeType == Enum.Parse<SizeType>(specParams.Filter.SizeType)));
             if (isSearch)
             {
-                AddPagination(specParams.PageSize, specParams.PageNumber);
+                Query.Skip(specParams.PageSize * (specParams.PageNumber - 1))
+                     .Take(specParams.PageSize);
                 switch (specParams.Sort)
                 {
                     case "name_asc":
-                        AddOrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                         break;
                     case "name_desc":
-                        AddOrderByDescending(x => x.Name);
+                        Query.OrderByDescending(x => x.Name);
                         break;
                     case "sort_order_asc":
-                        AddOrderBy(x => x.SortOrder);
+                        Query.OrderBy(x => x.SortOrder);
                         break;
                     case "sort_order_desc":
-                        AddOrderByDescending(x => x.SortOrder);
+                        Query.OrderByDescending(x => x.SortOrder);
                         break;
                     case "size_type_asc":
-                        AddOrderBy(x => x.SizeType);
+                        Query.OrderBy(x => x.SizeType);
                         break;
                     case "size_type_desc":
-                        AddOrderByDescending(x => x.SizeType);
+                        Query.OrderByDescending(x => x.SizeType);
                         break;
                     default:
-                        AddOrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                         break;
                 }
             }

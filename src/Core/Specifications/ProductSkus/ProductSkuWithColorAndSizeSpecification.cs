@@ -1,40 +1,43 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 
 namespace Core.Specifications.ProductSkus
 {
-    public class ProductSkuWithColorAndSizeSpecification : BaseSpecification<ProductSku>
+    public class ProductSkuWithColorAndSizeSpecification : Specification<ProductSku>
     {
         public ProductSkuWithColorAndSizeSpecification()
         {
-            AddInclude(x => x.Color);
-            AddInclude(x => x.Size);
+            Query
+                .Include(x => x.Color)
+                .Include(x => x.Size);
         }
-        public ProductSkuWithColorAndSizeSpecification(Guid id) : base(x => x.Id == id)
+        public ProductSkuWithColorAndSizeSpecification(Guid id)
         {
-            AddInclude(x => x.Color);
-            AddInclude(x => x.Size);
+            Query.Where(x => x.Id == id)
+                 .Include(x => x.Color)
+                 .Include(x => x.Size);
         }
 
 
         public ProductSkuWithColorAndSizeSpecification(ProductSkuSpecParams specParams, bool isSearch = true)
-            : base(x => (x.ProductId == specParams.Filter.ProductId))
         {
-            AddInclude(x => x.Color);
-            AddInclude(x => x.Size);
+            Query.Where(x => x.ProductId == specParams.Filter.ProductId)
+                 .Include(x => x.Color)
+                 .Include(x => x.Size);
             if (isSearch)
             {
-                AddPagination(specParams.PageSize, specParams.PageNumber);
+                Query.Skip(specParams.PageSize * (specParams.PageNumber - 1))
+                     .Take(specParams.PageSize);
                 switch (specParams.Sort)
                 {
                     case "sku_code_asc":
-                        AddOrderBy(x => x.SkuCode);
+                        Query.OrderBy(x => x.SkuCode);
                         break;
                     case "sku_code_desc":
-                        AddOrderByDescending(x => x.SkuCode);
+                        Query.OrderByDescending(x => x.SkuCode);
                         break;
                     default:
-                        AddOrderByDescending(x => x.UpdatedAt!);
+                        Query.OrderByDescending(x => x.UpdatedAt!);
                         break;
                 }
             }

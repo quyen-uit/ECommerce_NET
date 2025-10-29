@@ -1,7 +1,7 @@
 ﻿using Core.Dtos.Images;
 using Core.Entities;
 using Core.Enums;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Images;
 using Mapster;
@@ -10,9 +10,9 @@ namespace API.Services
 {
     public class ImageService : IImageService
     {
-        private readonly IGenericRepository<Image> _imageRepository;
+        private readonly IRepositoryBase<Image> _imageRepository;
 
-        public ImageService(IGenericRepository<Image> imageRepository)
+        public ImageService(IRepositoryBase<Image> imageRepository)
         {
             _imageRepository = imageRepository;
         }
@@ -20,7 +20,7 @@ namespace API.Services
         public async Task<List<ImageDto>> GetAllImageByRefIdAsync(Guid refId, ImageType type)
         {
             var spec = new ImageByRefIdSpecification(refId, type);
-            var images = await _imageRepository.GetAllWithSpecAsync(spec);
+            var images = await _imageRepository.ListAsync(spec);
             return images.Adapt<List<ImageDto>>();
         }
 
@@ -31,7 +31,7 @@ namespace API.Services
             {
                 // update Items
                 var spec = new ImageByRefIdSpecification(listImageDto.ReferenceId, listImageDto.CreateImageDtos.First().Type);
-                var existingItems = await _imageRepository.GetAllWithSpecAsync(spec);
+                var existingItems = await _imageRepository.ListAsync(spec);
 
                 // Remove items not in the new DTO
                 var dtoItemIds = listImageDto.CreateImageDtos
@@ -42,7 +42,7 @@ namespace API.Services
                     ? new List<Image>()
                     : existingItems.Where(i => !dtoItemIds.Contains(i.Id)).ToList();
 
-                _imageRepository.DeleteRange(itemsToRemove); // test
+                await _imageRepository.DeleteRangeAsync(itemsToRemove); // test
 
                 // Update or add items
                 foreach (var dtoItem in listImageDto.CreateImageDtos)
@@ -51,15 +51,14 @@ namespace API.Services
                     if (existingItem != null)
                     {
                         existingItem = dtoItem.Adapt<Image>();
-                        _imageRepository.Update(existingItem);
+                        await _imageRepository.UpdateAsync(existingItem);
                     }
                     else
                     {
-                        _imageRepository.Add(dtoItem.Adapt<Image>());
+                        await _imageRepository.AddAsync(dtoItem.Adapt<Image>());
                     }
                 }
 
-                await _imageRepository.Complete();
             }
         }
     }

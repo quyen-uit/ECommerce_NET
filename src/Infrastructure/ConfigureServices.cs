@@ -1,5 +1,6 @@
 ﻿using Core.Entities.Identity;
-using Core.Interfaces;
+using Ardalis.Specification;
+using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
@@ -57,10 +58,10 @@ namespace Infrastructure
                 };
             });
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepository<>));
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+            services.AddScoped<ITransactionCoordinator, Infrastructure.Common.TransactionCoordinator>();
 
             return services;
         }

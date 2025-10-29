@@ -1,13 +1,14 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities.OrderAggregate;
 
 
 namespace Core.Specifications.Orders
 {
-    public class OrderByPaymentIntentIdSpecification : BaseSpecification<Order>
+    public class OrderByPaymentIntentIdSpecification : Specification<Order>
     {
-        public OrderByPaymentIntentIdSpecification(string paymentId) : base(x => x.PaymentIntentId == paymentId)
+        public OrderByPaymentIntentIdSpecification(string paymentId)
         {
+            Query.Where(x => x.PaymentIntentId == paymentId);
         }
     }
 }

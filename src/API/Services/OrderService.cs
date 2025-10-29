@@ -3,21 +3,25 @@ using Core.Constants;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
-using Core.Interfaces;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
+using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
 
 namespace API.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepositoryBase<Order> _orderRepository;
+        private readonly IRepositoryBase<DeliveryMethod> _deliveryRepository;
+        private readonly IRepositoryBase<Product> _productRepository;
         private readonly IBasketRepository _basketRepository;
 
-        public OrderService(IUnitOfWork unitOfWork, IBasketRepository basketRepository)
+        public OrderService(IRepositoryBase<Order> orderRepository, IRepositoryBase<DeliveryMethod> deliveryRepository, IRepositoryBase<Product> productRepository, IBasketRepository basketRepository)
         {
-            _unitOfWork = unitOfWork;
+            _orderRepository = orderRepository;
+            _deliveryRepository = deliveryRepository;
+            _productRepository = productRepository;
             _basketRepository = basketRepository;
         }
 
@@ -35,7 +39,7 @@ namespace API.Services
 
             foreach (var basketItem in basket!.Items)
             {
-                var product = await _unitOfWork.Repository<Product>().GetByIdAsync(basketItem.Id);
+                var product = await _productRepository.GetByIdAsync(basketItem.Id);
                 if (product == null)
                     throw new NotFoundException(CommonMessage.NotFoundProduct);
                 OrderedProductItem orderProductItem = new OrderedProductItem(product.Id, product.Name, product.PhotoUrl!);
@@ -44,7 +48,7 @@ namespace API.Services
                 items.Add(orderItem);
             }
             // get delivery method
-            var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryId);
+            var deliveryMethod = await _deliveryRepository.GetByIdAsync(deliveryId);
             if (deliveryMethod == null)
                 throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
 
@@ -52,27 +56,20 @@ namespace API.Services
 
             // check order exist
             var spec = new OrderByPaymentIntentIdSpecification(basket.PaymentIntentId!);
-            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
+            var order = await _orderRepository.FirstOrDefaultAsync(spec);
 
             if (order != null)
             {
                 order.ShipToAddress = shipAddress;
                 order.DeliveryMethod = deliveryMethod;
                 order.Subtotal = subTotal;
-                _unitOfWork.Repository<Order>().Update(order);
+                await _orderRepository.UpdateAsync(order);
             }
             else
             {
                 //create order
                 order = new Order(items, buyerEmail, shipAddress, subTotal, deliveryMethod, basket.PaymentIntentId!);
-                _unitOfWork.Repository<Order>().Add(order);
-            }
-
-            var result = await _unitOfWork.Complete();
-
-            if (result <= 0)
-            {
-                throw new BadRequestException("Creating order fail");
+                await _orderRepository.AddAsync(order);
             }
 
             //await _basketRepository.DeleteBasketAsync(basketId);
@@ -81,13 +78,13 @@ namespace API.Services
 
         public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
         {
-            return await _unitOfWork.Repository<DeliveryMethod>().GetAllAsync();
+            return await _deliveryRepository.ListAsync();
         }
 
         public async Task<Order> GetOrderByIdAsync(Guid id, string email)
         {
             var spec = new OrdersWithItemsAndOrderingSpecification(id, email);
-            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
+            var order = await _orderRepository.FirstOrDefaultAsync(spec);
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
             return order;
@@ -96,7 +93,7 @@ namespace API.Services
         public async Task<IReadOnlyList<Order>> GetOrdersByEmailAsync(string email)
         {
             var spec = new OrdersWithItemsAndOrderingSpecification(email);
-            var orders = await _unitOfWork.Repository<Order>().GetAllWithSpecAsync(spec);
+            var orders = await _orderRepository.ListAsync(spec);
             return orders;
         }
     }

@@ -3,7 +3,7 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos.Sizes;
 using Core.Entities;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
 using Mapster;
@@ -12,9 +12,9 @@ namespace API.Services
 {
     public class SizeService : ISizeService
     {
-        private readonly IGenericRepository<Size> _sizeRepository;
+        private readonly IRepositoryBase<Size> _sizeRepository;
 
-        public SizeService(IGenericRepository<Size> sizeRepository)
+        public SizeService(IRepositoryBase<Size> sizeRepository)
         {
             _sizeRepository = sizeRepository;
         }
@@ -33,14 +33,13 @@ namespace API.Services
             if (entity == null)
             {
                 entity = dto.Adapt<Size>();
-                _sizeRepository.Add(entity);
+                await _sizeRepository.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                _sizeRepository.Update(entity);
+                await _sizeRepository.UpdateAsync(entity);
             }
-            await _sizeRepository.Complete();
             return entity.Adapt<SizeDto>();
         }
 
@@ -53,8 +52,7 @@ namespace API.Services
                 throw new BadRequestException(CommonMessage.CreateFail);
             }
             var entities = dtos.Adapt<IReadOnlyList<Size>>();
-            _sizeRepository.AddRange(entities);
-            await _sizeRepository.Complete();
+            await _sizeRepository.AddRangeAsync(entities);
             return entities.Adapt<IReadOnlyList<SizeDto>>();
         }
 
@@ -64,14 +62,13 @@ namespace API.Services
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundSize);
 
-            _sizeRepository.Delete(existing);
-            await _sizeRepository.Complete();
+            await _sizeRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<SizeDto>> GetAllSizesAsync(SizeSpecParams specParams)
         {
             var spec = new SizeSpecification(specParams);
-            var entities = await _sizeRepository.GetAllWithSpecAsync(spec);
+            var entities = await _sizeRepository.ListAsync(spec);
             var specCount = new SizeSpecification(specParams, false);
             var count = await _sizeRepository.CountAsync(specCount);
             return new Pagination<SizeDto>(
@@ -92,8 +89,19 @@ namespace API.Services
 
         public async Task DeleteSizesAsync(List<Guid> ids)
         {
-            await _sizeRepository.DeleteRangeById(ids);
-            await _sizeRepository.Complete();
+            var toDelete = new List<Size>();
+            foreach (var id in ids)
+            {
+                var entity = await _sizeRepository.GetByIdAsync(id);
+                if (entity != null)
+                {
+                    toDelete.Add(entity);
+                }
+            }
+            if (toDelete.Count > 0)
+            {
+                await _sizeRepository.DeleteRangeAsync(toDelete);
+            }
         }
     }
 }

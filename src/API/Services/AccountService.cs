@@ -2,7 +2,7 @@ using API.Exceptions;
 using API.Extensions;
 using Core.Dtos;
 using Core.Entities.Identity;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Microsoft.AspNetCore.Identity;
@@ -14,14 +14,14 @@ namespace API.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
+        private readonly IRepositoryBase<RefreshToken> _refreshTokenRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
         public AccountService(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
-            IGenericRepository<RefreshToken> refreshTokenRepository,
+            IRepositoryBase<RefreshToken> refreshTokenRepository,
             IHttpContextAccessor httpContextAccessor,
             IConfiguration config)
         {
@@ -58,7 +58,7 @@ namespace API.Services
 
         public async Task<UserDto> RefreshTokenAsync(string token)
         {
-            var storedToken = await _refreshTokenRepository.GetEntityWithSpecAsync(new RefreshTokenWithUserSpecification(token));
+            var storedToken = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(token));
             if (storedToken == null)
             {
                 throw new UnauthorizedException("Invalid token");
@@ -74,8 +74,7 @@ namespace API.Services
             storedToken.ReplacedByToken = newRefreshToken;
             var newAccessToken = await _tokenService.CreateToken(user);
 
-            _refreshTokenRepository.Update(storedToken);
-            await _refreshTokenRepository.Complete();
+            await _refreshTokenRepository.UpdateAsync(storedToken);
 
             return new UserDto
             {
@@ -127,20 +126,19 @@ namespace API.Services
 
         public async Task LogoutAsync(string refreshToken)
         {
-            var storedToken = await _refreshTokenRepository.GetEntityWithSpecAsync(new RefreshTokenWithUserSpecification(refreshToken));
+            var storedToken = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
             if (storedToken != null)
             {
                 var (ip, _, __) = GetClientInfo();
                 storedToken.RevokedAt = DateTime.UtcNow;
                 storedToken.RevokedByIp = ip;
-                _refreshTokenRepository.Update(storedToken);
-                await _refreshTokenRepository.Complete();
+                await _refreshTokenRepository.UpdateAsync(storedToken);
             }
         }
 
         public async Task LogoutAllAsync(string userId)
         {
-            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
 
             if (tokens.Any())
             {
@@ -149,9 +147,9 @@ namespace API.Services
                     var (ip, _, __) = GetClientInfo();
                     token.RevokedAt = DateTime.UtcNow;
                     token.RevokedByIp = ip;
-                    _refreshTokenRepository.Update(token);
+                    await _refreshTokenRepository.UpdateAsync(token);
                 }
-                await _refreshTokenRepository.Complete();
+                // Ardalis repo saves per call; no unit-of-work Complete needed.
             }
         }
 
@@ -171,7 +169,7 @@ namespace API.Services
 
         public async Task<IReadOnlyList<UserSessionDto>> GetSessionsAsync(string userId)
         {
-            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             var result = tokens
                 .Select(t => new UserSessionDto
                 {
@@ -190,35 +188,35 @@ namespace API.Services
 
         public async Task RevokeSessionAsync(string userId, Guid sessionId, string? reason = null)
         {
-            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
             foreach (var t in tokens.Where(t => t.SessionId == sessionId))
             {
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = reason ?? "User revoked";
-                _refreshTokenRepository.Update(t);
+                await _refreshTokenRepository.UpdateAsync(t);
             }
-            await _refreshTokenRepository.Complete();
+            // Ardalis repo saves per call; no unit-of-work Complete needed.
         }
 
         public async Task RevokeOtherSessionsAsync(string userId, Guid keepSessionId)
         {
-            var tokens = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
             foreach (var t in tokens.Where(t => t.SessionId != keepSessionId))
             {
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "User revoked others";
-                _refreshTokenRepository.Update(t);
+                await _refreshTokenRepository.UpdateAsync(t);
             }
-            await _refreshTokenRepository.Complete();
+            // Ardalis repo saves per call; no unit-of-work Complete needed.
         }
 
         public async Task<Guid?> GetSessionIdByRefreshTokenAsync(string refreshToken)
         {
-            var token = await _refreshTokenRepository.GetEntityWithSpecAsync(new RefreshTokenWithUserSpecification(refreshToken));
+            var token = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
             return token?.SessionId;
         }
 
@@ -226,7 +224,7 @@ namespace API.Services
         {
             var max = int.Parse(_config["Token:MaxSessionsPerUser"] ?? "3");
             if (max <= 0) return;
-            var active = await _refreshTokenRepository.GetAllWithSpecAsync(new RefreshTokenSpecification(userId));
+            var active = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             if (active.Count <= max) return;
             var toRevoke = active
                 .OrderBy(t => t.LastUsedAt ?? t.CreatedAt)
@@ -237,9 +235,9 @@ namespace API.Services
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "Max sessions exceeded";
-                _refreshTokenRepository.Update(t);
+                await _refreshTokenRepository.UpdateAsync(t);
             }
-            await _refreshTokenRepository.Complete();
+            // Ardalis repo saves per call; no unit-of-work Complete needed.
         }
 
         private (string? ip, string? userAgent, string? device) GetClientInfo()

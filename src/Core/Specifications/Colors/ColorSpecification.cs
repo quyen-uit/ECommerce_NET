@@ -1,33 +1,32 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 
 namespace Core.Specifications.Colors
 {
-    public class ColorSpecification : BaseSpecification<Color>
+    public class ColorSpecification : Specification<Color>
     {
         public ColorSpecification() { }
 
         public ColorSpecification(ColorSpecParams specParams, bool isSearch = true)
-            : base(x =>
-                (
-                    (string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
-                    && (string.IsNullOrEmpty(specParams.Filter.HexCode) || specParams.Filter.HexCode.ToLower().Contains(x.HexCode.ToLower()))
-                )
-            )
         {
+            Query.Where(x =>
+                (string.IsNullOrEmpty(specParams.Filter.Name) || specParams.Filter.Name.ToLower().Contains(x.Name.ToLower()))
+                && (string.IsNullOrEmpty(specParams.Filter.HexCode) || specParams.Filter.HexCode.ToLower().Contains(x.HexCode.ToLower()))
+            );
             if (isSearch)
             {
-                AddPagination(specParams.PageSize, specParams.PageNumber);
+                Query.Skip(specParams.PageSize * (specParams.PageNumber - 1))
+                     .Take(specParams.PageSize);
                 switch (specParams.Sort)
                 {
                     case "name_asc":
-                        AddOrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                         break;
                     case "name_desc":
-                        AddOrderByDescending(x => x.Name);
+                        Query.OrderByDescending(x => x.Name);
                         break;
                     default:
-                        AddOrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                         break;
                 }
             }

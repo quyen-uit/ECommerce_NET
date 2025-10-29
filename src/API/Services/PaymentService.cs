@@ -2,9 +2,9 @@
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Enums;
-using Core.Interfaces;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
+using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
 using Stripe;
 using Product = Core.Entities.Product;
@@ -13,13 +13,17 @@ namespace API.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepositoryBase<Order> _orderRepository;
+        private readonly IRepositoryBase<DeliveryMethod> _deliveryRepository;
+        private readonly IRepositoryBase<Product> _productRepository;
         private readonly IBasketRepository _basketRepository;
         private readonly IConfiguration _config;
 
-        public PaymentService(IUnitOfWork unitOfWork, IBasketRepository basketRepository, IConfiguration config)
+        public PaymentService(IRepositoryBase<Order> orderRepository, IRepositoryBase<DeliveryMethod> deliveryRepository, IRepositoryBase<Product> productRepository, IBasketRepository basketRepository, IConfiguration config)
         {
-            _unitOfWork = unitOfWork;
+            _orderRepository = orderRepository;
+            _deliveryRepository = deliveryRepository;
+            _productRepository = productRepository;
             _basketRepository = basketRepository;
             _config = config;
         }
@@ -35,7 +39,7 @@ namespace API.Services
             var shippingPrice = 0m;
             if (basket.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(basket.DeliveryMethodId.Value);
+                var deliveryMethod = await _deliveryRepository.GetByIdAsync(basket.DeliveryMethodId.Value);
                 if (deliveryMethod == null)
                     throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
 
@@ -45,7 +49,7 @@ namespace API.Services
             // check price from db
             foreach (var item in basket.Items)
             {
-                var product = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
+                var product = await _productRepository.GetByIdAsync(item.Id);
                 if (product == null)
                     throw new NotFoundException(CommonMessage.NotFoundProduct);
 
@@ -88,26 +92,26 @@ namespace API.Services
         public async Task<Order> UpdateOrderPaymentFailed(string paymentIntentId)
         {
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
-            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
+            var order = await _orderRepository.FirstOrDefaultAsync(spec);
 
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentFailed;
-            await _unitOfWork.Complete();
+            await _orderRepository.UpdateAsync(order);
             return order;
         }
 
         public async Task<Order> UpdateOrderPaymentSucceeded(string paymentIntentId)
         {
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
-            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpecAsync(spec);
+            var order = await _orderRepository.FirstOrDefaultAsync(spec);
 
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentReceived;
-            await _unitOfWork.Complete();
+            await _orderRepository.UpdateAsync(order);
             return order;
         }
     }

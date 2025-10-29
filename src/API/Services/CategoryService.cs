@@ -3,7 +3,7 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos.Categories;
 using Core.Entities;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
 using Mapster;
@@ -12,9 +12,9 @@ namespace API.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IRepositoryBase<Category> _categoryRepository;
 
-        public CategoryService(IGenericRepository<Category> categoryRepository)
+        public CategoryService(IRepositoryBase<Category> categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
@@ -34,14 +34,13 @@ namespace API.Services
             if (entity == null)
             {
                 entity = dto.Adapt<Category>();
-                _categoryRepository.Add(entity);
+                await _categoryRepository.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                _categoryRepository.Update(entity);
+                await _categoryRepository.UpdateAsync(entity);
             }
-            await _categoryRepository.Complete();
             return entity.Adapt<CategoryDto>();
         }
 
@@ -54,8 +53,7 @@ namespace API.Services
                 throw new BadRequestException(CommonMessage.CreateFail);
             }
             var entities = dtos.Adapt<IReadOnlyList<Category>>();
-            _categoryRepository.AddRange(entities);
-            await _categoryRepository.Complete();
+            await _categoryRepository.AddRangeAsync(entities);
             return entities.Adapt<IReadOnlyList<CategoryDto>>();
         }
 
@@ -65,8 +63,7 @@ namespace API.Services
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundCategory);
 
-            _categoryRepository.Delete(existing);
-            await _categoryRepository.Complete();
+            await _categoryRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<CategoryDto>> GetAllCategoriesAsync(
@@ -74,7 +71,7 @@ namespace API.Services
         )
         {
             var spec = new CategorySpecification(specParams);
-            var entities = await _categoryRepository.GetAllWithSpecAsync(spec);
+            var entities = await _categoryRepository.ListAsync(spec);
             var specCount = new CategorySpecification(specParams, isSearch: false);
             var count = await _categoryRepository.CountAsync(specCount);
             return new Pagination<CategoryDto>(
@@ -88,7 +85,7 @@ namespace API.Services
         public async Task<List<CategoryNodeDto>> GetCategoriesHierarchyAsync()
         {
             var spec = new CategorySpecification(new CategorySpecParams { Sort = "order_asc" });
-            var categories = await _categoryRepository.GetAllWithSpecAsync(spec);
+            var categories = await _categoryRepository.ListAsync(spec);
             var lookup = categories.ToLookup(p => p.ParentId);
 
             List<CategoryNodeDto> BuildTree(Guid? parentId)

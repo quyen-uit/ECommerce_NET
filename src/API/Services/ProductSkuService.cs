@@ -3,7 +3,7 @@ using Core.Common;
 using Core.Dtos.ProductSkus;
 using Core.Entities;
 using Core.Enums;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
 using Mapster;
@@ -12,10 +12,10 @@ namespace API.Services
 {
     public class ProductSkuService : IProductSkuService
     {
-        private readonly IGenericRepository<ProductSku> _productSkuRepository;
+        private readonly IRepositoryBase<ProductSku> _productSkuRepository;
         private readonly IImageService _imageService;
 
-        public ProductSkuService(IGenericRepository<ProductSku> productSkuRepository, IImageService imageService)
+        public ProductSkuService(IRepositoryBase<ProductSku> productSkuRepository, IImageService imageService)
         {
             _productSkuRepository = productSkuRepository;
             _imageService = imageService;
@@ -31,14 +31,13 @@ namespace API.Services
             if (entity == null)
             {
                 entity = dto.Adapt<ProductSku>();
-                _productSkuRepository.Add(entity);
+                await _productSkuRepository.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                _productSkuRepository.Update(entity);
+                await _productSkuRepository.UpdateAsync(entity);
             }
-            await _productSkuRepository.Complete();
             return entity.Adapt<ProductSkuDto>();
         }
 
@@ -47,14 +46,13 @@ namespace API.Services
             var existing = await _productSkuRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundProductSku);
-            _productSkuRepository.Delete(existing);
-            await _productSkuRepository.Complete();
+            await _productSkuRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<ProductSkuDto>> GetAllProductSkusAsync(ProductSkuSpecParams productSkuSpecParams)
         {
             var spec = new ProductSkuWithColorAndSizeSpecification(productSkuSpecParams);
-            var productSkus = await _productSkuRepository.GetAllWithSpecAsync(spec);
+            var productSkus = await _productSkuRepository.ListAsync(spec);
             var specCount = new ProductSkuWithColorAndSizeSpecification(productSkuSpecParams, isSearch: false);
             var count = await _productSkuRepository.CountAsync(specCount);
             return new Pagination<ProductSkuDto>(
@@ -68,7 +66,7 @@ namespace API.Services
         public async Task<ProductSkuDto> GetProductSkuByIdAsync(Guid id)
         {
             var spec = new ProductSkuWithColorAndSizeSpecification(id);
-            var productSku = await _productSkuRepository.GetEntityWithSpecAsync(spec);
+            var productSku = await _productSkuRepository.FirstOrDefaultAsync(spec);
             if (productSku == null)
                 throw new NotFoundException(CommonMessage.NotFoundProductSku);
 

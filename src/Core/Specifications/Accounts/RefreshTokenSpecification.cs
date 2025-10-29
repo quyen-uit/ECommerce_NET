@@ -1,13 +1,12 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 namespace Core.Specifications.Accounts
 {
-    public class RefreshTokenSpecification : BaseSpecification<RefreshToken>
+    public class RefreshTokenSpecification : Specification<RefreshToken>
     {
         public RefreshTokenSpecification(string userId, DateTime? revokedAt = null)
-            : base(x =>
-                (!string.IsNullOrEmpty(userId) && x.UserId == userId)
-                && x.RevokedAt == revokedAt)
         {
+            Query.Where(x => (!string.IsNullOrEmpty(userId) && x.UserId == userId)
+                              && x.RevokedAt == revokedAt);
         }
     }
 }

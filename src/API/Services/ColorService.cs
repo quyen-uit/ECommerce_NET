@@ -2,7 +2,7 @@
 using Core.Constants;
 using Core.Dtos.Colors;
 using Core.Entities;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
 using Mapster;
@@ -11,9 +11,9 @@ namespace API.Services
 {
     public class ColorService : IColorService
     {
-        private readonly IGenericRepository<Color> _colorRepository;
+        private readonly IRepositoryBase<Color> _colorRepository;
 
-        public ColorService(IGenericRepository<Color> colorRepository)
+        public ColorService(IRepositoryBase<Color> colorRepository)
         {
             _colorRepository = colorRepository;
         }
@@ -28,14 +28,13 @@ namespace API.Services
             if (entity == null)
             {
                 entity = dto.Adapt<Color>();
-                _colorRepository.Add(entity);
+                await _colorRepository.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                _colorRepository.Update(entity);
+                await _colorRepository.UpdateAsync(entity);
             }
-            await _colorRepository.Complete();
             return entity.Adapt<ColorDto>();
         }
 
@@ -44,8 +43,7 @@ namespace API.Services
         )
         {
             var colors = colorDtos.Adapt<IReadOnlyList<Color>>();
-            _colorRepository.AddRange(colors);
-            await _colorRepository.Complete();
+            await _colorRepository.AddRangeAsync(colors);
             return colors.Adapt<IReadOnlyList<ColorDto>>();
         }
 
@@ -60,14 +58,13 @@ namespace API.Services
             var existing = await _colorRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundColor);
-            _colorRepository.Delete(existing);
-            await _colorRepository.Complete();
+            await _colorRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<ColorDto>> GetAllColorsAsync(ColorSpecParams specParams)
         {
             var spec = new ColorSpecification(specParams);
-            var colors = await _colorRepository.GetAllWithSpecAsync(spec);
+            var colors = await _colorRepository.ListAsync(spec);
             var specCount = new ColorSpecification(specParams, isSearch: false);
             var count = await _colorRepository.CountAsync(specCount);
             return new Pagination<ColorDto>(

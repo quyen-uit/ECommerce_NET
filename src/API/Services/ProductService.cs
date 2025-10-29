@@ -2,7 +2,7 @@
 using Core.Constants;
 using Core.Dtos.Products;
 using Core.Entities;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
 using Mapster;
@@ -11,9 +11,9 @@ namespace API.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IGenericRepository<Product> _productRepository;
+        private readonly IRepositoryBase<Product> _productRepository;
 
-        public ProductService(IGenericRepository<Product> productRepository)
+        public ProductService(IRepositoryBase<Product> productRepository)
         {
             _productRepository = productRepository;
         }
@@ -28,14 +28,13 @@ namespace API.Services
             if (entity == null)
             {
                 entity = dto.Adapt<Product>();
-                _productRepository.Add(entity);
+                await _productRepository.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                _productRepository.Update(entity);
+                await _productRepository.UpdateAsync(entity);
             }
-            await _productRepository.Complete();
             return entity.Adapt<ProductDto>();
         }
 
@@ -44,14 +43,13 @@ namespace API.Services
             var existing = await _productRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundProduct);
-            _productRepository.Delete(existing);
-            await _productRepository.Complete();
+            await _productRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<ProductDto>> GetAllProductFilterByNameAsync(ProductFilterByNameSpecParams productSpecParams)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
-            var products = await _productRepository.GetAllWithSpecAsync(spec);
+            var products = await _productRepository.ListAsync(spec);
             var specCount = new ProductWithTypesAndBrandsSpecification(productSpecParams, isSearch: false);
             var count = await _productRepository.CountAsync(specCount);
             return new Pagination<ProductDto>(
@@ -65,7 +63,7 @@ namespace API.Services
         public async Task<Pagination<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpecParams)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(productSpecParams);
-            var products = await _productRepository.GetAllWithSpecAsync(spec);
+            var products = await _productRepository.ListAsync(spec);
             var specCount = new ProductWithTypesAndBrandsSpecification(productSpecParams, isSearch: false);
             var count = await _productRepository.CountAsync(specCount);
             return new Pagination<ProductDto>(
@@ -79,7 +77,7 @@ namespace API.Services
         public async Task<ProductDto> GetProductByIdAsync(Guid id)
         {
             var spec = new ProductWithTypesAndBrandsSpecification(id);
-            var product = await _productRepository.GetEntityWithSpecAsync(spec);
+            var product = await _productRepository.FirstOrDefaultAsync(spec);
             if (product == null)
                 throw new NotFoundException(CommonMessage.NotFoundProduct);
             return product.Adapt<ProductDto>();

@@ -2,7 +2,7 @@
 using Core.Constants;
 using Core.Dtos.PriceAdjustments;
 using Core.Entities;
-using Core.Interfaces.Reposiories;
+using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
 using Mapster;
@@ -11,9 +11,9 @@ namespace API.Services
 {
     public class PriceAdjustmentService : IPriceAdjustmentService
     {
-        private readonly IGenericRepository<PriceAdjustment> _priceAdjustmentRepository;
+        private readonly IRepositoryBase<PriceAdjustment> _priceAdjustmentRepository;
 
-        public PriceAdjustmentService(IGenericRepository<PriceAdjustment> PriceAdjustmentRepository)
+        public PriceAdjustmentService(IRepositoryBase<PriceAdjustment> PriceAdjustmentRepository)
         {
             _priceAdjustmentRepository = PriceAdjustmentRepository;
         }
@@ -30,7 +30,7 @@ namespace API.Services
             if (existingAdjustment == null)
             {
                 var adjustment = priceAdjustmentDto.Adapt<PriceAdjustment>();
-                _priceAdjustmentRepository.Add(adjustment);
+                await _priceAdjustmentRepository.AddAsync(adjustment);
                 resultEntity = adjustment;
             }
             else
@@ -68,11 +68,9 @@ namespace API.Services
                         existingAdjustment.PriceAdjustmentItems.Add(dtoItem.Adapt<PriceAdjustmentItem>());
                     }
                 }
-                _priceAdjustmentRepository.Update(existingAdjustment);
+                await _priceAdjustmentRepository.UpdateAsync(existingAdjustment);
                 resultEntity = existingAdjustment;
             }
-
-            await _priceAdjustmentRepository.Complete();
 
             return resultEntity.Adapt<PriceAdjustmentDto>();
         }
@@ -82,14 +80,13 @@ namespace API.Services
             var existing = await _priceAdjustmentRepository.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundPriceAdjustment);
-            _priceAdjustmentRepository.Delete(existing);
-            await _priceAdjustmentRepository.Complete();
+            await _priceAdjustmentRepository.DeleteAsync(existing);
         }
 
         public async Task<Pagination<PriceAdjustmentDto>> GetAllPriceAdjustmentAsync(PriceAdjustmentSpecParams specParams)
         {
             var spec = new PriceAdjustmentSpecification(specParams);
-            var priceAdjustments = await _priceAdjustmentRepository.GetAllWithSpecAsync(spec);
+            var priceAdjustments = await _priceAdjustmentRepository.ListAsync(spec);
             var specCount = new PriceAdjustmentSpecification(specParams, isSearch: false);
             var count = await _priceAdjustmentRepository.CountAsync(specCount);
             return new Pagination<PriceAdjustmentDto>(

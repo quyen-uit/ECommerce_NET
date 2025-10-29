@@ -1,22 +1,24 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities.OrderAggregate;
 
 
 namespace Core.Specifications.Orders
 {
-    public class OrdersWithItemsAndOrderingSpecification : BaseSpecification<Order>
+    public class OrdersWithItemsAndOrderingSpecification : Specification<Order>
     {
-        public OrdersWithItemsAndOrderingSpecification(string email) : base(o => o.BuyerEmail == email)
+        public OrdersWithItemsAndOrderingSpecification(string email)
         {
-            AddInclude(o => o.ShipToAddress);
-            AddInclude(o => o.DeliveryMethod);
-            AddOrderByDescending(o => o.OrderDate);
+            Query.Where(o => o.BuyerEmail == email)
+                 .Include(o => o.ShipToAddress)
+                 .Include(o => o.DeliveryMethod)
+                 .OrderByDescending(o => o.OrderDate);
         }
-        public OrdersWithItemsAndOrderingSpecification(Guid id, string email) : base(o => o.Id == id && o.BuyerEmail == email)
+        public OrdersWithItemsAndOrderingSpecification(Guid id, string email)
         {
-            AddInclude(o => o.ShipToAddress);
-            AddInclude(o => o.DeliveryMethod);
-            AddInclude(o => o.OrderItems);
+            Query.Where(o => o.Id == id && o.BuyerEmail == email)
+                 .Include(o => o.ShipToAddress)
+                 .Include(o => o.DeliveryMethod)
+                 .Include(o => o.OrderItems);
         }
     }
 }

@@ -1,44 +1,45 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Specifications.PriceAdjustments
 {
-    public class PriceAdjustmentSpecification : BaseSpecification<PriceAdjustment>
+    public class PriceAdjustmentSpecification : Specification<PriceAdjustment>
     {
         public PriceAdjustmentSpecification(PriceAdjustmentSpecParams specParams, bool isSearch = true)
-            : base(x =>
+        {
+            Query.Where(x =>
                 (string.IsNullOrEmpty(specParams.Filter.Name) || x.Name.ToLower().Contains(specParams.Filter.Name.ToLower()))
                 && (!specParams.Filter.StartDate.HasValue || x.StartDate >= specParams.Filter.StartDate.Value)
                 && (!specParams.Filter.EndDate.HasValue || x.EndDate <= specParams.Filter.EndDate.Value)
-            )
-        {
-            AddQueryableInclude(x => x.Include(i => i.PriceAdjustmentItems).ThenInclude(i => i.Product));
+            );
+            Query.Include(i => i.PriceAdjustmentItems).ThenInclude(i => i.Product);
             if (isSearch)
             {
-                AddPagination(specParams.PageSize, specParams.PageNumber);
+                Query.Skip(specParams.PageSize * (specParams.PageNumber - 1))
+                     .Take(specParams.PageSize);
                 switch (specParams.Sort)
                 {
                     case "name_asc":
-                        AddOrderBy(x => x.Name);
+                        Query.OrderBy(x => x.Name);
                         break;
                     case "name_desc":
-                        AddOrderByDescending(x => x.Name);
+                        Query.OrderByDescending(x => x.Name);
                         break;
                     case "start_date_asc":
-                        AddOrderBy(x => x.StartDate);
+                        Query.OrderBy(x => x.StartDate);
                         break;
                     case "start_date_desc":
-                        AddOrderByDescending(x => x.StartDate);
+                        Query.OrderByDescending(x => x.StartDate);
                         break;
                     case "end_date_asc":
-                        AddOrderBy(x => x.EndDate);
+                        Query.OrderBy(x => x.EndDate);
                         break;
                     case "end_date_desc":
-                        AddOrderByDescending(x => x.EndDate);
+                        Query.OrderByDescending(x => x.EndDate);
                         break;
                     default:
-                        AddOrderBy(x => x.UpdatedAt!);
+                        Query.OrderBy(x => x.UpdatedAt!);
                         break;
                 }
             }

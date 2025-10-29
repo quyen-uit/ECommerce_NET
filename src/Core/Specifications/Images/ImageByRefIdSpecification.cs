@@ -1,15 +1,15 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 using Core.Entities;
 using Core.Enums;
 
 namespace Core.Specifications.Images
 {
-    public class ImageByRefIdSpecification : BaseSpecification<Image>
+    public class ImageByRefIdSpecification : Specification<Image>
     {
         public ImageByRefIdSpecification(Guid refId, ImageType type)
-            : base(x => x.ReferenceId == refId && x.Type == type)
         {
-            AddOrderBy(x => x.Order);
+            Query.Where(x => x.ReferenceId == refId && x.Type == type)
+                 .OrderBy(x => x.Order);
         }
     }
 }

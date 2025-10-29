@@ -1,14 +1,12 @@
-﻿using Core.Common.Specifications;
+﻿using Ardalis.Specification;
 namespace Core.Specifications.Accounts
 {
-    public class RefreshTokenWithUserSpecification : BaseSpecification<RefreshToken>
+    public class RefreshTokenWithUserSpecification : Specification<RefreshToken>
     {
         public RefreshTokenWithUserSpecification(string? token)
-            : base(x =>
-                (!string.IsNullOrEmpty(token) && x.Token == token)
-                && x.IsActive == true)
         {
-            AddInclude(x => x.User);
+            Query.Where(x => (!string.IsNullOrEmpty(token) && x.Token == token) && x.IsActive == true)
+                 .Include(x => x.User);
         }
     }
 }
