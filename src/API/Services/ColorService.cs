@@ -2,18 +2,18 @@
 using Core.Constants;
 using Core.Dtos.Colors;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Colors;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class ColorService : IColorService
     {
-        private readonly IRepositoryBase<Color> _colorRepository;
+        private readonly IRepository<Color> _colorRepository;
 
-        public ColorService(IRepositoryBase<Color> colorRepository)
+        public ColorService(IRepository<Color> colorRepository)
         {
             _colorRepository = colorRepository;
         }

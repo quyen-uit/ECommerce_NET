@@ -1,18 +1,18 @@
 ﻿using Core.Dtos.Images;
 using Core.Entities;
 using Core.Enums;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Images;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class ImageService : IImageService
     {
-        private readonly IRepositoryBase<Image> _imageRepository;
+        private readonly IRepository<Image> _imageRepository;
 
-        public ImageService(IRepositoryBase<Image> imageRepository)
+        public ImageService(IRepository<Image> imageRepository)
         {
             _imageRepository = imageRepository;
         }

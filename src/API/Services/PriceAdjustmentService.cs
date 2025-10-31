@@ -2,18 +2,18 @@
 using Core.Constants;
 using Core.Dtos.PriceAdjustments;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class PriceAdjustmentService : IPriceAdjustmentService
     {
-        private readonly IRepositoryBase<PriceAdjustment> _priceAdjustmentRepository;
+        private readonly IRepository<PriceAdjustment> _priceAdjustmentRepository;
 
-        public PriceAdjustmentService(IRepositoryBase<PriceAdjustment> PriceAdjustmentRepository)
+        public PriceAdjustmentService(IRepository<PriceAdjustment> PriceAdjustmentRepository)
         {
             _priceAdjustmentRepository = PriceAdjustmentRepository;
         }

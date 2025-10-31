@@ -2,7 +2,6 @@
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Enums;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
@@ -13,13 +12,13 @@ namespace API.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IRepositoryBase<Order> _orderRepository;
-        private readonly IRepositoryBase<DeliveryMethod> _deliveryRepository;
-        private readonly IRepositoryBase<Product> _productRepository;
+        private readonly IRepository<Order> _orderRepository;
+        private readonly IRepository<DeliveryMethod> _deliveryRepository;
+        private readonly IRepository<Product> _productRepository;
         private readonly IBasketRepository _basketRepository;
         private readonly IConfiguration _config;
 
-        public PaymentService(IRepositoryBase<Order> orderRepository, IRepositoryBase<DeliveryMethod> deliveryRepository, IRepositoryBase<Product> productRepository, IBasketRepository basketRepository, IConfiguration config)
+        public PaymentService(IRepository<Order> orderRepository, IRepository<DeliveryMethod> deliveryRepository, IRepository<Product> productRepository, IBasketRepository basketRepository, IConfiguration config)
         {
             _orderRepository = orderRepository;
             _deliveryRepository = deliveryRepository;

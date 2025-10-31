@@ -2,18 +2,18 @@
 using Core.Constants;
 using Core.Dtos.ProductBrands;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class ProductBrandService : IProductBrandService
     {
-        private readonly IRepositoryBase<ProductBrand> _brandRepository;
+        private readonly IRepository<ProductBrand> _brandRepository;
 
-        public ProductBrandService(IRepositoryBase<ProductBrand> brandRepository)
+        public ProductBrandService(IRepository<ProductBrand> brandRepository)
         {
             _brandRepository = brandRepository;
         }

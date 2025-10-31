@@ -1,3 +1,8 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+
 **Project Overview**
 
 - ECommerce_NET is a layered .NET 9 Web API for an e-commerce platform. It provides product catalog, categories, sizes, colors, brands, orders, pricing adjustments, baskets (Redis-backed), image handling, and RBAC-based administration endpoints.
@@ -22,6 +27,35 @@
 - Object Mapping: Mapster + MapsterMapper
 - Payments: Stripe Webhooks (development example key present)
 - Docs: Swagger (enabled in Development)
+- Specifications: Ardalis.Specification for query composition
+
+
+**Common Development Commands**
+
+- Build
+  - Build entire solution: `dotnet build`
+  - Build specific project: `dotnet build src/API`
+  - Clean build artifacts: `dotnet clean`
+  - Restore packages: `dotnet restore`
+
+- Run
+  - Standard run: `dotnet run --project src/API`
+  - Watch mode (auto-reload): `dotnet watch --project src/API`
+  - Swagger UI (Development): `https://localhost:7229/swagger` or `http://localhost:5229/swagger`
+
+- Database Migrations
+  - Create migration: `dotnet ef migrations add MigrationName --project src/Infrastructure --startup-project src/API`
+  - Apply migrations: `dotnet ef database update --project src/Infrastructure --startup-project src/API`
+  - Rollback migration: `dotnet ef database update PreviousMigrationName --project src/Infrastructure --startup-project src/API`
+  - Remove last migration (unapplied): `dotnet ef migrations remove --project src/Infrastructure --startup-project src/API`
+  - List migrations: `dotnet ef migrations list --project src/Infrastructure --startup-project src/API`
+
+- Docker (Redis)
+  - Start services: `docker compose up -d`
+  - Stop services: `docker compose down`
+  - View logs: `docker compose logs -f redis`
+  - Restart Redis: `docker compose restart redis`
+  - Redis Commander UI: http://localhost:8081 (credentials: root/secret)
 
 
 **Architecture & Key Files**
@@ -31,6 +65,7 @@
   - `src/Core/Core.csproj` – domain: entities, DTOs, specs, interfaces
   - `src/Infrastructure/Infrastructure.csproj` – persistence: EF Core, repositories, UoW, Redis, seed
   - `src/API/API.csproj` – Web API: controllers, services, middleware, auth/configuration
+  - Note: `src/API.IntegrationTests` directory exists but is not currently included in the solution
 
 - API Composition
   - Startup/Composition Root: `src/API/Program.cs`
@@ -44,13 +79,23 @@
 - Persistence & Domain
   - DbContext: `src/Infrastructure/Data/ApplicationDbContext.cs`
     - Soft-delete filter via `ISoftDeletable`/`BaseEntity.IsDeleted`
+      - All entities inherit from `BaseEntity` (`src/Core/Common/Entities/BaseEntity.cs`) which implements `ISoftDeletable`
+      - Entities use GUID as primary key (`Guid Id`), not auto-increment integers
+      - Set `entity.IsDeleted = true` to soft-delete; global query filter automatically excludes soft-deleted records
+      - To include soft-deleted records in queries, use `.IgnoreQueryFilters()` on the IQueryable
     - Identity integration; DbSet per aggregate; global configurations via `ApplyConfigurationsFromAssembly`
   - Seed & Permissions: `src/Infrastructure/Data/ApplicationDbContextSeed.cs`
     - Creates Admin/User roles, default admin, seeds permission catalog (AppModule x {Read,Create,Update,Delete,Manage}) and assigns to Admin
     - Seeds brands, colors, sizes, delivery methods from `SeedData`
+    - **Default Admin Credentials:** email `quyen@mail.com`, password `Admin@123` (change immediately in production)
   - Migrations: `src/Infrastructure/Migrations/*`
   - Entities: `src/Core/Entities/**` (e.g., `Product`, `Category`, `ProductBrand`, `Order`, `PriceAdjustment`, `ProductSku`, Identity types)
+    - All inherit from `BaseEntity` with GUID primary keys
   - Specifications: `src/Core/Specifications/**` and evaluator `src/Infrastructure/Data/SpecificationEvaluator.cs`
+    - Specification Pattern (Ardalis.Specification) for complex query composition and reusable query logic
+    - Example specs: `ProductWithFiltersForCountSpecification`, `ProductWithSpecification`, `OrderWithItemsSpecification`
+    - Supports includes, filtering, ordering, pagination
+    - Repository methods accept `ISpecification<T>` to compose queries
   - Repositories/UoW: `src/Infrastructure/Data/Repositories/*.cs`, `src/Infrastructure/Data/UnitOfWork.cs`
   - Basket (Redis): `src/Infrastructure/Data/Repositories/BasketRepository.cs`
 
@@ -60,7 +105,7 @@
 
 - API Endpoints (Controllers)
   - Base controller: `src/API/Controllers/ApiControllerBase.cs` with route `api/[controller]` and kebab-case transform
-  - Feature controllers (see “API or Feature Summary” for endpoints)
+  - Feature controllers (see "API or Feature Summary" for endpoints)
 
 - Security & Middleware
   - JWT Token Service: `src/API/Services/TokenService.cs` (adds standard claims; `NameIdentifier` included)
@@ -107,18 +152,47 @@
     - `dotnet tool install --global dotnet-ef` (if EF CLI not installed)
     - `dotnet ef database update --project src/Infrastructure --startup-project src/API`
   - On first run, the app also runs `ApplicationDbContextSeed.SeedAsync` to create roles, admin user, permissions, and baseline data (sizes/colors/brands/delivery).
+  - **Default Admin Credentials:**
+    - Email: `quyen@mail.com`
+    - Password: `Admin@123`
+    - **IMPORTANT:** Change these credentials immediately in production environments
 
 - Redis (Docker optional)
-  - Start Redis and Commander: `docker compose up -d redis redis-commander`
-  - Redis Commander UI: http://localhost:8081 (default credentials set in `docker-compose.yml`)
+  - Start Redis and Commander: `docker compose up -d`
+  - Redis Commander UI: http://localhost:8081 (credentials: root/secret)
 
 - Run the API
-  - Development: `dotnet run --project src/API`
+  - Development: `dotnet run --project src/API` or `dotnet watch --project src/API`
   - Swagger UI (Development): `https://localhost:7229/swagger` or `http://localhost:5229/swagger`
 
 - Notes
   - Sensitive cookie endpoints (refresh/logout/sessions) require correct `Origin/Referer` matching `Spa:Origin` and are rate limited.
   - Replace the hard-coded Stripe webhook secret in `src/API/Controllers/PaymentController.cs` with a secure configuration source for non-local use.
+  - **RBAC Testing:**
+    - Unauthenticated requests → 401 (due to fallback policy, unless endpoint has `[AllowAnonymous]`)
+    - Authenticated without permission → 403 (permission policy denial)
+    - Authenticated with permission → 200
+    - After updating role permissions, affected users gain/lose access immediately (permission cache invalidation)
+
+
+**Working with RBAC/Permissions**
+
+- Protect endpoints
+  - Read: `[Authorize(Policy = "Permission:Module.Read")]`
+  - Create: `[Authorize(Policy = "Permission:Module.Create")]`
+  - Update: `[Authorize(Policy = "Permission:Module.Update")]`
+  - Delete: `[Authorize(Policy = "Permission:Module.Delete")]`
+  - Manage: `[Authorize(Policy = "Permission:Module.Manage")]` (implies all other permissions for that module)
+
+- Public endpoints
+  - Must be explicitly marked: `[AllowAnonymous]`
+
+- Add new module
+  - Add value to `Core.Enums.AppModule`
+  - On app start, seeder automatically creates 5 permissions (Read, Create, Update, Delete, Manage) and assigns them to Admin
+  - Apply policies to controller actions: `[Authorize(Policy = "Permission:ModuleName.Action")]`
+  - `Manage` permission implies all other permissions for that module
+  - Permission cache is automatically invalidated when role permissions change via `RoleService`
 
 
 **API or Feature Summary**
@@ -188,4 +262,3 @@
 ---
 
 This document is intended to give another LLM a compact, accurate mental model of the repository, its architecture, security model, and operational requirements.
-

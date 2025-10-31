@@ -3,19 +3,19 @@ using Core.Common;
 using Core.Dtos.ProductSkus;
 using Core.Entities;
 using Core.Enums;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductSkus;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class ProductSkuService : IProductSkuService
     {
-        private readonly IRepositoryBase<ProductSku> _productSkuRepository;
+        private readonly IRepository<ProductSku> _productSkuRepository;
         private readonly IImageService _imageService;
 
-        public ProductSkuService(IRepositoryBase<ProductSku> productSkuRepository, IImageService imageService)
+        public ProductSkuService(IRepository<ProductSku> productSkuRepository, IImageService imageService)
         {
             _productSkuRepository = productSkuRepository;
             _imageService = imageService;

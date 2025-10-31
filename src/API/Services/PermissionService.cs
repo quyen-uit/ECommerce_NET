@@ -2,7 +2,6 @@
 using Core.Constants;
 using Core.Dtos.Accounts;
 using Core.Entities.Identity;
-using Ardalis.Specification;
 using Core.Interfaces.Reposiories;
 using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
@@ -15,13 +14,13 @@ namespace API.Services
     public class PermissionService : IPermissionService
     {
         private readonly IRolePermissionRepository _rolePermissionRepository;
-        private readonly IRepositoryBase<Permission> _permissionRepository;
+        private readonly IRepository<Permission> _permissionRepository;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMemoryCache _cache;
 
         public PermissionService(
             IRolePermissionRepository rolePermissionRepository,
-            IRepositoryBase<Permission> permissionRepository,
+            IRepository<Permission> permissionRepository,
             UserManager<AppUser> userManager,
             IMemoryCache cache)
         {

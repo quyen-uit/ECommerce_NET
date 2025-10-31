@@ -3,7 +3,6 @@ using Core.Constants;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
@@ -12,12 +11,12 @@ namespace API.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepositoryBase<Order> _orderRepository;
-        private readonly IRepositoryBase<DeliveryMethod> _deliveryRepository;
-        private readonly IRepositoryBase<Product> _productRepository;
+        private readonly IRepository<Order> _orderRepository;
+        private readonly IRepository<DeliveryMethod> _deliveryRepository;
+        private readonly IRepository<Product> _productRepository;
         private readonly IBasketRepository _basketRepository;
 
-        public OrderService(IRepositoryBase<Order> orderRepository, IRepositoryBase<DeliveryMethod> deliveryRepository, IRepositoryBase<Product> productRepository, IBasketRepository basketRepository)
+        public OrderService(IRepository<Order> orderRepository, IRepository<DeliveryMethod> deliveryRepository, IRepository<Product> productRepository, IBasketRepository basketRepository)
         {
             _orderRepository = orderRepository;
             _deliveryRepository = deliveryRepository;

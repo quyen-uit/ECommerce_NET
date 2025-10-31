@@ -3,18 +3,18 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos.Categories;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Categories;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IRepositoryBase<Category> _categoryRepository;
+        private readonly IRepository<Category> _categoryRepository;
 
-        public CategoryService(IRepositoryBase<Category> categoryRepository)
+        public CategoryService(IRepository<Category> categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }

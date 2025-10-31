@@ -1,6 +1,6 @@
 ﻿using Core.Entities.Identity;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
+using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,9 +14,9 @@ namespace API.Services
     {
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
-        private readonly IRepositoryBase<RefreshToken> _refreshTokenRepository;
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
         private readonly UserManager<AppUser> _userManager;
-        public TokenService(IConfiguration config, IRepositoryBase<RefreshToken> refreshTokenRepository, UserManager<AppUser> userManager)
+        public TokenService(IConfiguration config, IRepository<RefreshToken> refreshTokenRepository, UserManager<AppUser> userManager)
         {
             _config = config;
             _refreshTokenRepository = refreshTokenRepository;

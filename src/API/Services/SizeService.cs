@@ -3,18 +3,18 @@ using Core.Common;
 using Core.Constants;
 using Core.Dtos.Sizes;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Sizes;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class SizeService : ISizeService
     {
-        private readonly IRepositoryBase<Size> _sizeRepository;
+        private readonly IRepository<Size> _sizeRepository;
 
-        public SizeService(IRepositoryBase<Size> sizeRepository)
+        public SizeService(IRepository<Size> sizeRepository)
         {
             _sizeRepository = sizeRepository;
         }

@@ -2,8 +2,8 @@ using API.Exceptions;
 using API.Extensions;
 using Core.Dtos;
 using Core.Entities.Identity;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
+using Core.Interfaces.Reposiories;
 using Core.Specifications.Accounts;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -14,14 +14,14 @@ namespace API.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IRepositoryBase<RefreshToken> _refreshTokenRepository;
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
 
         public AccountService(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
-            IRepositoryBase<RefreshToken> refreshTokenRepository,
+            IRepository<RefreshToken> refreshTokenRepository,
             IHttpContextAccessor httpContextAccessor,
             IConfiguration config)
         {

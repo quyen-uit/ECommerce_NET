@@ -2,18 +2,18 @@
 using Core.Constants;
 using Core.Dtos.Products;
 using Core.Entities;
-using Ardalis.Specification;
 using Core.Interfaces.Services;
 using Core.Specifications.Products;
+using Core.Interfaces.Reposiories;
 using Mapster;
 
 namespace API.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IRepositoryBase<Product> _productRepository;
+        private readonly IRepository<Product> _productRepository;
 
-        public ProductService(IRepositoryBase<Product> productRepository)
+        public ProductService(IRepository<Product> productRepository)
         {
             _productRepository = productRepository;
         }

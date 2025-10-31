@@ -59,6 +59,7 @@ namespace Infrastructure
             });
 
             services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepository<>));
+            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<ITransactionCoordinator, Infrastructure.Common.TransactionCoordinator>();
