@@ -1,7 +1,10 @@
-﻿using Core.Entities.Identity;
+﻿using API.Options;
+using Core.Entities.Identity;
+using Core.Exceptions;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,15 +15,16 @@ namespace API.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _config;
+        private readonly JwtTokenOptions _tokenOptions;
         private readonly SymmetricSecurityKey _key;
         private readonly IRepository<RefreshToken> _refreshTokenRepository;
         private readonly UserManager<AppUser> _userManager;
-        public TokenService(IConfiguration config, IRepository<RefreshToken> refreshTokenRepository, UserManager<AppUser> userManager)
+
+        public TokenService(IOptions<JwtTokenOptions> tokenOptions, IRepository<RefreshToken> refreshTokenRepository, UserManager<AppUser> userManager)
         {
-            _config = config;
+            _tokenOptions = tokenOptions.Value;
             _refreshTokenRepository = refreshTokenRepository;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]!));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.Key));
             _userManager = userManager;
         }
 
@@ -47,10 +51,10 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Token:AccessTokenExpiration"] ?? "15")),
+                Expires = DateTime.UtcNow.AddMinutes(_tokenOptions.AccessTokenExpiration),
                 SigningCredentials = credentials,
-                Issuer = _config["Token:Issuer"],
-                Audience = _config["Token:Audience"]
+                Issuer = _tokenOptions.Issuer,
+                Audience = _tokenOptions.Audience
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -67,7 +71,7 @@ namespace API.Services
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.UtcNow.AddDays(int.Parse(_config["Token:RefreshTokenExpirationDays"] ?? "7")),
+                Expires = DateTime.UtcNow.AddDays(_tokenOptions.RefreshTokenExpirationDays),
                 CreatedAt = DateTime.UtcNow,
                 LastUsedAt = DateTime.UtcNow,
                 UserId = userId,

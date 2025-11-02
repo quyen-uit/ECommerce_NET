@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.Services;
+using Core.Exceptions;
 using StackExchange.Redis;
 using System.Text.Json;
 

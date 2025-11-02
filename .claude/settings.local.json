@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(for file in ColorService.cs PermissionService.cs ProductService.cs ProductBrandService.cs PriceAdjustmentService.cs PaymentService.cs ProductSkuService.cs ImageService.cs TokenService.cs ResponseCacheService.cs)",
+      "Bash(do sed -i '1a using Core.Exceptions;' \"$file\")",
+      "Bash(done)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet ef migrations add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

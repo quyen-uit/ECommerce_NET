@@ -1,4 +1,5 @@
 ﻿using Core.Common;
+using Core.Exceptions;
 using Core.Constants;
 using Core.Dtos.Accounts;
 using Core.Entities.Identity;
@@ -7,7 +8,6 @@ using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Services
 {
@@ -16,18 +16,18 @@ namespace API.Services
         private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly IRepository<Permission> _permissionRepository;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IMemoryCache _cache;
+        private readonly IPermissionCacheService _permissionCache;
 
         public PermissionService(
             IRolePermissionRepository rolePermissionRepository,
             IRepository<Permission> permissionRepository,
             UserManager<AppUser> userManager,
-            IMemoryCache cache)
+            IPermissionCacheService permissionCache)
         {
             _rolePermissionRepository = rolePermissionRepository;
             _permissionRepository = permissionRepository;
             _userManager = userManager;
-            _cache = cache;
+            _permissionCache = permissionCache;
         }
 
         public async Task<PermissionResponse> CreatePermissionAsync(CreatePermissionRequest request)
@@ -85,15 +85,16 @@ namespace API.Services
 
         public async Task<bool> UserHasPermissionAsync(string userId, string permission)
         {
-            var cacheKey = $"user_permissions_{userId}";
+            var userPermissions = await _permissionCache.GetPermissionsAsync(userId);
 
-            if (!_cache.TryGetValue(cacheKey, out List<string>? userPermissions))
+            if (userPermissions is null)
             {
-                userPermissions = await GetUserPermissionsAsync(userId);
-                _cache.Set(cacheKey, userPermissions, TimeSpan.FromMinutes(30));
+                var permissionsList = await GetUserPermissionsAsync(userId);
+                userPermissions = permissionsList.ToHashSet();
+                await _permissionCache.SetPermissionsAsync(userId, userPermissions, TimeSpan.FromMinutes(30));
             }
 
-            if (userPermissions is null || userPermissions.Count == 0)
+            if (userPermissions.Count == 0)
                 return false;
 
             if (userPermissions.Contains(permission))

@@ -42,6 +42,7 @@ namespace Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<Permission> Permissions => Set<Permission>();
         public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

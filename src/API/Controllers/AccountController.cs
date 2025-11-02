@@ -1,5 +1,5 @@
 ﻿using API.Commons.Response;
-using API.Exceptions;
+using Core.Exceptions;
 using API.Extensions;
 using API.Helpers;
 using Core.Dtos;

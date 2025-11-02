@@ -1,4 +1,4 @@
-﻿using API.Exceptions;
+﻿using Core.Exceptions;
 using Core.Constants;
 using Core.Entities;
 using Core.Entities.Identity;
@@ -6,6 +6,7 @@ using Core.Entities.OrderAggregate;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
+using Core.Specifications.Products;
 
 namespace API.Services
 {
@@ -36,11 +37,16 @@ namespace API.Services
             //get item from product
             var items = new List<OrderItem>();
 
-            foreach (var basketItem in basket!.Items)
+            // Fix: Batch fetch all products in one query instead of N queries
+            var productIds = basket!.Items.Select(i => i.Id).ToList();
+            var products = await _productRepository.ListAsync(new ProductsByIdsSpecification(productIds));
+            var productDict = products.ToDictionary(p => p.Id);
+
+            foreach (var basketItem in basket.Items)
             {
-                var product = await _productRepository.GetByIdAsync(basketItem.Id);
-                if (product == null)
+                if (!productDict.TryGetValue(basketItem.Id, out var product))
                     throw new NotFoundException(CommonMessage.NotFoundProduct);
+
                 OrderedProductItem orderProductItem = new OrderedProductItem(product.Id, product.Name, product.PhotoUrl!);
                 OrderItem orderItem = new OrderItem(orderProductItem, basketItem.Price, basketItem.Quantity);
 

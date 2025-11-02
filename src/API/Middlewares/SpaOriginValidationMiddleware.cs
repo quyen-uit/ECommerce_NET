@@ -1,5 +1,7 @@
-using System.Text.Json;
 using API.Helpers;
+using API.Options;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace API.Middlewares
 {
@@ -17,11 +19,11 @@ namespace API.Middlewares
             new PathString("/api/account/sessions"), // includes subpaths
         };
 
-        public SpaOriginValidationMiddleware(RequestDelegate next, IConfiguration config, ILogger<SpaOriginValidationMiddleware> logger)
+        public SpaOriginValidationMiddleware(RequestDelegate next, IOptions<SpaOptions> spaOptions, ILogger<SpaOriginValidationMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _allowedOrigin = config["Spa:Origin"] ?? "https://localhost:4200";
+            _allowedOrigin = spaOptions.Value.Origin;
         }
 
         public async Task InvokeAsync(HttpContext context)

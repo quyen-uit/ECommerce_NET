@@ -2,13 +2,14 @@
 using Core.Constants;
 using Core.Dtos.Accounts;
 using Core.Entities.Identity;
+using Core.Exceptions;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
-using Core.Interfaces.Services;
 using Core.Specifications.Accounts;
+using Infrastructure.Data;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
@@ -18,7 +19,8 @@ namespace API.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly ITransactionCoordinator _tx;
-        private readonly IMemoryCache _cache;
+        private readonly IPermissionCacheService _permissionCache;
+        private readonly ApplicationDbContext _context;
 
 
         public RoleService(
@@ -26,13 +28,15 @@ namespace API.Services
             UserManager<AppUser> userManager,
             IRolePermissionRepository rolePermissionRepository,
             ITransactionCoordinator tx,
-            IMemoryCache cache)
+            IPermissionCacheService permissionCache,
+            ApplicationDbContext context)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _rolePermissionRepository = rolePermissionRepository;
             _tx = tx;
-            _cache = cache;
+            _permissionCache = permissionCache;
+            _context = context;
         }
 
         public async Task<RoleResponse> CreateRoleAsync(CreateRoleRequest request)
@@ -118,11 +122,18 @@ namespace API.Services
             var countAllRoles = await _rolePermissionRepository.CountRoles(roleParams);
 
             var roleResponses = roles.Adapt<List<RoleResponse>>();
+
+            // Fix: Get user counts in a single query instead of N queries
+            var roleIds = roleResponses.Select(r => r.Id).ToList();
+            var userCounts = await _context.UserRoles
+                .Where(ur => roleIds.Contains(ur.RoleId))
+                .GroupBy(ur => ur.RoleId)
+                .Select(g => new { RoleId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.RoleId, x => x.Count);
+
             foreach (var role in roleResponses)
             {
-                var users = await _userManager.GetUsersInRoleAsync(role.Name);
-                role.UserCount = users.Count;
-
+                role.UserCount = userCounts.GetValueOrDefault(role.Id, 0);
             }
 
             return new Pagination<RoleResponse>(
@@ -155,8 +166,7 @@ namespace API.Services
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
             foreach (var user in usersInRole)
             {
-                var cacheKey = $"user_permissions_{user.Id}";
-                _cache.Remove(cacheKey);
+                await _permissionCache.InvalidatePermissionsAsync(user.Id);
             }
         }
     }

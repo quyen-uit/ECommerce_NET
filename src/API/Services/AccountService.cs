@@ -1,11 +1,14 @@
-using API.Exceptions;
+using Core.Exceptions;
 using API.Extensions;
+using API.Options;
 using Core.Dtos;
 using Core.Entities.Identity;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Accounts;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace API.Services
@@ -16,20 +19,23 @@ namespace API.Services
         private readonly ITokenService _tokenService;
         private readonly IRepository<RefreshToken> _refreshTokenRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IConfiguration _config;
+        private readonly JwtTokenOptions _tokenOptions;
+        private readonly ApplicationDbContext _context;
 
         public AccountService(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
             IRepository<RefreshToken> refreshTokenRepository,
             IHttpContextAccessor httpContextAccessor,
-            IConfiguration config)
+            IOptions<JwtTokenOptions> tokenOptions,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _refreshTokenRepository = refreshTokenRepository;
             _httpContextAccessor = httpContextAccessor;
-            _config = config;
+            _tokenOptions = tokenOptions.Value;
+            _context = context;
         }
 
         public async Task<UserDto> LoginAsync(LoginDto request)
@@ -142,14 +148,16 @@ namespace API.Services
 
             if (tokens.Any())
             {
+                var (ip, _, __) = GetClientInfo();
+                // Update all tokens in memory first
                 foreach (var token in tokens)
                 {
-                    var (ip, _, __) = GetClientInfo();
                     token.RevokedAt = DateTime.UtcNow;
                     token.RevokedByIp = ip;
-                    await _refreshTokenRepository.UpdateAsync(token);
+                    _context.Update(token);
                 }
-                // Ardalis repo saves per call; no unit-of-work Complete needed.
+                // Save all changes in a single batch
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -190,28 +198,44 @@ namespace API.Services
         {
             var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
-            foreach (var t in tokens.Where(t => t.SessionId == sessionId))
+            var tokensToRevoke = tokens.Where(t => t.SessionId == sessionId).ToList();
+
+            // Update all tokens in memory first
+            foreach (var t in tokensToRevoke)
             {
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = reason ?? "User revoked";
-                await _refreshTokenRepository.UpdateAsync(t);
+                _context.Update(t);
             }
-            // Ardalis repo saves per call; no unit-of-work Complete needed.
+
+            // Save all changes in a single batch
+            if (tokensToRevoke.Any())
+            {
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task RevokeOtherSessionsAsync(string userId, Guid keepSessionId)
         {
             var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
-            foreach (var t in tokens.Where(t => t.SessionId != keepSessionId))
+            var tokensToRevoke = tokens.Where(t => t.SessionId != keepSessionId).ToList();
+
+            // Update all tokens in memory first
+            foreach (var t in tokensToRevoke)
             {
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "User revoked others";
-                await _refreshTokenRepository.UpdateAsync(t);
+                _context.Update(t);
             }
-            // Ardalis repo saves per call; no unit-of-work Complete needed.
+
+            // Save all changes in a single batch
+            if (tokensToRevoke.Any())
+            {
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<Guid?> GetSessionIdByRefreshTokenAsync(string refreshToken)
@@ -222,7 +246,7 @@ namespace API.Services
 
         private async Task EnforceMaxSessionsAsync(string userId, string? ip)
         {
-            var max = int.Parse(_config["Token:MaxSessionsPerUser"] ?? "3");
+            var max = _tokenOptions.MaxSessionsPerUser;
             if (max <= 0) return;
             var active = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
             if (active.Count <= max) return;
@@ -230,14 +254,21 @@ namespace API.Services
                 .OrderBy(t => t.LastUsedAt ?? t.CreatedAt)
                 .Take(active.Count - max)
                 .ToList();
+
+            // Update all tokens in memory first
             foreach (var t in toRevoke)
             {
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "Max sessions exceeded";
-                await _refreshTokenRepository.UpdateAsync(t);
+                _context.Update(t);
             }
-            // Ardalis repo saves per call; no unit-of-work Complete needed.
+
+            // Save all changes in a single batch
+            if (toRevoke.Any())
+            {
+                await _context.SaveChangesAsync();
+            }
         }
 
         private (string? ip, string? userAgent, string? device) GetClientInfo()
