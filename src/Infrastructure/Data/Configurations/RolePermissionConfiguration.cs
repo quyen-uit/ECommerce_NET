@@ -22,6 +22,20 @@ namespace Infrastructure.Data.Configurations
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Indexes - High Priority (RBAC Performance)
+            // Index 1: Permission lookup by role (CRITICAL for permission resolution)
+            builder.HasIndex(rp => rp.RoleId)
+                .HasDatabaseName("IX_RolePermissions_RoleId");
+
+            // Index 2: Reverse lookup (which roles have a permission)
+            builder.HasIndex(rp => rp.PermissionId)
+                .HasDatabaseName("IX_RolePermissions_PermissionId");
+
+            // Index 3: Composite unique constraint (explicit)
+            builder.HasIndex(rp => new { rp.RoleId, rp.PermissionId })
+                .HasDatabaseName("IX_RolePermissions_RoleId_PermissionId")
+                .IsUnique();
         }
     }
 }

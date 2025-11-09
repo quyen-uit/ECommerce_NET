@@ -16,6 +16,17 @@ namespace Infrastructure.Data.Configurations
 
             builder.Property(s => s.Name)
                 .HasMaxLength(100);
+
+            // Indexes - High Priority
+            // Index 1: Hierarchical navigation
+            builder.HasIndex(c => new { c.ParentId, c.Order })
+                .HasDatabaseName("IX_Categories_ParentId_Order")
+                .HasFilter("\"IsDeleted\" = false");
+
+            // Index 2: Active categories filter
+            builder.HasIndex(c => c.IsActive)
+                .HasDatabaseName("IX_Categories_IsActive")
+                .HasFilter("\"IsDeleted\" = false");
         }
     }
 }

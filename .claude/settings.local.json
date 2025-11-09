@@ -8,7 +8,8 @@
       "Bash(dotnet clean:*)",
       "Bash(dotnet add package:*)",
       "Bash(dotnet add:*)",
-      "Bash(dotnet ef migrations add:*)"
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
