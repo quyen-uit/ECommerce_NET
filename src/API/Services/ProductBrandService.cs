@@ -6,36 +6,39 @@ using Core.Entities;
 using Core.Interfaces.Services;
 using Core.Specifications.ProductBrands;
 using Core.Interfaces.Reposiories;
+using Core.Interfaces;
 using Mapster;
 
 namespace API.Services
 {
     public class ProductBrandService : IProductBrandService
     {
-        private readonly IRepository<ProductBrand> _brandRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductBrandService(IRepository<ProductBrand> brandRepository)
+        public ProductBrandService(IUnitOfWork unitOfWork)
         {
-            _brandRepository = brandRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ProductBrandDto> AddOrUpdateProductBrandAsync(CreateProductBrandDto dto)
         {
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
             ProductBrand? entity = null;
             if (dto.Id.HasValue && dto.Id != Guid.Empty)
             {
-                entity = await _brandRepository.GetByIdAsync(dto.Id.Value);
+                entity = await brandRepo.GetByIdAsync(dto.Id.Value);
             }
             if (entity == null)
             {
                 entity = dto.Adapt<ProductBrand>();
-                await _brandRepository.AddAsync(entity);
+                await brandRepo.AddAsync(entity);
             }
             else
             {
                 dto.Adapt(entity);
-                await _brandRepository.UpdateAsync(entity);
+                await brandRepo.UpdateAsync(entity);
             }
+            await _unitOfWork.SaveChangesAsync();
             return entity.Adapt<ProductBrandDto>();
         }
 
@@ -43,33 +46,39 @@ namespace API.Services
             IReadOnlyList<CreateProductBrandDto> brandDtos
         )
         {
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
             var brands = brandDtos.Adapt<IReadOnlyList<ProductBrand>>();
-            await _brandRepository.AddRangeAsync(brands);
+            await brandRepo.AddRangeAsync(brands);
+            await _unitOfWork.SaveChangesAsync();
             return brands.Adapt<IReadOnlyList<ProductBrandDto>>();
         }
 
         public async Task<int> CountAllAsync(ProductBrandSpecParams specParams)
         {
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
             var spec = new ProductBrandSpecification(specParams);
-            return await _brandRepository.CountAsync(spec);
+            return await brandRepo.CountAsync(spec);
         }
 
         public async Task DeleteProductBrandAsync(Guid id)
         {
-            var existing = await _brandRepository.GetByIdAsync(id);
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
+            var existing = await brandRepo.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundBrand);
 
-            await _brandRepository.DeleteAsync(existing);
+            await brandRepo.DeleteAsync(existing);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<Pagination<ProductBrandDto>> GetAllProductBrandsAsync(
             ProductBrandSpecParams specParams
         )
         {
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
             var spec = new ProductBrandSpecification(specParams);
-            var brands = await _brandRepository.ListAsync(spec);
-            var count = await _brandRepository.CountAsync(spec);
+            var brands = await brandRepo.ListAsync(spec);
+            var count = await brandRepo.CountAsync(spec);
             return new Pagination<ProductBrandDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,
@@ -80,7 +89,8 @@ namespace API.Services
 
         public async Task<ProductBrandDto> GetProductBrandByIdAsync(Guid id)
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
+            var brand = await brandRepo.GetByIdAsync(id);
             if (brand == null)
                 throw new NotFoundException(CommonMessage.NotFoundBrand);
             return brand.Adapt<ProductBrandDto>();
@@ -88,10 +98,11 @@ namespace API.Services
 
         public async Task DeleteBrandsAsync(List<Guid> ids)
         {
+            var brandRepo = _unitOfWork.Repository<ProductBrand>();
             var toDelete = new List<ProductBrand>();
             foreach (var bid in ids)
             {
-                var entity = await _brandRepository.GetByIdAsync(bid);
+                var entity = await brandRepo.GetByIdAsync(bid);
                 if (entity != null)
                 {
                     toDelete.Add(entity);
@@ -99,7 +110,8 @@ namespace API.Services
             }
             if (toDelete.Count > 0)
             {
-                await _brandRepository.DeleteRangeAsync(toDelete);
+                await brandRepo.DeleteRangeAsync(toDelete);
+                await _unitOfWork.SaveChangesAsync();
             }
         }
     }

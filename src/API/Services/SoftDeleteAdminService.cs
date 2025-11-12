@@ -29,7 +29,7 @@ namespace API.Services
                     Id = p.Id,
                     EntityType = "Product",
                     DisplayName = p.Name,
-                    DeletedAt = p.UpdatedAt
+                    DeletedAt = p.UpdatedAt ?? DateTime.UtcNow
                 })
                 .ToListAsync();
 
@@ -41,13 +41,13 @@ namespace API.Services
             var categories = await _context.Categories
                 .IgnoreQueryFilters()
                 .Where(c => c.IsDeleted)
-                .OrderByDescending(c => c.UpdatedAt)
+                .OrderByDescending(c => c.Id)
                 .Select(c => new SoftDeletedItemDto
                 {
                     Id = c.Id,
                     EntityType = "Category",
                     DisplayName = c.Name,
-                    DeletedAt = c.UpdatedAt
+                    DeletedAt = DateTime.UtcNow // Category doesn't have UpdatedAt
                 })
                 .ToListAsync();
 
@@ -59,13 +59,13 @@ namespace API.Services
             var brands = await _context.ProductBrands
                 .IgnoreQueryFilters()
                 .Where(b => b.IsDeleted)
-                .OrderByDescending(b => b.UpdatedAt)
+                .OrderByDescending(b => b.Id)
                 .Select(b => new SoftDeletedItemDto
                 {
                     Id = b.Id,
                     EntityType = "ProductBrand",
                     DisplayName = b.Name,
-                    DeletedAt = b.UpdatedAt
+                    DeletedAt = DateTime.UtcNow // ProductBrand doesn't have UpdatedAt
                 })
                 .ToListAsync();
 
@@ -100,7 +100,7 @@ namespace API.Services
                 throw new NotFoundException("Soft-deleted category not found");
 
             category.IsDeleted = false;
-            category.UpdatedAt = DateTime.UtcNow;
+            // Category doesn't have UpdatedAt property
             _context.Update(category);
             await _context.SaveChangesAsync();
 
@@ -118,7 +118,7 @@ namespace API.Services
                 throw new NotFoundException("Soft-deleted brand not found");
 
             brand.IsDeleted = false;
-            brand.UpdatedAt = DateTime.UtcNow;
+            // ProductBrand doesn't have UpdatedAt property
             _context.Update(brand);
             await _context.SaveChangesAsync();
 

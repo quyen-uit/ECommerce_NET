@@ -1,6 +1,6 @@
 ﻿using API.Options;
-using Core.Entities.Identity;
 using Core.Exceptions;
+using Core.Entities.Identity;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Microsoft.AspNetCore.Identity;

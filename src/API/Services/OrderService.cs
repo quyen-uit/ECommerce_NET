@@ -3,6 +3,7 @@ using Core.Constants;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
@@ -12,22 +13,22 @@ namespace API.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<DeliveryMethod> _deliveryRepository;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IBasketRepository _basketRepository;
 
-        public OrderService(IRepository<Order> orderRepository, IRepository<DeliveryMethod> deliveryRepository, IRepository<Product> productRepository, IBasketRepository basketRepository)
+        public OrderService(IUnitOfWork unitOfWork, IBasketRepository basketRepository)
         {
-            _orderRepository = orderRepository;
-            _deliveryRepository = deliveryRepository;
-            _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
             _basketRepository = basketRepository;
         }
 
         public async Task<Order> CreateOrderAsync(string buyerEmail, Guid deliveryId, string basketId, Address shipAddress)
         {
-            // get basket   
+            var orderRepo = _unitOfWork.Repository<Order>();
+            var deliveryRepo = _unitOfWork.Repository<DeliveryMethod>();
+            var productRepo = _unitOfWork.Repository<Product>();
+
+            // get basket
             var basket = await _basketRepository.GetBasketAsync(basketId);
             if (basket == null)
             {
@@ -39,7 +40,7 @@ namespace API.Services
 
             // Fix: Batch fetch all products in one query instead of N queries
             var productIds = basket!.Items.Select(i => i.Id).ToList();
-            var products = await _productRepository.ListAsync(new ProductsByIdsSpecification(productIds));
+            var products = await productRepo.ListAsync(new ProductsByIdsSpecification(productIds));
             var productDict = products.ToDictionary(p => p.Id);
 
             foreach (var basketItem in basket.Items)
@@ -53,7 +54,7 @@ namespace API.Services
                 items.Add(orderItem);
             }
             // get delivery method
-            var deliveryMethod = await _deliveryRepository.GetByIdAsync(deliveryId);
+            var deliveryMethod = await deliveryRepo.GetByIdAsync(deliveryId);
             if (deliveryMethod == null)
                 throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
 
@@ -61,21 +62,24 @@ namespace API.Services
 
             // check order exist
             var spec = new OrderByPaymentIntentIdSpecification(basket.PaymentIntentId!);
-            var order = await _orderRepository.FirstOrDefaultAsync(spec);
+            var order = await orderRepo.FirstOrDefaultAsync(spec);
 
             if (order != null)
             {
                 order.ShipToAddress = shipAddress;
                 order.DeliveryMethod = deliveryMethod;
                 order.Subtotal = subTotal;
-                await _orderRepository.UpdateAsync(order);
+                await orderRepo.UpdateAsync(order);
             }
             else
             {
                 //create order
                 order = new Order(items, buyerEmail, shipAddress, subTotal, deliveryMethod, basket.PaymentIntentId!);
-                await _orderRepository.AddAsync(order);
+                await orderRepo.AddAsync(order);
             }
+
+            // Save all changes in one transaction (EF Core handles this automatically)
+            await _unitOfWork.SaveChangesAsync();
 
             //await _basketRepository.DeleteBasketAsync(basketId);
             return order;
@@ -83,13 +87,15 @@ namespace API.Services
 
         public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodsAsync()
         {
-            return await _deliveryRepository.ListAsync();
+            var deliveryRepo = _unitOfWork.Repository<DeliveryMethod>();
+            return await deliveryRepo.ListAsync();
         }
 
         public async Task<Order> GetOrderByIdAsync(Guid id, string email)
         {
+            var orderRepo = _unitOfWork.Repository<Order>();
             var spec = new OrdersWithItemsAndOrderingSpecification(id, email);
-            var order = await _orderRepository.FirstOrDefaultAsync(spec);
+            var order = await orderRepo.FirstOrDefaultAsync(spec);
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
             return order;
@@ -97,8 +103,9 @@ namespace API.Services
 
         public async Task<IReadOnlyList<Order>> GetOrdersByEmailAsync(string email)
         {
+            var orderRepo = _unitOfWork.Repository<Order>();
             var spec = new OrdersWithItemsAndOrderingSpecification(email);
-            var orders = await _orderRepository.ListAsync(spec);
+            var orders = await orderRepo.ListAsync(spec);
             return orders;
         }
     }

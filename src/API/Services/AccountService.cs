@@ -3,10 +3,10 @@ using API.Extensions;
 using API.Options;
 using Core.Dtos;
 using Core.Entities.Identity;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Accounts;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -17,25 +17,22 @@ namespace API.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IRepository<RefreshToken> _refreshTokenRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtTokenOptions _tokenOptions;
-        private readonly ApplicationDbContext _context;
 
         public AccountService(
             UserManager<AppUser> userManager,
             ITokenService tokenService,
-            IRepository<RefreshToken> refreshTokenRepository,
+            IUnitOfWork unitOfWork,
             IHttpContextAccessor httpContextAccessor,
-            IOptions<JwtTokenOptions> tokenOptions,
-            ApplicationDbContext context)
+            IOptions<JwtTokenOptions> tokenOptions)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            _refreshTokenRepository = refreshTokenRepository;
+            _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
             _tokenOptions = tokenOptions.Value;
-            _context = context;
         }
 
         public async Task<UserDto> LoginAsync(LoginDto request)
@@ -64,7 +61,8 @@ namespace API.Services
 
         public async Task<UserDto> RefreshTokenAsync(string token)
         {
-            var storedToken = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(token));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var storedToken = await refreshTokenRepo.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(token));
             if (storedToken == null)
             {
                 throw new UnauthorizedException("Invalid token");
@@ -80,7 +78,8 @@ namespace API.Services
             storedToken.ReplacedByToken = newRefreshToken;
             var newAccessToken = await _tokenService.CreateToken(user);
 
-            await _refreshTokenRepository.UpdateAsync(storedToken);
+            await refreshTokenRepo.UpdateAsync(storedToken);
+            await _unitOfWork.SaveChangesAsync();
 
             return new UserDto
             {
@@ -132,19 +131,22 @@ namespace API.Services
 
         public async Task LogoutAsync(string refreshToken)
         {
-            var storedToken = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var storedToken = await refreshTokenRepo.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
             if (storedToken != null)
             {
                 var (ip, _, __) = GetClientInfo();
                 storedToken.RevokedAt = DateTime.UtcNow;
                 storedToken.RevokedByIp = ip;
-                await _refreshTokenRepository.UpdateAsync(storedToken);
+                await refreshTokenRepo.UpdateAsync(storedToken);
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 
         public async Task LogoutAllAsync(string userId)
         {
-            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var tokens = await refreshTokenRepo.ListAsync(new RefreshTokenSpecification(userId));
 
             if (tokens.Any())
             {
@@ -154,10 +156,10 @@ namespace API.Services
                 {
                     token.RevokedAt = DateTime.UtcNow;
                     token.RevokedByIp = ip;
-                    _context.Update(token);
+                    await refreshTokenRepo.UpdateAsync(token);
                 }
-                // Save all changes in a single batch
-                await _context.SaveChangesAsync();
+                // Save all changes in a single batch transaction
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 
@@ -177,7 +179,8 @@ namespace API.Services
 
         public async Task<IReadOnlyList<UserSessionDto>> GetSessionsAsync(string userId)
         {
-            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var tokens = await refreshTokenRepo.ListAsync(new RefreshTokenSpecification(userId));
             var result = tokens
                 .Select(t => new UserSessionDto
                 {
@@ -196,7 +199,8 @@ namespace API.Services
 
         public async Task RevokeSessionAsync(string userId, Guid sessionId, string? reason = null)
         {
-            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var tokens = await refreshTokenRepo.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
             var tokensToRevoke = tokens.Where(t => t.SessionId == sessionId).ToList();
 
@@ -206,19 +210,20 @@ namespace API.Services
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = reason ?? "User revoked";
-                _context.Update(t);
+                await refreshTokenRepo.UpdateAsync(t);
             }
 
-            // Save all changes in a single batch
+            // Save all changes in a single batch transaction
             if (tokensToRevoke.Any())
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 
         public async Task RevokeOtherSessionsAsync(string userId, Guid keepSessionId)
         {
-            var tokens = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var tokens = await refreshTokenRepo.ListAsync(new RefreshTokenSpecification(userId));
             var (ip, _, __) = GetClientInfo();
             var tokensToRevoke = tokens.Where(t => t.SessionId != keepSessionId).ToList();
 
@@ -228,27 +233,29 @@ namespace API.Services
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "User revoked others";
-                _context.Update(t);
+                await refreshTokenRepo.UpdateAsync(t);
             }
 
-            // Save all changes in a single batch
+            // Save all changes in a single batch transaction
             if (tokensToRevoke.Any())
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 
         public async Task<Guid?> GetSessionIdByRefreshTokenAsync(string refreshToken)
         {
-            var token = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
+            var token = await refreshTokenRepo.FirstOrDefaultAsync(new RefreshTokenWithUserSpecification(refreshToken));
             return token?.SessionId;
         }
 
         private async Task EnforceMaxSessionsAsync(string userId, string? ip)
         {
+            var refreshTokenRepo = _unitOfWork.Repository<RefreshToken>();
             var max = _tokenOptions.MaxSessionsPerUser;
             if (max <= 0) return;
-            var active = await _refreshTokenRepository.ListAsync(new RefreshTokenSpecification(userId));
+            var active = await refreshTokenRepo.ListAsync(new RefreshTokenSpecification(userId));
             if (active.Count <= max) return;
             var toRevoke = active
                 .OrderBy(t => t.LastUsedAt ?? t.CreatedAt)
@@ -261,13 +268,13 @@ namespace API.Services
                 t.RevokedAt = DateTime.UtcNow;
                 t.RevokedByIp = ip;
                 t.ReasonRevoked = "Max sessions exceeded";
-                _context.Update(t);
+                await refreshTokenRepo.UpdateAsync(t);
             }
 
-            // Save all changes in a single batch
+            // Save all changes in a single batch transaction
             if (toRevoke.Any())
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
             }
         }
 

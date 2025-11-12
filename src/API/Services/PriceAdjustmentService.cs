@@ -6,32 +6,34 @@ using Core.Entities;
 using Core.Interfaces.Services;
 using Core.Specifications.PriceAdjustments;
 using Core.Interfaces.Reposiories;
+using Core.Interfaces;
 using Mapster;
 
 namespace API.Services
 {
     public class PriceAdjustmentService : IPriceAdjustmentService
     {
-        private readonly IRepository<PriceAdjustment> _priceAdjustmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PriceAdjustmentService(IRepository<PriceAdjustment> PriceAdjustmentRepository)
+        public PriceAdjustmentService(IUnitOfWork unitOfWork)
         {
-            _priceAdjustmentRepository = PriceAdjustmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PriceAdjustmentDto> AddOrUpdatePriceAdjustmentAsync(CreatePriceAdjustmentDto priceAdjustmentDto)
         {
+            var priceAdjustmentRepo = _unitOfWork.Repository<PriceAdjustment>();
             PriceAdjustment? existingAdjustment = null;
             if (priceAdjustmentDto.Id.HasValue && priceAdjustmentDto.Id != Guid.Empty)
             {
-                existingAdjustment = await _priceAdjustmentRepository.GetByIdAsync(priceAdjustmentDto.Id.Value);
+                existingAdjustment = await priceAdjustmentRepo.GetByIdAsync(priceAdjustmentDto.Id.Value);
             }
 
             PriceAdjustment resultEntity;
             if (existingAdjustment == null)
             {
                 var adjustment = priceAdjustmentDto.Adapt<PriceAdjustment>();
-                await _priceAdjustmentRepository.AddAsync(adjustment);
+                await priceAdjustmentRepo.AddAsync(adjustment);
                 resultEntity = adjustment;
             }
             else
@@ -69,27 +71,31 @@ namespace API.Services
                         existingAdjustment.PriceAdjustmentItems.Add(dtoItem.Adapt<PriceAdjustmentItem>());
                     }
                 }
-                await _priceAdjustmentRepository.UpdateAsync(existingAdjustment);
+                await priceAdjustmentRepo.UpdateAsync(existingAdjustment);
                 resultEntity = existingAdjustment;
             }
 
+            await _unitOfWork.SaveChangesAsync();
             return resultEntity.Adapt<PriceAdjustmentDto>();
         }
 
         public async Task DeletePriceAdjustmentAsync(Guid id)
         {
-            var existing = await _priceAdjustmentRepository.GetByIdAsync(id);
+            var priceAdjustmentRepo = _unitOfWork.Repository<PriceAdjustment>();
+            var existing = await priceAdjustmentRepo.GetByIdAsync(id);
             if (existing == null)
                 throw new NotFoundException(CommonMessage.NotFoundPriceAdjustment);
-            await _priceAdjustmentRepository.DeleteAsync(existing);
+            await priceAdjustmentRepo.DeleteAsync(existing);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<Pagination<PriceAdjustmentDto>> GetAllPriceAdjustmentAsync(PriceAdjustmentSpecParams specParams)
         {
+            var priceAdjustmentRepo = _unitOfWork.Repository<PriceAdjustment>();
             var spec = new PriceAdjustmentSpecification(specParams);
-            var priceAdjustments = await _priceAdjustmentRepository.ListAsync(spec);
+            var priceAdjustments = await priceAdjustmentRepo.ListAsync(spec);
             var specCount = new PriceAdjustmentSpecification(specParams, isSearch: false);
-            var count = await _priceAdjustmentRepository.CountAsync(specCount);
+            var count = await priceAdjustmentRepo.CountAsync(specCount);
             return new Pagination<PriceAdjustmentDto>(
                     pageNumber: specParams.PageNumber,
                     pageSize: specParams.PageSize,
@@ -100,7 +106,8 @@ namespace API.Services
 
         public async Task<PriceAdjustmentDto> GetPriceAdjustmentByIdAsync(Guid id)
         {
-            var priceAdjustment = await _priceAdjustmentRepository.GetByIdAsync(id);
+            var priceAdjustmentRepo = _unitOfWork.Repository<PriceAdjustment>();
+            var priceAdjustment = await priceAdjustmentRepo.GetByIdAsync(id);
             if (priceAdjustment == null)
                 throw new NotFoundException(CommonMessage.NotFoundPriceAdjustment);
             return priceAdjustment.Adapt<PriceAdjustmentDto>();

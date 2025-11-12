@@ -26,7 +26,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetSoftDeletedProducts()
         {
             var result = await _softDeleteAdminService.GetSoftDeletedProductsAsync();
-            return Ok(ResponseFactory.Success(result));
+            return Ok(ResponseFactory.Ok(result));
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetSoftDeletedCategories()
         {
             var result = await _softDeleteAdminService.GetSoftDeletedCategoriesAsync();
-            return Ok(ResponseFactory.Success(result));
+            return Ok(ResponseFactory.Ok(result));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetSoftDeletedBrands()
         {
             var result = await _softDeleteAdminService.GetSoftDeletedBrandsAsync();
-            return Ok(ResponseFactory.Success(result));
+            return Ok(ResponseFactory.Ok(result));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace API.Controllers
         public async Task<IActionResult> RestoreProduct(Guid id)
         {
             var result = await _softDeleteAdminService.RestoreProductAsync(id);
-            return Ok(ResponseFactory.Success(result, "Product restored successfully"));
+            return Ok(ResponseFactory.Ok(result, message: "Product restored successfully"));
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace API.Controllers
         public async Task<IActionResult> RestoreCategory(Guid id)
         {
             var result = await _softDeleteAdminService.RestoreCategoryAsync(id);
-            return Ok(ResponseFactory.Success(result, "Category restored successfully"));
+            return Ok(ResponseFactory.Ok(result, message: "Category restored successfully"));
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace API.Controllers
         public async Task<IActionResult> RestoreBrand(Guid id)
         {
             var result = await _softDeleteAdminService.RestoreBrandAsync(id);
-            return Ok(ResponseFactory.Success(result, "Brand restored successfully"));
+            return Ok(ResponseFactory.Ok(result, message: "Brand restored successfully"));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace API.Controllers
         public async Task<IActionResult> PermanentlyDeleteProduct(Guid id)
         {
             var result = await _softDeleteAdminService.PermanentlyDeleteProductAsync(id);
-            return Ok(ResponseFactory.Success(result, "Product permanently deleted"));
+            return Ok(ResponseFactory.Ok(result, message: "Product permanently deleted"));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace API.Controllers
         public async Task<IActionResult> PermanentlyDeleteCategory(Guid id)
         {
             var result = await _softDeleteAdminService.PermanentlyDeleteCategoryAsync(id);
-            return Ok(ResponseFactory.Success(result, "Category permanently deleted"));
+            return Ok(ResponseFactory.Ok(result, message: "Category permanently deleted"));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace API.Controllers
         public async Task<IActionResult> PermanentlyDeleteBrand(Guid id)
         {
             var result = await _softDeleteAdminService.PermanentlyDeleteBrandAsync(id);
-            return Ok(ResponseFactory.Success(result, "Brand permanently deleted"));
+            return Ok(ResponseFactory.Ok(result, message: "Brand permanently deleted"));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace API.Controllers
                 Data = logs
             };
 
-            return Ok(ResponseFactory.Success(result));
+            return Ok(ResponseFactory.Ok(result));
         }
     }
 }

@@ -3,6 +3,7 @@ using Core.Exceptions;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Enums;
+using Core.Interfaces;
 using Core.Interfaces.Services;
 using Core.Interfaces.Reposiories;
 using Core.Specifications.Orders;
@@ -13,17 +14,13 @@ namespace API.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<DeliveryMethod> _deliveryRepository;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IBasketRepository _basketRepository;
         private readonly IConfiguration _config;
 
-        public PaymentService(IRepository<Order> orderRepository, IRepository<DeliveryMethod> deliveryRepository, IRepository<Product> productRepository, IBasketRepository basketRepository, IConfiguration config)
+        public PaymentService(IUnitOfWork unitOfWork, IBasketRepository basketRepository, IConfiguration config)
         {
-            _orderRepository = orderRepository;
-            _deliveryRepository = deliveryRepository;
-            _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
             _basketRepository = basketRepository;
             _config = config;
         }
@@ -32,6 +29,9 @@ namespace API.Services
         {
             StripeConfiguration.ApiKey = _config["StripeSettings:SecretKey"];
 
+            var deliveryRepo = _unitOfWork.Repository<DeliveryMethod>();
+            var productRepo = _unitOfWork.Repository<Product>();
+
             var basket = await _basketRepository.GetBasketAsync(basketId);
             if (basket == null)
                 throw new NotFoundException(CommonMessage.NotFoundBasket);
@@ -39,7 +39,7 @@ namespace API.Services
             var shippingPrice = 0m;
             if (basket.DeliveryMethodId.HasValue)
             {
-                var deliveryMethod = await _deliveryRepository.GetByIdAsync(basket.DeliveryMethodId.Value);
+                var deliveryMethod = await deliveryRepo.GetByIdAsync(basket.DeliveryMethodId.Value);
                 if (deliveryMethod == null)
                     throw new NotFoundException(CommonMessage.NotFoundDeliveryMethod);
 
@@ -49,7 +49,7 @@ namespace API.Services
             // check price from db
             foreach (var item in basket.Items)
             {
-                var product = await _productRepository.GetByIdAsync(item.Id);
+                var product = await productRepo.GetByIdAsync(item.Id);
                 if (product == null)
                     throw new NotFoundException(CommonMessage.NotFoundProduct);
 
@@ -91,27 +91,31 @@ namespace API.Services
 
         public async Task<Order> UpdateOrderPaymentFailed(string paymentIntentId)
         {
+            var orderRepo = _unitOfWork.Repository<Order>();
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
-            var order = await _orderRepository.FirstOrDefaultAsync(spec);
+            var order = await orderRepo.FirstOrDefaultAsync(spec);
 
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentFailed;
-            await _orderRepository.UpdateAsync(order);
+            await orderRepo.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
             return order;
         }
 
         public async Task<Order> UpdateOrderPaymentSucceeded(string paymentIntentId)
         {
+            var orderRepo = _unitOfWork.Repository<Order>();
             var spec = new OrderByPaymentIntentIdSpecification(paymentIntentId);
-            var order = await _orderRepository.FirstOrDefaultAsync(spec);
+            var order = await orderRepo.FirstOrDefaultAsync(spec);
 
             if (order == null)
                 throw new NotFoundException(CommonMessage.NotFoundOrder);
 
             order.Status = OrderStatus.PaymentReceived;
-            await _orderRepository.UpdateAsync(order);
+            await orderRepo.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
             return order;
         }
     }

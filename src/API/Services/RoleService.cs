@@ -18,7 +18,6 @@ namespace API.Services
         private readonly RoleManager<AppRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly IRolePermissionRepository _rolePermissionRepository;
-        private readonly ITransactionCoordinator _tx;
         private readonly IPermissionCacheService _permissionCache;
         private readonly ApplicationDbContext _context;
 
@@ -27,21 +26,21 @@ namespace API.Services
             RoleManager<AppRole> roleManager,
             UserManager<AppUser> userManager,
             IRolePermissionRepository rolePermissionRepository,
-            ITransactionCoordinator tx,
             IPermissionCacheService permissionCache,
             ApplicationDbContext context)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _rolePermissionRepository = rolePermissionRepository;
-            _tx = tx;
             _permissionCache = permissionCache;
             _context = context;
         }
 
         public async Task<RoleResponse> CreateRoleAsync(CreateRoleRequest request)
         {
-            return await _tx.ExecuteAsync(async ct =>
+            // Using DbContext.Database.BeginTransaction for explicit transaction
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
                 var role = request.Adapt<AppRole>();
                 var result = await _roleManager.CreateAsync(role);
@@ -50,13 +49,21 @@ namespace API.Services
                     throw new InvalidOperationException($"Failed to create role: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                 }
                 await _rolePermissionRepository.AddPermissionsToRoleAsync(role.Id, request.PermissionIds);
+                await transaction.CommitAsync();
                 return await GetRoleByIdAsync(role.Id);
-            });
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<RoleResponse> UpdateRoleAsync(UpdateRoleRequest request)
         {
-            return await _tx.ExecuteAsync(async ct =>
+            // Using DbContext.Database.BeginTransaction for explicit transaction
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
                 var role = await _roleManager.FindByIdAsync(request.Id);
                 if (role == null)
@@ -76,13 +83,21 @@ namespace API.Services
                 // Invalidate permission cache for users in this role
                 await InvalidateUsersPermissionCacheAsync(role.Name!);
 
+                await transaction.CommitAsync();
                 return await GetRoleByIdAsync(role.Id);
-            });
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> DeleteRoleAsync(string roleId)
         {
-            return await _tx.ExecuteAsync(async ct =>
+            // Using DbContext.Database.BeginTransaction for explicit transaction
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
                 var role = await _roleManager.FindByIdAsync(roleId);
                 if (role == null)
@@ -96,8 +111,14 @@ namespace API.Services
 
                 await _rolePermissionRepository.RemoveAllPermissionsFromRoleAsync(roleId);
                 var result = await _roleManager.DeleteAsync(role);
+                await transaction.CommitAsync();
                 return result.Succeeded;
-            });
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<RoleResponse> GetRoleByIdAsync(string roleId)
