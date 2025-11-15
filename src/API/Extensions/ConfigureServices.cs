@@ -5,6 +5,8 @@ using API.Services;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Core.Interfaces.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -59,6 +61,12 @@ namespace API.Extensions
             {
                 options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseTransformer()));
             });
+
+            // Configure FluentValidation
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Program>();
+
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {

@@ -9,7 +9,11 @@
       "Bash(dotnet add package:*)",
       "Bash(dotnet add:*)",
       "Bash(dotnet ef migrations add:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(for file in src/Core/Dtos/Colors/CreateColorDto.cs src/Core/Dtos/Sizes/CreateSizeDto.cs src/Core/Dtos/ProductSkus/CreateProductSkuDto.cs)",
+      "Bash(if [ -d src/API/wwwroot_temp ])",
+      "Bash(then mv src/API/wwwroot_temp src/API/wwwroot)",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []

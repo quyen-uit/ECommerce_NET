@@ -1,16 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.Dtos
+﻿namespace Core.Dtos
 {
     public class RegisterDto
     {
-        [Required]
-        public required string DisplayName { get; set; }
-        [Required]
-        [EmailAddress]
-        public required string Email { get; set; }
-        [Required]
-        [RegularExpression("(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*", ErrorMessage = "Password is not match rules.")]
-        public required string Password { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 }

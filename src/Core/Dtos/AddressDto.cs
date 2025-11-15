@@ -1,24 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
 namespace Core.Dtos
 {
     public class AddressDto
     {
-        [Required]
-        public required string FirstName { get; set; }
-        [Required]
-        public required string LastName { get; set; }
-        [Required]
-        public required string HouseNumber { get; set; }
-        [Required]
-        public required string Street { get; set; }
-        [Required]
-        public required string Ward { get; set; }
-        [Required]
-        public required string District { get; set; }
-        [Required]
-        public required string City { get; set; }
-        [Required]
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string HouseNumber { get; set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+        public string Ward { get; set; } = string.Empty;
+        public string District { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
         public int ZipCode { get; set; }
     }
 }

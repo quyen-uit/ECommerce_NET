@@ -1,9 +1,9 @@
-﻿namespace Core.Dtos
+namespace Core.Dtos
 {
     public class OrderDto
     {
-        public required string BasketId { get; set; }
+        public string BasketId { get; set; } = string.Empty;
         public Guid DeliveryMethod { get; set; }
-        public required AddressDto ShipToAddress { get; set; }
+        public AddressDto ShipToAddress { get; set; } = new();
     }
 }

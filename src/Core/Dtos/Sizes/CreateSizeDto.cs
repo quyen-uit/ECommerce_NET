@@ -1,16 +1,12 @@
-using System.ComponentModel.DataAnnotations;
+using Core.Exceptions;
 
 namespace Core.Dtos.Sizes
 {
     public class CreateSizeDto
     {
         public Guid? Id { get; set; }
-        [Required]
-        [MaxLength(50)]
-        public required string Name { get; set; }
-
+        public string Name { get; set; } = string.Empty;
         public int SortOrder { get; set; }
-        [Required]
-        public required string SizeType { get; set; }
+        public string SizeType { get; set; } = string.Empty;
     }
 }

@@ -1,15 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Core.Dtos.ProductBrands
+﻿namespace Core.Dtos.ProductBrands
 {
     public class CreateProductBrandDto
     {
         public Guid? Id { get; set; }
-        [Required]
-        [MaxLength(100)]
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? LogoUrl { get; set; }
     }
-
 }
