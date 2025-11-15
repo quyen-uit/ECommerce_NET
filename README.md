@@ -168,12 +168,20 @@ public async Task<IActionResult> Create([FromBody] MyDto dto) { }
 # Create migration
 dotnet ef migrations add MigrationName --project src/Infrastructure --startup-project src/API
 
-# Apply migration
+# Apply migration to database
 dotnet ef database update --project src/Infrastructure --startup-project src/API
 
-# Rollback
+# List all migrations
+dotnet ef migrations list --project src/Infrastructure --startup-project src/API
+
+# Rollback to a specific migration
 dotnet ef database update PreviousMigrationName --project src/Infrastructure --startup-project src/API
+
+# Remove last unapplied migration
+dotnet ef migrations remove --project src/Infrastructure --startup-project src/API
 ```
+
+**Note:** The project uses `IDesignTimeDbContextFactory` in [ApplicationDbContextFactory.cs](src/Infrastructure/Data/ApplicationDbContextFactory.cs) to enable migrations in the Infrastructure class library.
 
 ## Configuration
 
