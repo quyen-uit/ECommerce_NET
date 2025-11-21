@@ -47,11 +47,11 @@ builder.Services.AddHealthChecks()
     .AddNpgSql(
         builder.Configuration.GetConnectionString("DefaultConnection")!,
         name: "postgresql",
-        tags: new[] { "db", "sql", "postgres" })
-    .AddRedis(
-        builder.Configuration.GetConnectionString("Redis")!,
-        name: "redis",
-        tags: new[] { "cache", "redis" });
+        tags: new[] { "db", "sql", "postgres" });
+    // .AddRedis( // Commented out - Redis disabled
+    //     builder.Configuration.GetConnectionString("Redis")!,
+    //     name: "redis",
+    //     tags: new[] { "cache", "redis" });
 
 var app = builder.Build();
 

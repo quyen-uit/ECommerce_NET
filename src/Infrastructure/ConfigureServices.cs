@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
+// using StackExchange.Redis; // Commented out - Redis disabled
 
 namespace Infrastructure
 {
@@ -23,11 +23,12 @@ namespace Infrastructure
                            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
                                builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
-            services.AddSingleton<IConnectionMultiplexer>(c =>
-            {
-                var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis")!);
-                return ConnectionMultiplexer.Connect(options);
-            });
+            // Redis connection - Commented out - Redis disabled
+            // services.AddSingleton<IConnectionMultiplexer>(c =>
+            // {
+            //     var options = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis")!);
+            //     return ConnectionMultiplexer.Connect(options);
+            // });
 
             // add identity service
             services.AddIdentity<AppUser, AppRole>(options => { })
@@ -62,7 +63,8 @@ namespace Infrastructure
             // Register repositories
             services.AddScoped(typeof(IRepositoryBase<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped<IBasketRepository, BasketRepository>();
+            // services.AddScoped<IBasketRepository, BasketRepository>(); // Commented out - Basket uses Redis
+            services.AddScoped<IBasketRepository, InMemoryBasketRepository>(); // In-memory implementation (no Redis)
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
 
             // Register Unit of Work

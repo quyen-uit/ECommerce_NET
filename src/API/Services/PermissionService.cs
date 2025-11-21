@@ -16,18 +16,18 @@ namespace API.Services
         private readonly IRolePermissionRepository _rolePermissionRepository;
         private readonly IRepository<Permission> _permissionRepository;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IPermissionCacheService _permissionCache;
+        // private readonly IPermissionCacheService _permissionCache; // Commented out - Redis disabled
 
         public PermissionService(
             IRolePermissionRepository rolePermissionRepository,
             IRepository<Permission> permissionRepository,
-            UserManager<AppUser> userManager,
-            IPermissionCacheService permissionCache)
+            UserManager<AppUser> userManager)
+            // IPermissionCacheService permissionCache) // Commented out - Redis disabled
         {
             _rolePermissionRepository = rolePermissionRepository;
             _permissionRepository = permissionRepository;
             _userManager = userManager;
-            _permissionCache = permissionCache;
+            // _permissionCache = permissionCache; // Commented out - Redis disabled
         }
 
         public async Task<PermissionResponse> CreatePermissionAsync(CreatePermissionRequest request)
@@ -85,14 +85,15 @@ namespace API.Services
 
         public async Task<bool> UserHasPermissionAsync(string userId, string permission)
         {
-            var userPermissions = await _permissionCache.GetPermissionsAsync(userId);
-
-            if (userPermissions is null)
-            {
-                var permissionsList = await GetUserPermissionsAsync(userId);
-                userPermissions = permissionsList.ToHashSet();
-                await _permissionCache.SetPermissionsAsync(userId, userPermissions, TimeSpan.FromMinutes(30));
-            }
+            // Redis caching disabled - always query database
+            // var userPermissions = await _permissionCache.GetPermissionsAsync(userId);
+            //
+            // if (userPermissions is null)
+            // {
+            var permissionsList = await GetUserPermissionsAsync(userId);
+            var userPermissions = permissionsList.ToHashSet();
+            //     await _permissionCache.SetPermissionsAsync(userId, userPermissions, TimeSpan.FromMinutes(30));
+            // }
 
             if (userPermissions.Count == 0)
                 return false;

@@ -181,8 +181,8 @@ namespace API.Extensions
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ISoftDeleteAdminService, SoftDeleteAdminService>();
 
-            services.AddSingleton<IPermissionCacheService, PermissionCacheService>();
-            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+            // services.AddSingleton<IPermissionCacheService, PermissionCacheService>(); // Commented out - Uses Redis
+            // services.AddSingleton<IResponseCacheService, ResponseCacheService>(); // Commented out - Uses Redis
 
             services.AddSingleton(TypeAdapterConfig.GlobalSettings);
             services.AddScoped<IMapper, ServiceMapper>();

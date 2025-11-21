@@ -18,7 +18,7 @@ namespace API.Services
         private readonly RoleManager<AppRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly IRolePermissionRepository _rolePermissionRepository;
-        private readonly IPermissionCacheService _permissionCache;
+        // private readonly IPermissionCacheService _permissionCache; // Commented out - Redis disabled
         private readonly ApplicationDbContext _context;
 
 
@@ -26,13 +26,13 @@ namespace API.Services
             RoleManager<AppRole> roleManager,
             UserManager<AppUser> userManager,
             IRolePermissionRepository rolePermissionRepository,
-            IPermissionCacheService permissionCache,
+            // IPermissionCacheService permissionCache, // Commented out - Redis disabled
             ApplicationDbContext context)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _rolePermissionRepository = rolePermissionRepository;
-            _permissionCache = permissionCache;
+            // _permissionCache = permissionCache; // Commented out - Redis disabled
             _context = context;
         }
 
@@ -80,8 +80,8 @@ namespace API.Services
                 // Update role permissions
                 await UpdateRolePermissionsAsync(role.Id, request.PermissionIds);
 
-                // Invalidate permission cache for users in this role
-                await InvalidateUsersPermissionCacheAsync(role.Name!);
+                // Invalidate permission cache for users in this role - Commented out - Redis disabled
+                // await InvalidateUsersPermissionCacheAsync(role.Name!);
 
                 await transaction.CommitAsync();
                 return await GetRoleByIdAsync(role.Id);
@@ -182,13 +182,14 @@ namespace API.Services
 
         }
 
-        private async Task InvalidateUsersPermissionCacheAsync(string roleName)
-        {
-            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
-            foreach (var user in usersInRole)
-            {
-                await _permissionCache.InvalidatePermissionsAsync(user.Id);
-            }
-        }
+        // Commented out - Redis disabled
+        // private async Task InvalidateUsersPermissionCacheAsync(string roleName)
+        // {
+        //     var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+        //     foreach (var user in usersInRole)
+        //     {
+        //         await _permissionCache.InvalidatePermissionsAsync(user.Id);
+        //     }
+        // }
     }
 }
