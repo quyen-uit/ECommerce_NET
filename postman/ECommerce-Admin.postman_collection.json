@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "ECommerce NET - Admin",
+    "description": "Collection for Admin operations: soft-delete management and audit logs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Soft Deleted Items",
+      "item": [
+        {
+          "name": "Get Soft Deleted Products",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "products"]
+            },
+            "description": "Get all soft-deleted products (requires Permission:Product.Manage)"
+          }
+        },
+        {
+          "name": "Get Soft Deleted Categories",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "categories"]
+            },
+            "description": "Get all soft-deleted categories (requires Permission:Category.Manage)"
+          }
+        },
+        {
+          "name": "Get Soft Deleted Brands",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/brands",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "brands"]
+            },
+            "description": "Get all soft-deleted brands (requires Permission:Brand.Manage)"
+          }
+        }
+      ],
+      "description": "View soft-deleted items"
+    },
+    {
+      "name": "Restore Items",
+      "item": [
+        {
+          "name": "Restore Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/products/{{productId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "products", "{{productId}}", "restore"]
+            },
+            "description": "Restore a soft-deleted product (requires Permission:Product.Manage)"
+          }
+        },
+        {
+          "name": "Restore Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/categories/{{categoryId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "categories", "{{categoryId}}", "restore"]
+            },
+            "description": "Restore a soft-deleted category (requires Permission:Category.Manage)"
+          }
+        },
+        {
+          "name": "Restore Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/brands/{{brandId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "brands", "{{brandId}}", "restore"]
+            },
+            "description": "Restore a soft-deleted brand (requires Permission:Brand.Manage)"
+          }
+        }
+      ],
+      "description": "Restore soft-deleted items"
+    },
+    {
+      "name": "Permanent Delete",
+      "item": [
+        {
+          "name": "Permanently Delete Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/products/{{productId}}/permanent",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "products", "{{productId}}", "permanent"]
+            },
+            "description": "Permanently delete a soft-deleted product (requires Permission:Product.Manage)"
+          }
+        },
+        {
+          "name": "Permanently Delete Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/categories/{{categoryId}}/permanent",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "categories", "{{categoryId}}", "permanent"]
+            },
+            "description": "Permanently delete a soft-deleted category (requires Permission:Category.Manage)"
+          }
+        },
+        {
+          "name": "Permanently Delete Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/soft-deleted/brands/{{brandId}}/permanent",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "soft-deleted", "brands", "{{brandId}}", "permanent"]
+            },
+            "description": "Permanently delete a soft-deleted brand (requires Permission:Brand.Manage)"
+          }
+        }
+      ],
+      "description": "Permanently delete soft-deleted items (cannot be undone)"
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit-logs?pageNumber=1&pageSize=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit-logs"],
+              "query": [
+                {"key": "pageNumber", "value": "1"},
+                {"key": "pageSize", "value": "50"},
+                {"key": "userId", "value": "", "disabled": true},
+                {"key": "action", "value": "", "disabled": true}
+              ]
+            },
+            "description": "Get audit logs with optional filtering (requires Permission:Permission.Manage)"
+          }
+        },
+        {
+          "name": "Get Audit Logs - Filtered by User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit-logs?pageNumber=1&pageSize=50&userId={{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit-logs"],
+              "query": [
+                {"key": "pageNumber", "value": "1"},
+                {"key": "pageSize", "value": "50"},
+                {"key": "userId", "value": "{{userId}}"}
+              ]
+            },
+            "description": "Get audit logs filtered by user ID"
+          }
+        },
+        {
+          "name": "Get Audit Logs - Filtered by Action",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit-logs?pageNumber=1&pageSize=50&action=Create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit-logs"],
+              "query": [
+                {"key": "pageNumber", "value": "1"},
+                {"key": "pageSize", "value": "50"},
+                {"key": "action", "value": "Create"}
+              ]
+            },
+            "description": "Get audit logs filtered by action type"
+          }
+        }
+      ],
+      "description": "View system audit logs"
+    }
+  ]
+}

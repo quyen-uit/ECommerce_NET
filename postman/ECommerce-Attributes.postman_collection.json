@@ -1,0 +1,295 @@
+{
+  "info": {
+    "name": "ECommerce NET - Attributes",
+    "description": "Collection for product attributes: Colors and Sizes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Colors",
+      "item": [
+        {
+          "name": "Get Color by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/color/{{colorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "{{colorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Colors",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/color/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "search"]
+            }
+          }
+        },
+        {
+          "name": "Create Color",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('colorId', jsonData.data.id);",
+                  "        console.log('Color ID saved:', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Red\",\n  \"hexCode\": \"#FF0000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/color/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Many Colors",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\"name\": \"Blue\", \"hexCode\": \"#0000FF\"},\n  {\"name\": \"Green\", \"hexCode\": \"#00FF00\"},\n  {\"name\": \"Black\", \"hexCode\": \"#000000\"},\n  {\"name\": \"White\", \"hexCode\": \"#FFFFFF\"}\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/color/create-many",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "create-many"]
+            }
+          }
+        },
+        {
+          "name": "Update Color",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{colorId}}\",\n  \"name\": \"Dark Red\",\n  \"hexCode\": \"#8B0000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/color/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "update"]
+            }
+          }
+        },
+        {
+          "name": "Delete Color",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/color/{{colorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "color", "{{colorId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sizes",
+      "item": [
+        {
+          "name": "Get Size by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/size/{{sizeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "{{sizeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Sizes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/size/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "search"]
+            }
+          }
+        },
+        {
+          "name": "Create Size",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('sizeId', jsonData.data.id);",
+                  "        console.log('Size ID saved:', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Medium\",\n  \"abbreviation\": \"M\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/size/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Many Sizes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\"name\": \"Small\", \"abbreviation\": \"S\"},\n  {\"name\": \"Large\", \"abbreviation\": \"L\"},\n  {\"name\": \"Extra Large\", \"abbreviation\": \"XL\"},\n  {\"name\": \"Extra Extra Large\", \"abbreviation\": \"XXL\"}\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/size/create-many",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "create-many"]
+            }
+          }
+        },
+        {
+          "name": "Update Size",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{sizeId}}\",\n  \"name\": \"Medium Updated\",\n  \"abbreviation\": \"M\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/size/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "update"]
+            }
+          }
+        },
+        {
+          "name": "Delete Size",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/size/{{sizeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "{{sizeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Many Sizes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[\"id1\", \"id2\", \"id3\"]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/size/delete-many",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "size", "delete-many"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

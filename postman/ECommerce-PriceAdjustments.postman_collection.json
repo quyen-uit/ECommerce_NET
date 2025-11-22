@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "ECommerce NET - Price Adjustments",
+    "description": "Collection for managing product price adjustments and discounts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Price Adjustment by ID",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/price-adjustment/{{priceAdjustmentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "price-adjustment", "{{priceAdjustmentId}}"]
+        },
+        "description": "Get price adjustment by ID"
+      }
+    },
+    {
+      "name": "Search Price Adjustments",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/price-adjustment/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "price-adjustment", "search"]
+        },
+        "description": "Search price adjustments with pagination"
+      }
+    },
+    {
+      "name": "Create Price Adjustment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.data && jsonData.data.id) {",
+              "        pm.environment.set('priceAdjustmentId', jsonData.data.id);",
+              "        console.log('Price Adjustment ID saved:', jsonData.data.id);",
+              "    }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productSkuId\": \"{{productSkuId}}\",\n  \"adjustmentType\": \"Discount\",\n  \"adjustmentValue\": 10.00,\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"description\": \"10% discount promotion\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/price-adjustment/create",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "price-adjustment", "create"]
+        },
+        "description": "Create new price adjustment"
+      }
+    },
+    {
+      "name": "Update Price Adjustment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{priceAdjustmentId}}\",\n  \"productSkuId\": \"{{productSkuId}}\",\n  \"adjustmentType\": \"Discount\",\n  \"adjustmentValue\": 15.00,\n  \"startDate\": \"2024-01-01T00:00:00Z\",\n  \"endDate\": \"2024-12-31T23:59:59Z\",\n  \"description\": \"15% discount promotion (updated)\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/price-adjustment/update",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "price-adjustment", "update"]
+        },
+        "description": "Update existing price adjustment"
+      }
+    },
+    {
+      "name": "Delete Price Adjustment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/price-adjustment/{{priceAdjustmentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "price-adjustment", "{{priceAdjustmentId}}"]
+        },
+        "description": "Delete price adjustment"
+      }
+    }
+  ]
+}

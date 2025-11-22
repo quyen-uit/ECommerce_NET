@@ -1,0 +1,160 @@
+{
+  "info": {
+    "name": "ECommerce NET - Categories",
+    "description": "Collection for Category management including hierarchical categories",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Category by ID",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/category/{{categoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "{{categoryId}}"]
+        },
+        "description": "Get a single category by ID"
+      }
+    },
+    {
+      "name": "Search Categories",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/category/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "search"]
+        },
+        "description": "Search categories with pagination"
+      }
+    },
+    {
+      "name": "Get Categories Hierarchy",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/category/hierarchy",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "hierarchy"]
+        },
+        "description": "Get all categories as a hierarchical tree structure"
+      }
+    },
+    {
+      "name": "Create Category",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const jsonData = pm.response.json();",
+              "    if (jsonData.data && jsonData.data.id) {",
+              "        pm.environment.set('categoryId', jsonData.data.id);",
+              "        console.log('Category ID saved:', jsonData.data.id);",
+              "    }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices and accessories\",\n  \"parentId\": null\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/category/create",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "create"]
+        },
+        "description": "Create a new category (can be root or child category)"
+      }
+    },
+    {
+      "name": "Create Many Categories",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"name\": \"Smartphones\",\n    \"description\": \"Mobile phones and accessories\",\n    \"parentId\": \"{{categoryId}}\"\n  },\n  {\n    \"name\": \"Laptops\",\n    \"description\": \"Portable computers\",\n    \"parentId\": \"{{categoryId}}\"\n  },\n  {\n    \"name\": \"Tablets\",\n    \"description\": \"Tablet devices\",\n    \"parentId\": \"{{categoryId}}\"\n  }\n]"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/category/create-many",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "create-many"]
+        },
+        "description": "Create multiple categories at once"
+      }
+    },
+    {
+      "name": "Update Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{categoryId}}\",\n  \"name\": \"Updated Category Name\",\n  \"description\": \"Updated description\",\n  \"parentId\": null\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/category/update",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "update"]
+        },
+        "description": "Update an existing category"
+      }
+    },
+    {
+      "name": "Delete Category",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/category/{{categoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "category", "{{categoryId}}"]
+        },
+        "description": "Soft delete a category"
+      }
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "info": {
+    "name": "ECommerce NET - Products",
+    "description": "Collection for Products, Brands, and Product SKUs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Search Products by Name",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "search"]
+            }
+          }
+        },
+        {
+          "name": "Get All Products by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/get-all-by-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "get-all-by-id"]
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('productId', jsonData.data.id);",
+                  "        console.log('Product ID saved:', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Product\",\n  \"description\": \"Product description\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"brandId\": \"{{brandId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{productId}}\",\n  \"name\": \"Updated Product Name\",\n  \"description\": \"Updated description\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"brandId\": \"{{brandId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "update"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "{{productId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Brands",
+      "item": [
+        {
+          "name": "Search Brands",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10,\n  \"search\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "search"]
+            }
+          }
+        },
+        {
+          "name": "Get Brand by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/{{brandId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "{{brandId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Brand",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('brandId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Brand\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Many Brands",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\"name\": \"Brand 1\"},\n  {\"name\": \"Brand 2\"},\n  {\"name\": \"Brand 3\"}\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/create-many",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "create-many"]
+            }
+          }
+        },
+        {
+          "name": "Update Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{brandId}}\",\n  \"name\": \"Updated Brand Name\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "update"]
+            }
+          }
+        },
+        {
+          "name": "Delete Brand",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/{{brandId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "{{brandId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Many Brands",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[\"id1\", \"id2\", \"id3\"]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/brand/delete-many",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "brand", "delete-many"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product SKUs",
+      "item": [
+        {
+          "name": "Search Product SKUs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageIndex\": 1,\n  \"pageSize\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product-sku/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product-sku", "search"]
+            }
+          }
+        },
+        {
+          "name": "Get Product SKU by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/product-sku/{{productSkuId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product-sku", "{{productSkuId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Product SKU",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.id) {",
+                  "        pm.environment.set('productSkuId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"colorId\": \"{{colorId}}\",\n  \"sizeId\": \"{{sizeId}}\",\n  \"sku\": \"SKU-001\",\n  \"price\": 99.99,\n  \"quantity\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product-sku/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product-sku", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Product SKU",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{productSkuId}}\",\n  \"productId\": \"{{productId}}\",\n  \"colorId\": \"{{colorId}}\",\n  \"sizeId\": \"{{sizeId}}\",\n  \"sku\": \"SKU-001-UPDATED\",\n  \"price\": 109.99,\n  \"quantity\": 150\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product-sku/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product-sku", "update"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product SKU",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/product-sku/{{productSkuId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product-sku", "{{productSkuId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

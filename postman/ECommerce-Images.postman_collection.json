@@ -1,0 +1,30 @@
+{
+  "info": {
+    "name": "ECommerce NET - Images",
+    "description": "Collection for Image processing and management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Process Images",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [{"key": "token", "value": "{{accessToken}}", "type": "string"}]
+        },
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"images\": [\n    {\n      \"entityId\": \"{{productId}}\",\n      \"entityType\": \"Product\",\n      \"imageUrl\": \"https://example.com/image1.jpg\",\n      \"isPrimary\": true,\n      \"displayOrder\": 1\n    },\n    {\n      \"entityId\": \"{{productId}}\",\n      \"entityType\": \"Product\",\n      \"imageUrl\": \"https://example.com/image2.jpg\",\n      \"isPrimary\": false,\n      \"displayOrder\": 2\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/image/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "image", "process"]
+        },
+        "description": "Process and save images for products or other entities (requires Permission:Image.Create)"
+      }
+    }
+  ]
+}
